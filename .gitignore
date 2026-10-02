@@ -1,0 +1,19 @@
+# ===== Hugo 构建产物 =====
+public/
+resources/
+.hugo_build.lock
+hugo_stats.json
+
+# ===== 编辑器与 IDE =====
+.idea/
+.vscode/
+*.iml
+
+# ===== 操作系统 =====
+.DS_Store
+Thumbs.db
+
+# ===== 日志与临时文件 =====
+*.log
+*.tmp
+*.bak

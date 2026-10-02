@@ -1,0 +1,173 @@
+# ============================================================
+#  Hugo 站点主配置
+#  站点地址：https://elthereal-star.github.io/blog/
+#  主题：PaperMod
+# ============================================================
+
+baseURL: "https://elthereal-star.github.io/blog/"
+title: "Star-Bai 的技术笔记"
+theme: PaperMod
+
+# ---------- 语言与内容 ----------
+languageCode: "zh-cn"
+defaultContentLanguage: "zh-cn"
+hasCJKLanguage: true   # 中文字数统计按字计算，而不是按空格分词
+enableEmoji: true
+summaryLength: 80      # 列表页摘要长度（字符）
+timeZone: "Asia/Shanghai"
+
+# ---------- 构建行为 ----------
+buildDrafts: false
+buildFuture: false
+buildExpired: false
+enableRobotsTXT: true
+pagination:
+  pagerSize: 10
+
+minify:
+  disableXML: true
+  minifyOutput: true
+
+# ---------- 输出格式 ----------
+# home 必须输出 JSON，全文搜索（/search/ 页面）依赖它生成的索引
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON
+
+# ---------- Markdown 渲染 ----------
+markup:
+  goldmark:
+    renderer:
+      unsafe: true      # 允许在文章里直接写 HTML
+    extensions:
+      footnote: true
+      typographer: false
+  highlight:
+    noClasses: false    # 使用 CSS class，配合主题的代码高亮配色
+    codeFences: true
+    guessSyntax: true
+    lineNos: false
+    tabWidth: 4
+
+# ---------- 导航菜单 ----------
+menu:
+  main:
+    - identifier: posts
+      name: 文章
+      url: /posts/
+      weight: 10
+    - identifier: projects
+      name: 项目
+      url: /projects/
+      weight: 20
+    - identifier: archives
+      name: 归档
+      url: /archives/
+      weight: 30
+    - identifier: tags
+      name: 标签
+      url: /tags/
+      weight: 40
+    - identifier: search
+      name: 搜索
+      url: /search/
+      weight: 50
+    - identifier: about
+      name: 关于
+      url: /about/
+      weight: 60
+
+# ---------- 站点参数 ----------
+params:
+  env: production
+  description: "Java 后端学习笔记 · 项目复盘 · 测试工程实践"
+  keywords: [Java, Spring Boot, Hugo, 后端, 测试, 博客]
+  author: "Star-Bai"
+
+  # 首页列表展示哪些板块的内容（文章 + 项目）
+  mainSections:
+    - posts
+    - projects
+
+  # 站点主标题区（头像/标题/副标题/按钮）
+  # 注意：这里的路径不要写开头的斜杠，主题会自动拼上 baseURL 的 /blog/ 前缀
+  label:
+    text: "Star-Bai"
+    icon: "favicon-32x32.png"
+    iconHeight: 35
+
+  # 首页简介块
+  homeInfoParams:
+    Title: "Hi，我是 Star-Bai 👋"
+    Content: >
+      这里记录我的 Java 后端学习笔记、项目复盘和一些测试工程上的踩坑记录。
+      目前主要折腾 Spring Boot 3 / MyBatis-Plus / Vue 3 这条技术线，
+      也在持续补 Git 工作流和自动化测试的功课。
+      <br><br>
+      顶部菜单可以直接看 **文章** 和 **项目**，右上角有搜索 —— 想到什么随时搜。
+
+  # 首页社交图标
+  socialIcons:
+    - name: github
+      title: GitHub
+      url: "https://github.com/elthereal-star"
+    - name: email
+      title: 邮箱
+      url: "mailto:2838984524@qq.com"
+    - name: rss
+      title: RSS 订阅
+      url: "https://elthereal-star.github.io/blog/index.xml"
+
+  # ---------- 界面开关 ----------
+  defaultTheme: auto          # 跟随系统深浅色，读者也能手动切换
+  disableThemeToggle: false
+  disableScrollToTop: false
+  DateFormat: "2006年1月2日"    # 文章日期显示格式（Go 时间布局语法）
+  ShowReadingTime: true
+  ShowWordCount: true
+  ShowShareButtons: false
+  ShowPostNavLinks: true      # 文章底部「上一篇 / 下一篇」
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: true   # 代码块右上角一键复制
+  ShowRssButtonInSectionTermList: true
+  ShowFullTextinRSS: true
+  UseHugoToc: true            # 用 Hugo 内置目录生成
+  ShowToc: true               # 文章页默认显示右侧目录
+  TocOpen: false              # 目录默认折叠
+  comments: false             # 未接入评论系统，需要时可开启 Giscus
+
+  # 首页第一篇文章也用普通卡片样式（而非 PaperMod 默认的「巨幅首图」样式）
+  disableSpecial1stPost: true
+  hidemeta: false
+  hideSummary: false
+
+  # 文章底部「编辑此页」入口，方便自己从线上跳回 GitHub 改稿
+  editPost:
+    URL: "https://github.com/elthereal-star/blog/tree/main/content/"
+    Text: "在 GitHub 上编辑"
+    appendFilePath: true
+
+  # ---------- 静态资源 ----------
+  assets:
+    disableHLJS: true         # 代码高亮交给 Hugo 内置的 Chroma，不加载 highlight.js
+    # 同样不要写开头的斜杠，否则会指向根域名（丢 /blog/ 前缀）导致 404
+    favicon: "favicon.ico"
+    favicon16x16: "favicon-16x16.png"
+    favicon32x32: "favicon-32x32.png"
+    apple_touch_icon: "apple-touch-icon.png"
+    safari_pinned_tab: "safari-pinned-tab.svg"
+
+  # ---------- 全文搜索（Fuse.js）----------
+  fuseOpts:
+    isCaseSensitive: false
+    shouldSort: true
+    location: 0
+    distance: 1000
+    threshold: 0.4
+    minMatchCharLength: 1
+    keys: ["title", "permalink", "summary", "content"]
+
+  # ---------- 文章版权声明 ----------
+  # 如需页脚添加备案号等，可在此处使用 footer 自定义模板

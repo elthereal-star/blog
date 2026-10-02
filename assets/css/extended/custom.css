@@ -1,0 +1,136 @@
+/* ============================================================
+   自定义样式（放在 assets/css/extended/ 下会被 PaperMod 自动合并，
+   不需要修改主题源码，主题升级也不会覆盖这里）
+   ============================================================ */
+
+/* ---------- 中文正文优化 ---------- */
+.post-content {
+    /* 中文需要比英文更大的行高才舒服 */
+    line-height: 1.85;
+    /* 中英混排时自动加一点间距，避免挤在一起 */
+    text-align: justify;
+    text-justify: inter-ideograph;
+    word-break: break-word;
+}
+
+.post-content p {
+    margin: 1.1em 0;
+    /* 首行不缩进，用段间距区分段落，可读性更好 */
+    text-indent: 0;
+}
+
+/* 标题上下留白更宽松一些 */
+.post-content h2 {
+    margin-top: 2.2em;
+    margin-bottom: 0.9em;
+    padding-bottom: 0.35em;
+    border-bottom: 1px solid var(--border);
+}
+
+.post-content h3 {
+    margin-top: 1.8em;
+    margin-bottom: 0.7em;
+}
+
+/* ---------- 列表与引用 ---------- */
+.post-content ul,
+.post-content ol {
+    padding-inline-start: 1.6em;
+}
+
+.post-content li {
+    margin: 0.45em 0;
+}
+
+.post-content blockquote {
+    border-inline-start: 3px solid var(--primary);
+    padding: 0.35em 1em;
+    margin: 1.4em 0;
+    opacity: 0.92;
+}
+
+/* ---------- 表格：给技术文章里的对照表加个边框，别太素 ---------- */
+.post-content table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1.5em 0;
+    font-size: 0.95em;
+    display: table;
+    overflow-x: auto;
+}
+
+.post-content table th,
+.post-content table td {
+    border: 1px solid var(--border);
+    padding: 0.6em 0.9em;
+    text-align: left;
+}
+
+.post-content table th {
+    background: var(--code-bg);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.post-content table tr:nth-child(even) td {
+    background: var(--code-bg);
+}
+
+/* ---------- 代码块 ---------- */
+.post-content pre {
+    border-radius: 0.5em;
+    padding: 1em 1.1em;
+    line-height: 1.6;
+    font-size: 0.9em;
+}
+
+/* 行内代码 */
+.post-content code:not(pre code) {
+    padding: 0.15em 0.4em;
+    border-radius: 0.3em;
+    font-size: 0.9em;
+    background: var(--code-bg);
+}
+
+/* ---------- 链接：hover 时加下划线，让可点击区域更明确 ---------- */
+.post-content a {
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s ease;
+}
+
+.post-content a:hover {
+    border-bottom-color: var(--primary);
+}
+
+/* ---------- 首页信息块 ---------- */
+.home-info {
+    margin-bottom: 2.5rem;
+}
+
+/* ---------- 列表页卡片：hover 时轻微上浮 ---------- */
+.post-entry {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.post-entry:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* ---------- 404 页面 ---------- */
+.not-found {
+    text-align: center;
+    padding: 4rem 1rem;
+}
+
+/* ---------- 移动端适配 ---------- */
+@media screen and (max-width: 768px) {
+    .post-content {
+        line-height: 1.75;
+    }
+
+    .post-content table {
+        font-size: 0.88em;
+    }
+}
