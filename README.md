@@ -1,4 +1,4 @@
-# Star-Bai 的技术笔记
+# elthereal-star 的技术笔记
 
 个人技术博客的源码，基于 **Hugo + PaperMod**，通过 **GitHub Actions** 自动构建并部署到 **GitHub Pages**。
 
@@ -72,7 +72,13 @@ blog/
 ├── .github/workflows/hugo.yml    # 自动部署流水线
 ├── hugo.yaml                     # 站点主配置（菜单、参数、搜索等）
 ├── archetypes/default.md         # 新建文章模板
-├── assets/css/extended/custom.css# 自定义样式（不改主题源码）
+├── assets/
+│   ├── css/extended/custom.css   # 自定义样式（不改主题源码）
+│   └── js/custom.js              # 自定义交互脚本
+├── layouts/_partials/
+│   ├── home_info.html            # 首页 Hero 区块
+│   ├── extend_head.html          # <head> 注入点
+│   └── extend_footer.html        # </body> 前注入点（进度条 + 脚本）
 ├── i18n/zh-cn.yaml               # 中文界面文案
 ├── content/
 │   ├── about.md                  # 关于我
@@ -83,6 +89,32 @@ blog/
 ├── static/                       # favicon 等静态文件
 └── themes/PaperMod/              # 主题（已内置进仓库）
 ```
+
+## 视觉与交互定制
+
+站点的「豪华感」来自这几处，都集中在上面标出的文件里，改起来互不干扰：
+
+| 想改什么 | 改哪里 |
+| --- | --- |
+| 品牌主色 / 渐变色 | `custom.css` 顶部的 `--brand-1/2/3` |
+| 深浅色主题的底色、文字色 | `custom.css` 里的 `:root` 与 `:root[data-theme="dark"]` |
+| 极光背景的浓度 | `custom.css` 里 `body::before` 的 `rgba(...)` 透明度 |
+| 首页徽章 / 打字机文案 / 技能标签 | `hugo.yaml` 的 `params.hero` |
+| 首页问候语和简介正文 | `hugo.yaml` 的 `params.homeInfoParams` |
+| 动效速度、开关 | `assets/js/custom.js` 顶部的 `TYPE_SPEED` / `HOLD_TIME` / `MAX_TILT` |
+
+已经实现的动效清单：
+
+- 缓慢漂浮的极光渐变背景（纯 CSS，无 canvas、无第三方库）
+- 顶部滚动进度条
+- 吸顶毛玻璃导航栏（滚动后出现分割线与投影）
+- 导航项 hover 渐变下划线、logo 渐变流光、主题按钮旋转
+- 首页 Hero：旋转光环的星形徽标、渐变动画大标题、挥手 emoji、打字机副标题、可悬停的技能标签、圆形社交图标
+- 列表卡片：滚动进场错峰淡入、hover 上浮 + 渐变描边 + 高光扫过 + 鼠标跟随的 3D 倾斜
+- 文章页：二级标题渐变竖条、目录卡片与 scrollspy 当前位置高亮、代码块 hover 上浮、表格渐变表头
+
+> 所有动效都遵循 `prefers-reduced-motion`：系统里关闭动画后会自动降级为静态显示。
+> 全部动效只用 CSS 与少量原生 JS 实现，整站**不请求任何第三方 CDN 或字体**。
 
 ## 几个容易踩的坑
 

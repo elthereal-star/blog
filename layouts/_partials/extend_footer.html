@@ -1,0 +1,5 @@
+{{- /* 页脚自定义区：顶部阅读进度条 + 自定义交互脚本 */ -}}
+<div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+{{- $customJS := resources.Get "js/custom.js" | resources.Minify | resources.Fingerprint }}
+<script defer src="{{ $customJS.RelPermalink }}" integrity="{{ $customJS.Data.Integrity }}" crossorigin="anonymous"></script>

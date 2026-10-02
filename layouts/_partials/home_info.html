@@ -1,0 +1,60 @@
+{{- /* 首页 Hero 区块
+       在主题同名的 partial 基础上重写，加入徽章、星形徽标、打字机副标题与技能标签。
+       可通过 hugo.yaml 的 params.hero 调整文案，不需要改这个文件。 */ -}}
+{{- with site.Params.homeInfoParams }}
+{{- $hero := site.Params.hero }}
+<article class="first-entry home-info">
+    {{- with $hero.badge }}
+    <span class="hero-badge">
+        <span class="dot"></span>{{ . }}
+    </span>
+    {{- end }}
+
+    <div class="hero-avatar" aria-hidden="true">
+        <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="heroStarGradient" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#4f6cf0" />
+                    <stop offset="55%" stop-color="#7c5ceb" />
+                    <stop offset="100%" stop-color="#e05dbe" />
+                </linearGradient>
+            </defs>
+            <path fill="url(#heroStarGradient)"
+                d="M24 2 C25.5 12.5 35.5 22.5 46 24 C35.5 25.5 25.5 35.5 24 46 C22.5 35.5 12.5 25.5 2 24 C12.5 22.5 22.5 12.5 24 2 Z" />
+        </svg>
+    </div>
+
+    <header class="entry-header">
+        {{- /* 渐变文字用 background-clip 实现，会把 emoji 也一起染色，
+               所以标题文字和 emoji 分开放，emoji 单独做挥手动画 */}}
+        <h1>
+            <span class="hero-title-text">{{ .Title | markdownify }}</span>
+            {{- with $hero.emoji }}<span class="hero-wave">{{ . }}</span>{{ end }}
+        </h1>
+    </header>
+
+    {{- with $hero.typing }}
+    {{- /* data-typing 交给 JS 做打字机效果；这里预置第一句，JS 失效时也能正常显示 */}}
+    <p class="hero-typing" data-typing='{{ . | jsonify }}'>
+        <span>{{ index . 0 }}</span><span class="caret"></span>
+    </p>
+    {{- end }}
+
+    <div class="entry-content md-content">
+        {{- $opts := dict "display" "block" }}
+        {{ .Content | $.Page.RenderString $opts }}
+    </div>
+
+    {{- with $hero.chips }}
+    <div class="hero-chips">
+        {{- range . }}
+        <span class="hero-chip">{{ . }}</span>
+        {{- end }}
+    </div>
+    {{- end }}
+
+    <footer class="entry-footer">
+        {{ partial "social_icons.html" (dict "align" site.Params.homeInfoParams.AlignSocialIconsTo) }}
+    </footer>
+</article>
+{{- end -}}

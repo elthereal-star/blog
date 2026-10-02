@@ -1,0 +1,6 @@
+{{- /* 头部自定义区：在 <head> 里尽早给 <html> 打上 js-reveal 标记，
+       这样滚动进场动画的「初始隐藏」状态不会出现闪一下再消失的问题。
+       若浏览器禁用 JS，则不会打这个标记，内容直接正常显示。 */ -}}
+<script>
+    document.documentElement.classList.add("js-reveal");
+</script>

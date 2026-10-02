@@ -1,136 +1,864 @@
 /* ============================================================
-   自定义样式（放在 assets/css/extended/ 下会被 PaperMod 自动合并，
-   不需要修改主题源码，主题升级也不会覆盖这里）
+   elthereal-star 的技术笔记 —— 自定义样式
+   放在 assets/css/extended/ 下会被 PaperMod 自动拼接到主题样式之后，
+   因此这里可以放心覆盖主题的默认外观，且主题升级不会覆盖本文件。
+
+   目录
+   1. 品牌配色与主题变量
+   2. 动态极光背景
+   3. 顶部滚动进度条
+   4. 吸顶玻璃导航栏
+   5. 首页 Hero
+   6. 列表卡片
+   7. 文章页细节
+   8. 标签 / 归档 / 404
+   9. 页脚与回到顶部
+   10. 滚动进场动画
+   11. 无障碍与移动端
    ============================================================ */
 
-/* ---------- 中文正文优化 ---------- */
-.post-content {
-    /* 中文需要比英文更大的行高才舒服 */
-    line-height: 1.85;
-    /* 中英混排时自动加一点间距，避免挤在一起 */
-    text-align: justify;
-    text-justify: inter-ideograph;
-    word-break: break-word;
+/* ==================== 1. 品牌配色与主题变量 ==================== */
+
+:root {
+    /* 品牌渐变色：靛蓝 → 紫罗兰 → 品红 */
+    --brand-1: #4f6cf0;
+    --brand-2: #7c5ceb;
+    --brand-3: #e05dbe;
+    --grad-brand: linear-gradient(120deg, var(--brand-1) 0%, var(--brand-2) 50%, var(--brand-3) 100%);
+    --grad-brand-soft: linear-gradient(120deg, rgba(79, 108, 240, 0.14), rgba(224, 93, 190, 0.14));
+    --glow-sm: 0 4px 16px -6px rgba(79, 108, 240, 0.5);
+    --glow-md: 0 12px 32px -12px rgba(79, 108, 240, 0.55);
+    --glow-lg: 0 24px 60px -20px rgba(124, 92, 235, 0.5);
+    --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+    --radius: 14px;
 }
 
-.post-content p {
-    margin: 1.1em 0;
-    /* 首行不缩进，用段间距区分段落，可读性更好 */
-    text-indent: 0;
+/* 浅色主题：近白底 + 冷调文字，卡片纯白 */
+:root {
+    --theme: #f7f8fd;
+    --entry: #ffffff;
+    --primary: #14162b;
+    --secondary: #6b7089;
+    --tertiary: #dfe2f2;
+    --content: #2a2d42;
+    --code-bg: #f1f3fb;
+    --code-block-bg: #1b1d2b;
+    --border: rgba(79, 108, 240, 0.13);
+    color-scheme: light;
 }
 
-/* 标题上下留白更宽松一些 */
-.post-content h2 {
-    margin-top: 2.2em;
-    margin-bottom: 0.9em;
-    padding-bottom: 0.35em;
-    border-bottom: 1px solid var(--border);
+/* 深色主题：深空蓝黑 + 更亮的极光 */
+:root[data-theme="dark"] {
+    --theme: #0a0b13;
+    --entry: #14161f;
+    --primary: #f2f3fa;
+    --secondary: #9ba1b8;
+    --tertiary: #2a2e3f;
+    --content: #d3d6e3;
+    --code-bg: #1a1d29;
+    --code-block-bg: #12141d;
+    --border: rgba(255, 255, 255, 0.09);
+    color-scheme: dark;
 }
 
-.post-content h3 {
-    margin-top: 1.8em;
-    margin-bottom: 0.7em;
+/* 列表页主题默认给了 --code-bg 底色，这里改透明让极光透出来 */
+.list,
+[data-theme="dark"] .list {
+    background: transparent;
 }
 
-/* ---------- 列表与引用 ---------- */
-.post-content ul,
-.post-content ol {
-    padding-inline-start: 1.6em;
+/* ==================== 2. 动态极光背景 ==================== */
+
+body {
+    background-color: var(--theme);
+    position: relative;
 }
 
-.post-content li {
-    margin: 0.45em 0;
+/* 三团缓慢漂浮的光斑，营造「极光」质感 */
+body::before {
+    content: "";
+    position: fixed;
+    inset: -30vh -20vw;
+    z-index: -1;
+    pointer-events: none;
+    background:
+        radial-gradient(closest-side, rgba(79, 108, 240, 0.28), transparent 72%) 12% 8% / 62vw 62vw no-repeat,
+        radial-gradient(closest-side, rgba(124, 92, 235, 0.24), transparent 72%) 78% 4% / 56vw 56vw no-repeat,
+        radial-gradient(closest-side, rgba(224, 93, 190, 0.2), transparent 72%) 50% 96% / 68vw 68vw no-repeat;
+    filter: blur(28px);
+    animation: aurora-drift 26s ease-in-out infinite alternate;
 }
 
-.post-content blockquote {
-    border-inline-start: 3px solid var(--primary);
-    padding: 0.35em 1em;
-    margin: 1.4em 0;
-    opacity: 0.92;
+/* 一层极淡的网格，增加「科技感」层次 */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.5;
+    background-image:
+        linear-gradient(to right, var(--border) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--border) 1px, transparent 1px);
+    background-size: 56px 56px;
+    -webkit-mask-image: radial-gradient(circle at 50% 0%, #000 0%, transparent 72%);
+    mask-image: radial-gradient(circle at 50% 0%, #000 0%, transparent 72%);
 }
 
-/* ---------- 表格：给技术文章里的对照表加个边框，别太素 ---------- */
-.post-content table {
-    border-collapse: collapse;
+[data-theme="dark"] body::before {
+    background:
+        radial-gradient(closest-side, rgba(79, 108, 240, 0.34), transparent 72%) 12% 8% / 62vw 62vw no-repeat,
+        radial-gradient(closest-side, rgba(124, 92, 235, 0.3), transparent 72%) 78% 4% / 56vw 56vw no-repeat,
+        radial-gradient(closest-side, rgba(224, 93, 190, 0.22), transparent 72%) 50% 96% / 68vw 68vw no-repeat;
+}
+
+[data-theme="dark"] body::after {
+    opacity: 0.35;
+}
+
+@keyframes aurora-drift {
+    0% {
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+    50% {
+        transform: translate3d(2.5vw, -2vh, 0) scale(1.08);
+    }
+    100% {
+        transform: translate3d(-2vw, 3vh, 0) scale(1.03);
+    }
+}
+
+@keyframes gradient-slide {
+    to {
+        background-position: 300% 0;
+    }
+}
+
+@keyframes spin-slow {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes sheen {
+    from {
+        background-position: -120% 0;
+    }
+    to {
+        background-position: 220% 0;
+    }
+}
+
+@keyframes pulse-dot {
+    70% {
+        box-shadow: 0 0 0 7px rgba(47, 191, 113, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(47, 191, 113, 0);
+    }
+}
+
+@keyframes caret-blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+/* ==================== 3. 顶部滚动进度条 ==================== */
+
+.scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
     width: 100%;
-    margin: 1.5em 0;
-    font-size: 0.95em;
-    display: table;
-    overflow-x: auto;
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    background: var(--grad-brand);
+    box-shadow: 0 0 12px rgba(124, 92, 235, 0.7);
+    z-index: 999;
+    transition: transform 0.08s linear;
 }
 
-.post-content table th,
-.post-content table td {
-    border: 1px solid var(--border);
-    padding: 0.6em 0.9em;
-    text-align: left;
-}
+/* ==================== 4. 吸顶玻璃导航栏 ==================== */
 
-.post-content table th {
-    background: var(--code-bg);
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.post-content table tr:nth-child(even) td {
-    background: var(--code-bg);
-}
-
-/* ---------- 代码块 ---------- */
-.post-content pre {
-    border-radius: 0.5em;
-    padding: 1em 1.1em;
-    line-height: 1.6;
-    font-size: 0.9em;
-}
-
-/* 行内代码 */
-.post-content code:not(pre code) {
-    padding: 0.15em 0.4em;
-    border-radius: 0.3em;
-    font-size: 0.9em;
-    background: var(--code-bg);
-}
-
-/* ---------- 链接：hover 时加下划线，让可点击区域更明确 ---------- */
-.post-content a {
-    text-decoration: none;
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 90;
+    background: color-mix(in srgb, var(--theme) 76%, transparent);
+    backdrop-filter: saturate(180%) blur(14px);
+    -webkit-backdrop-filter: saturate(180%) blur(14px);
     border-bottom: 1px solid transparent;
-    transition: border-color 0.15s ease;
+    transition: border-color 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
+}
+
+/* 页面滚动后由 JS 打上，出现分割线和投影 */
+.header.is-stuck {
+    border-bottom-color: var(--border);
+    box-shadow: 0 8px 24px -18px rgba(20, 22, 43, 0.6);
+}
+
+/* logo 文字用渐变，hover 时渐变流动 */
+.logo a {
+    font-size: 21px;
+    letter-spacing: -0.01em;
+    background: var(--grad-brand);
+    background-size: 220% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: background-position 0.6s var(--ease-out);
+}
+
+.logo a:hover {
+    background-position: 100% 0;
+}
+
+.logo a img {
+    box-shadow: var(--glow-sm);
+    transition: transform 0.4s var(--ease-out);
+}
+
+.logo a:hover img {
+    transform: rotate(-8deg) scale(1.08);
+}
+
+/* 导航项：hover 时渐变下划线从中间展开 */
+.menu li a {
+    position: relative;
+    transition: color 0.2s var(--ease-out);
+}
+
+.menu li a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 14px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--grad-brand);
+    transform: scaleX(0);
+    transition: transform 0.3s var(--ease-out);
+}
+
+.menu li a:hover::after,
+.menu li a:focus-visible::after {
+    transform: scaleX(1);
+}
+
+.menu li a:hover {
+    color: var(--primary);
+}
+
+.menu li a span {
+    display: inline-block;
+    transition: transform 0.3s var(--ease-out);
+}
+
+.menu li a:hover span {
+    transform: translateY(-1px);
+}
+
+/* 主题切换按钮：hover 旋转 */
+.theme-toggle svg {
+    transition: transform 0.45s var(--ease-out);
+}
+
+.theme-toggle:hover svg {
+    transform: rotate(28deg) scale(1.12);
+}
+
+/* ==================== 5. 首页 Hero ==================== */
+
+.home-info.first-entry {
+    min-height: unset;
+    position: relative;
+    overflow: hidden;
+    padding: clamp(1.75rem, 4vw, 3rem);
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) + 6px);
+    background: color-mix(in srgb, var(--entry) 88%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--glow-lg);
+}
+
+/* 卡片顶部一条流动的渐变光带 */
+.home-info.first-entry::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--brand-1), var(--brand-2), var(--brand-3), var(--brand-1));
+    background-size: 300% 100%;
+    animation: gradient-slide 6s linear infinite;
+}
+
+/* 右上角一团柔光 */
+.home-info.first-entry::after {
+    content: "";
+    position: absolute;
+    top: -60%;
+    right: -20%;
+    width: 60%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(124, 92, 235, 0.22), transparent);
+    pointer-events: none;
+}
+
+/* --- 小徽章 --- */
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    align-self: flex-start;
+    margin-bottom: 1.1rem;
+    padding: 0.32rem 0.85rem;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--secondary);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--grad-brand-soft);
+}
+
+.hero-badge .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #2fbf71;
+    box-shadow: 0 0 0 0 rgba(47, 191, 113, 0.7);
+    animation: pulse-dot 2.2s infinite;
+}
+
+/* --- 头像徽标：外圈渐变光环持续旋转 --- */
+.hero-avatar {
+    position: relative;
+    width: 74px;
+    height: 74px;
+    margin-bottom: 1.25rem;
+    display: grid;
+    place-items: center;
+}
+
+.hero-avatar::before {
+    content: "";
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg, var(--brand-1), var(--brand-3), var(--brand-2), var(--brand-1));
+    animation: spin-slow 7s linear infinite;
+}
+
+.hero-avatar::after {
+    content: "";
+    position: absolute;
+    inset: 2px;
+    border-radius: 50%;
+    background: var(--entry);
+}
+
+.hero-avatar svg {
+    position: relative;
+    z-index: 1;
+    width: 40px;
+    height: 40px;
+}
+
+/* --- 渐变动画大标题 --- */
+.home-info .entry-header {
+    -webkit-line-clamp: unset;
+    overflow: visible;
+}
+
+.home-info .entry-header h1 {
+    font-size: clamp(1.85rem, 5vw, 2.9rem);
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+}
+
+/* 渐变只作用在文字部分，避免把 emoji 一起染色 */
+.hero-title-text {
+    display: inline;
+    background: linear-gradient(100deg, var(--brand-1), var(--brand-2) 40%, var(--brand-3) 70%, var(--brand-1));
+    background-size: 250% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-slide 9s linear infinite;
+}
+
+/* emoji 单独放，保留原本的多彩外观并做挥手动画 */
+.hero-wave {
+    display: inline-block;
+    margin-left: 0.12em;
+    transform-origin: 72% 78%;
+    animation: hero-wave 2.6s var(--ease-out) infinite;
+}
+
+@keyframes hero-wave {
+    0%,
+    60%,
+    100% {
+        transform: rotate(0deg);
+    }
+    10%,
+    30%,
+    50% {
+        transform: rotate(16deg);
+    }
+    20%,
+    40% {
+        transform: rotate(-8deg);
+    }
+}
+
+/* --- 打字机副标题 --- */
+.hero-typing {
+    min-height: 1.8em;
+    margin: 0.55rem 0 0.9rem;
+    font-size: clamp(1rem, 2.4vw, 1.22rem);
+    font-weight: 500;
+    color: var(--primary);
+}
+
+.hero-typing .caret {
+    display: inline-block;
+    width: 2px;
+    height: 1.05em;
+    margin-left: 3px;
+    vertical-align: -0.15em;
+    background: var(--brand-2);
+    animation: caret-blink 1s steps(2) infinite;
+}
+
+/* --- 技能标签 --- */
+.hero-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1.35rem 0 0.4rem;
+}
+
+.hero-chip {
+    padding: 0.3rem 0.78rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--secondary);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--entry);
+    transition: transform 0.25s var(--ease-out), color 0.25s var(--ease-out),
+        border-color 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
+}
+
+.hero-chip:hover {
+    transform: translateY(-3px);
+    color: #fff;
+    border-color: transparent;
+    background: var(--grad-brand);
+    box-shadow: var(--glow-md);
+}
+
+/* --- 社交图标 --- */
+.home-info .social-icons {
+    display: flex;
+    gap: 0.7rem;
+    margin-top: 1.35rem;
+}
+
+.home-info .social-icons a {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--entry);
+    transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out),
+        border-color 0.3s var(--ease-out);
+}
+
+.home-info .social-icons a svg {
+    width: 17px;
+    height: 17px;
+    transition: transform 0.3s var(--ease-out);
+}
+
+.home-info .social-icons a:hover {
+    transform: translateY(-4px) scale(1.06);
+    border-color: transparent;
+    box-shadow: var(--glow-md);
+}
+
+.home-info .social-icons a:hover svg {
+    transform: scale(1.1);
+}
+
+/* ==================== 6. 列表卡片 ==================== */
+
+.post-entry {
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: transform 0.32s var(--ease-out), box-shadow 0.32s var(--ease-out),
+        border-color 0.32s var(--ease-out);
+}
+
+.post-entry:hover,
+.post-entry:focus-within {
+    transform: translateY(-5px);
+    border-color: transparent;
+    box-shadow: var(--glow-lg);
+    background-image: var(--grad-brand-soft);
+}
+
+/* hover 时一道高光从左扫到右 */
+.post-entry::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.28) 50%, transparent 65%);
+    background-size: 260% 100%;
+    background-position: -120% 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.post-entry:hover::before {
+    opacity: 1;
+    animation: sheen 1.05s var(--ease-out);
+}
+
+[data-theme="dark"] .post-entry::before {
+    background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.09) 50%, transparent 65%);
+    background-size: 260% 100%;
+}
+
+.post-entry .entry-header h2 {
+    transition: transform 0.25s var(--ease-out);
+}
+
+.post-entry:hover .entry-header h2 {
+    transform: translateX(2px);
+}
+
+/* ==================== 7. 文章页细节 ==================== */
+
+.post-single .post-title {
+    font-size: clamp(1.7rem, 4.2vw, 2.4rem);
+    line-height: 1.28;
+    letter-spacing: -0.02em;
+}
+
+/* 正文链接：渐变下划线 */
+.post-content a {
+    color: var(--brand-2);
+    text-decoration: none;
+    border-bottom: 1px solid color-mix(in srgb, var(--brand-2) 40%, transparent);
+    transition: border-color 0.2s var(--ease-out), color 0.2s var(--ease-out);
 }
 
 .post-content a:hover {
-    border-bottom-color: var(--primary);
+    color: var(--brand-3);
+    border-bottom-color: var(--brand-3);
 }
 
-/* ---------- 首页信息块 ---------- */
-.home-info {
-    margin-bottom: 2.5rem;
+/* 二级标题左侧渐变竖条 */
+.post-content h2 {
+    position: relative;
+    padding-left: 0.85rem;
+    border-bottom: none;
 }
 
-/* ---------- 列表页卡片：hover 时轻微上浮 ---------- */
-.post-entry {
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+.post-content h2::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.16em;
+    bottom: 0.16em;
+    width: 4px;
+    border-radius: 4px;
+    background: var(--grad-brand);
 }
 
-.post-entry:hover {
+/* 引用块：渐变左边框 + 淡底 */
+.post-content blockquote {
+    border-inline-start: 4px solid transparent;
+    border-image: var(--grad-brand) 1;
+    background: var(--grad-brand-soft);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 0.85em 1.15em;
+    opacity: 1;
+}
+
+/* 行内代码：淡紫底 */
+.post-content code:not(pre code) {
+    color: var(--brand-2);
+    background: var(--grad-brand-soft);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+}
+
+/* 代码块：圆角 + 投影，hover 轻微上浮 */
+.post-content .highlight,
+.post-content pre {
+    border-radius: var(--radius);
+    box-shadow: 0 10px 28px -18px rgba(20, 22, 43, 0.7);
+    transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out);
+}
+
+.post-content .highlight:hover,
+.post-content pre:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 16px 36px -18px rgba(79, 108, 240, 0.6);
 }
 
-/* ---------- 404 页面 ---------- */
-.not-found {
-    text-align: center;
-    padding: 4rem 1rem;
+/* 表格：渐变表头 */
+.post-content table th {
+    background: var(--grad-brand-soft);
+    color: var(--primary);
+    border-bottom: 2px solid color-mix(in srgb, var(--brand-2) 45%, transparent);
 }
 
-/* ---------- 移动端适配 ---------- */
-@media screen and (max-width: 768px) {
-    .post-content {
-        line-height: 1.75;
+.post-content table tr:nth-child(even) td {
+    background: color-mix(in srgb, var(--code-bg) 60%, transparent);
+}
+
+/* 图片：圆角 + hover 放大 */
+.post-content img {
+    border-radius: var(--radius);
+    transition: transform 0.45s var(--ease-out), box-shadow 0.45s var(--ease-out);
+}
+
+.post-content img:hover {
+    transform: scale(1.015);
+    box-shadow: var(--glow-lg);
+}
+
+/* --- 目录卡片 --- */
+.toc {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: color-mix(in srgb, var(--entry) 85%, transparent);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 12px 32px -24px rgba(20, 22, 43, 0.8);
+}
+
+.toc details summary {
+    font-weight: 600;
+}
+
+.toc a {
+    display: block;
+    padding: 0.2rem 0.55rem;
+    border-radius: 7px;
+    border-inline-start: 2px solid transparent;
+    transition: background 0.22s var(--ease-out), color 0.22s var(--ease-out),
+        border-color 0.22s var(--ease-out);
+}
+
+.toc a:hover {
+    background: var(--grad-brand-soft);
+    border-inline-start-color: var(--brand-2);
+}
+
+/* 当前阅读位置高亮（由 JS 打上 .is-active） */
+.toc a.is-active {
+    color: var(--brand-2);
+    font-weight: 600;
+    background: var(--grad-brand-soft);
+    border-inline-start-color: var(--brand-3);
+}
+
+.breadcrumbs a {
+    transition: color 0.2s var(--ease-out);
+}
+
+.breadcrumbs a:hover {
+    color: var(--brand-2);
+}
+
+/* 上一篇 / 下一篇 */
+.paginav a {
+    transition: transform 0.28s var(--ease-out), box-shadow 0.28s var(--ease-out),
+        border-color 0.28s var(--ease-out);
+}
+
+.paginav a:hover {
+    transform: translateY(-3px);
+    border-color: transparent;
+    box-shadow: var(--glow-md);
+}
+
+/* ==================== 8. 标签 / 归档 / 404 ==================== */
+
+.post-tags a,
+.terms-tags a {
+    border-radius: 999px;
+    transition: transform 0.25s var(--ease-out), color 0.25s var(--ease-out),
+        background 0.25s var(--ease-out), border-color 0.25s var(--ease-out);
+}
+
+.post-tags a:hover,
+.terms-tags a:hover {
+    transform: translateY(-3px);
+    color: #fff;
+    border-color: transparent;
+    background: var(--grad-brand);
+    box-shadow: var(--glow-md);
+}
+
+.archive-year-header {
+    color: var(--secondary);
+}
+
+.archive-entry {
+    border-radius: 10px;
+    transition: background 0.25s var(--ease-out), transform 0.25s var(--ease-out);
+}
+
+.archive-entry:hover {
+    background: var(--grad-brand-soft);
+    transform: translateX(4px);
+}
+
+.not-found h1 {
+    font-size: 4rem;
+    background: var(--grad-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* ==================== 9. 页脚与回到顶部 ==================== */
+
+.footer {
+    position: relative;
+}
+
+.footer::before {
+    content: "";
+    display: block;
+    width: 64px;
+    height: 3px;
+    margin: 0 auto 1.1rem;
+    border-radius: 3px;
+    background: var(--grad-brand);
+}
+
+.footer a {
+    transition: color 0.2s var(--ease-out);
+}
+
+.footer a:hover {
+    color: var(--brand-2);
+}
+
+.top-link {
+    background: var(--grad-brand) !important;
+    color: #fff !important;
+    box-shadow: var(--glow-md);
+    transition: transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out);
+}
+
+.top-link:hover {
+    transform: translateY(-3px) scale(1.06);
+    box-shadow: var(--glow-lg);
+}
+
+/* ==================== 10. 滚动进场动画 ==================== */
+
+/* 只有 JS 可用时才隐藏，避免禁用脚本后内容看不到 */
+.js-reveal .post-entry,
+.js-reveal .archive-entry,
+.js-reveal .terms-tags li {
+    opacity: 0;
+    transform: translateY(18px);
+}
+
+.js-reveal .post-entry.is-visible,
+.js-reveal .archive-entry.is-visible,
+.js-reveal .terms-tags li.is-visible {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out);
+}
+
+/* 首页 Hero 单独入场 */
+.js-reveal .home-info.first-entry {
+    opacity: 0;
+    transform: translateY(24px) scale(0.99);
+}
+
+.js-reveal .home-info.first-entry.is-visible {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+}
+
+/* ==================== 11. 无障碍与移动端 ==================== */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
     }
 
-    .post-content table {
-        font-size: 0.88em;
+    /* 关掉动效后必须保证内容可见 */
+    .js-reveal .post-entry,
+    .js-reveal .archive-entry,
+    .js-reveal .terms-tags li,
+    .js-reveal .home-info.first-entry {
+        opacity: 1;
+        transform: none;
+    }
+
+    .scroll-progress {
+        transition: none;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    body::before {
+        filter: blur(20px);
+    }
+
+    body::after {
+        background-size: 40px 40px;
+    }
+
+    .home-info.first-entry {
+        padding: 1.4rem 1.15rem;
+        border-radius: var(--radius);
+    }
+
+    .hero-avatar {
+        width: 62px;
+        height: 62px;
+        margin-bottom: 1rem;
+    }
+
+    .hero-avatar svg {
+        width: 34px;
+        height: 34px;
+    }
+
+    .menu li a::after {
+        bottom: 10px;
+    }
+
+    /* 移动端不做卡片倾斜 */
+    .post-entry {
+        transform: none !important;
     }
 }

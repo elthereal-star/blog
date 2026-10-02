@@ -5,7 +5,7 @@
 # ============================================================
 
 baseURL: "https://elthereal-star.github.io/blog/"
-title: "Star-Bai 的技术笔记"
+title: "elthereal-star 的技术笔记"
 theme: PaperMod
 
 # ---------- 语言与内容 ----------
@@ -84,7 +84,7 @@ params:
   env: production
   description: "Java 后端学习笔记 · 项目复盘 · 测试工程实践"
   keywords: [Java, Spring Boot, Hugo, 后端, 测试, 博客]
-  author: "Star-Bai"
+  author: "elthereal-star"
 
   # 首页列表展示哪些板块的内容（文章 + 项目）
   mainSections:
@@ -94,19 +94,38 @@ params:
   # 站点主标题区（头像/标题/副标题/按钮）
   # 注意：这里的路径不要写开头的斜杠，主题会自动拼上 baseURL 的 /blog/ 前缀
   label:
-    text: "Star-Bai"
+    text: "elthereal-star"
     icon: "favicon-32x32.png"
     iconHeight: 35
 
-  # 首页简介块
+  # 首页简介块（homeInfoParams 必须保留：主题靠它判断首页是否渲染 info 区块）
   homeInfoParams:
-    Title: "Hi，我是 Star-Bai 👋"
+    Title: "Hi，我是 elthereal-star"
     Content: >
       这里记录我的 Java 后端学习笔记、项目复盘和一些测试工程上的踩坑记录。
       目前主要折腾 Spring Boot 3 / MyBatis-Plus / Vue 3 这条技术线，
       也在持续补 Git 工作流和自动化测试的功课。
       <br><br>
       顶部菜单可以直接看 **文章** 和 **项目**，右上角有搜索 —— 想到什么随时搜。
+
+  # 首页 Hero 区块的额外内容（由 layouts/_partials/home_info.html 渲染）
+  hero:
+    badge: "Hugo × PaperMod · 自动部署"
+    emoji: "👋"
+    # 打字机轮播的句子，想改就改这里
+    typing:
+      - "Java 后端学习者"
+      - "Spring Boot 3 / MyBatis-Plus"
+      - "Vue 3 全栈折腾"
+      - "工程化与自动化测试"
+    # 技能标签
+    chips:
+      - "Java 21"
+      - "Spring Boot 3"
+      - "MyBatis-Plus"
+      - "Vue 3"
+      - "Docker"
+      - "GitHub Actions"
 
   # 首页社交图标
   socialIcons:
