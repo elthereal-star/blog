@@ -10,6 +10,7 @@
    4. Hero 打字机副标题
    5. 列表卡片 3D 跟随鼠标倾斜
    6. 文章目录 scrollspy 高亮
+   7. 文章内 SVG 动画（滚进视口才开始播）
    ============================================================ */
 
 (function () {
@@ -299,6 +300,56 @@
     }
 
     /* ---------------------------------------------------------
+       7. 文章内 SVG 动画：滚进视口时才播一次
+          HTML 侧用 data-anim-play 标记，具体动效写在 CSS 里
+       --------------------------------------------------------- */
+    function initSvgAnimations() {
+        var targets = Array.prototype.slice.call(
+            document.querySelectorAll("[data-anim-play]")
+        );
+        if (!targets.length) return;
+
+        // setTimeout 保底：万一观察器没触发，3 秒后也让内容显示出来
+        targetGuard(targets);
+
+        // 关掉动画或不支持观察器时，直接标记为已播放，内容静态可见
+        if (reduceMotion || !("IntersectionObserver" in window)) {
+            targets.forEach(function (el) {
+                el.classList.add("is-playing");
+            });
+            return;
+        }
+
+        var observer = new IntersectionObserver(
+            function (entries) {
+                entries.forEach(function (entry) {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("is-playing");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            { threshold: 0.2 }
+        );
+
+        targets.forEach(function (el) {
+            observer.observe(el);
+        });
+    }
+
+    // 元素已经位于视口内却迟迟没被标记时兜底补上，避免内容一直不可见
+    function targetGuard(targets) {
+        window.setTimeout(function () {
+            targets.forEach(function (el) {
+                var rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight && rect.bottom > 0) {
+                    el.classList.add("is-playing");
+                }
+            });
+        }, 3000);
+    }
+
+    /* ---------------------------------------------------------
        启动
        --------------------------------------------------------- */
     function boot() {
@@ -308,6 +359,7 @@
         initTyping();
         initTilt();
         initTocSpy();
+        initSvgAnimations();
     }
 
     if (document.readyState === "loading") {

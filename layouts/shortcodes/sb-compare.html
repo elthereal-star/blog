@@ -1,0 +1,82 @@
+{{- /* Spring Boot 2.x vs 3.x 六项核心差异 —— 内联 SVG 动画
+       样式：assets/css/extended/custom.css 第 12 节
+       触发：assets/js/custom.js 里监听 [data-anim-play]，滚进视口才播放
+       无 JS 或 prefers-reduced-motion 时，内容直接静态显示 */ -}}
+<figure class="sb-compare" data-anim-play>
+  <svg viewBox="0 0 720 492" role="img" aria-labelledby="sc-title">
+    <title id="sc-title">Spring Boot 2 与 Spring Boot 3 的六项核心差异对比</title>
+    <defs>
+      <marker id="sc-arrowhead" viewBox="0 0 10 10" refX="7" refY="5"
+              markerWidth="4.5" markerHeight="4.5" orient="auto">
+        <path d="M2 1.5L7 5L2 8.5" fill="none" stroke="#4f6cf0"
+              stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </marker>
+    </defs>
+
+    <text class="sc-title" x="24" y="26">Spring Boot 2 → 3：六项必须知道的变更</text>
+    <text class="sc-sub" x="24" y="50">同一份业务代码，跨过这条线就要动手术</text>
+
+    <g class="sc-head">
+      <text class="sc-dimhead" x="74" y="101" text-anchor="middle">对比维度</text>
+      <rect class="sc-card-old sc-card-strong" x="136" y="80" width="260" height="42" rx="10"/>
+      <text class="sc-headtext-old" x="266" y="101" text-anchor="middle">Spring Boot 2.x</text>
+      <rect class="sc-card-new sc-card-solid" x="436" y="80" width="260" height="42" rx="10"/>
+      <text class="sc-headtext-new" x="566" y="101" text-anchor="middle">Spring Boot 3.x</text>
+    </g>
+
+    <g class="sc-row sc-row-1">
+      <text class="sc-dim" x="74" y="157" text-anchor="middle">Java 基线</text>
+      <rect class="sc-card-old" x="136" y="132" width="260" height="50" rx="10"/>
+      <text class="sc-val-old" x="156" y="157">Java 8 起步</text>
+      <path class="sc-arrow" d="M404 157 H428" marker-end="url(#sc-arrowhead)"/>
+      <rect class="sc-card-new" x="436" y="132" width="260" height="50" rx="10"/>
+      <text class="sc-val-new" x="456" y="157">Java 17 起步</text>
+    </g>
+
+    <g class="sc-row sc-row-2">
+      <text class="sc-dim" x="74" y="215" text-anchor="middle">命名空间</text>
+      <rect class="sc-card-old" x="136" y="190" width="260" height="50" rx="10"/>
+      <text class="sc-val-old sc-mono" x="156" y="215">javax.*</text>
+      <path class="sc-arrow" d="M404 215 H428" marker-end="url(#sc-arrowhead)"/>
+      <rect class="sc-card-new" x="436" y="190" width="260" height="50" rx="10"/>
+      <text class="sc-val-new sc-mono" x="456" y="215">jakarta.*</text>
+    </g>
+
+    <g class="sc-row sc-row-3">
+      <text class="sc-dim" x="74" y="273" text-anchor="middle">框架内核</text>
+      <rect class="sc-card-old" x="136" y="248" width="260" height="50" rx="10"/>
+      <text class="sc-val-old" x="156" y="273">Spring Framework 5.3</text>
+      <path class="sc-arrow" d="M404 273 H428" marker-end="url(#sc-arrowhead)"/>
+      <rect class="sc-card-new" x="436" y="248" width="260" height="50" rx="10"/>
+      <text class="sc-val-new" x="456" y="273">Spring Framework 6.0</text>
+    </g>
+
+    <g class="sc-row sc-row-4">
+      <text class="sc-dim" x="74" y="331" text-anchor="middle">自动配置</text>
+      <rect class="sc-card-old" x="136" y="306" width="260" height="50" rx="10"/>
+      <text class="sc-val-old sc-mono" x="156" y="331">spring.factories</text>
+      <path class="sc-arrow" d="M404 331 H428" marker-end="url(#sc-arrowhead)"/>
+      <rect class="sc-card-new" x="436" y="306" width="260" height="50" rx="10"/>
+      <text class="sc-val-new sc-mono" x="456" y="331">AutoConfiguration.imports</text>
+    </g>
+
+    <g class="sc-row sc-row-5">
+      <text class="sc-dim" x="74" y="389" text-anchor="middle">原生镜像</text>
+      <rect class="sc-card-old" x="136" y="364" width="260" height="50" rx="10"/>
+      <text class="sc-val-old" x="156" y="389">Spring Native（实验）</text>
+      <path class="sc-arrow" d="M404 389 H428" marker-end="url(#sc-arrowhead)"/>
+      <rect class="sc-card-new" x="436" y="364" width="260" height="50" rx="10"/>
+      <text class="sc-val-new" x="456" y="389">GraalVM AOT 内置支持</text>
+    </g>
+
+    <g class="sc-row sc-row-6">
+      <text class="sc-dim" x="74" y="447" text-anchor="middle">可观测性</text>
+      <rect class="sc-card-old" x="136" y="422" width="260" height="50" rx="10"/>
+      <text class="sc-val-old" x="156" y="447">Spring Cloud Sleuth</text>
+      <path class="sc-arrow" d="M404 447 H428" marker-end="url(#sc-arrowhead)"/>
+      <rect class="sc-card-new" x="436" y="422" width="260" height="50" rx="10"/>
+      <text class="sc-val-new" x="456" y="447">Micrometer Observation</text>
+    </g>
+  </svg>
+  <figcaption>六项里真正会「改到你代码」的只有两项：<strong>Java 基线</strong>和<strong>命名空间</strong>，其余属于依赖升级与机制换代。</figcaption>
+</figure>
