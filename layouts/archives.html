@@ -1,0 +1,67 @@
+{{- /*
+  「归档」页 —— 项目级覆盖 PaperMod 的 themes/PaperMod/layouts/archives.html
+  （content/archives.md 里 layout: "archives" 指向这里）
+
+  版式对齐「墨序」改良版的 ArchiveView：
+    左侧一条竖线，每年一个圆形年标（两位数年份）+ 「YYYY 年 (N 篇)」，
+    该年的文章逐行列出：月-日（等宽）/ 标题（衬线）/ 分类 / 箭头。
+*/ -}}
+
+{{- define "main" }}
+
+{{- $pages := where site.RegularPages "Type" "in" site.Params.mainSections }}
+{{- $pages = where $pages "Params.hiddenInHomeList" "!=" "true" }}
+
+{{- /* ---- 按年份归组 ---- */}}
+{{- $byYear := dict }}
+{{- $minY := 9999 }}
+{{- $maxY := 0 }}
+{{- range $pages }}
+    {{- $y := int (.Date.Format "2006") }}
+    {{- if lt $y $minY }}{{ $minY = $y }}{{ end }}
+    {{- if gt $y $maxY }}{{ $maxY = $y }}{{ end }}
+    {{- $yStr := printf "%d" $y }}
+    {{- $arr := index $byYear $yStr | default slice }}
+    {{- $byYear = merge $byYear (dict $yStr ($arr | append .)) }}
+{{- end }}
+
+<div class="mz-page">
+
+    <header class="mz-page-head">
+        <h1 class="mz-page-title">时间轴归档</h1>
+        <p class="mz-page-sub">全站共收录 {{ len $pages }} 篇随笔，记录岁月沉淀与心路轨迹。</p>
+    </header>
+
+    {{- if gt $maxY 0 }}
+    <div class="mz-timeline">
+        {{- range $i := seq 0 (sub $maxY $minY) }}
+        {{- $y := sub $maxY $i }}
+        {{- $yStr := printf "%d" $y }}
+        {{- with index $byYear $yStr }}
+        <section class="mz-tlyear">
+            <div class="mz-tlyear-head">
+                <span class="mz-tlyear-badge" aria-hidden="true">{{ slicestr $yStr 2 }}</span>
+                <h2 class="mz-tlyear-title">{{ $yStr }} 年</h2>
+                <span class="mz-tlyear-count">({{ len . }} 篇)</span>
+            </div>
+            <div class="mz-tlyear-list">
+                {{- range . }}
+                <a class="mz-tlrow" href="{{ .RelPermalink }}">
+                    <span class="mz-tlrow-date">{{ .Date | time.Format "01-02" }}</span>
+                    <span class="mz-tlrow-title">{{ .Title }}</span>
+                    <span class="mz-tlrow-cat">{{ with .GetTerms "categories" }}{{ (index . 0).LinkTitle }}{{ else }}{{ .Section }}{{ end }}</span>
+                    {{ partial "icon.html" (dict "name" "arrow-right" "class" "mz-tlrow-arrow") }}
+                </a>
+                {{- end }}
+            </div>
+        </section>
+        {{- end }}
+        {{- end }}
+    </div>
+    {{- else }}
+    <p class="mz-empty">还没有文章。</p>
+    {{- end }}
+
+</div>
+
+{{- end }}

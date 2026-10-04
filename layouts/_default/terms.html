@@ -1,0 +1,91 @@
+{{- /*
+  「专栏」页 —— 项目级覆盖 PaperMod 的 terms.html
+  同时服务 /categories/ 与 /tags/ 两个分类法页面（用 .Data.Plural 区分标题）。
+
+  版式对齐「墨序」改良版的 CategoriesView：
+    1. 页头：大标题 + 一句说明
+    2. 话题标签云：每个标签带计数，点击即在前端过滤下方列表
+    3. 按分类分组：每组一条发丝分割线 + 该组文章行（标题 / 日期 · 阅读时长 / 箭头）
+
+  标签过滤纯前端实现，见 assets/js/mz-pages.js。
+*/ -}}
+
+{{- define "main" }}
+
+{{- $plural := .Data.Plural | default "categories" }}
+{{- $isTags := eq $plural "tags" }}
+{{- $title := cond $isTags "标签总览" "专栏与话题分类" }}
+{{- $sub := cond $isTags "全站文章用过的所有标签，点一个即可筛出相关文章。" "按知识领域与技术话题分类归集，方便快速检索与系列阅读。" }}
+
+{{- /* 参与聚合的文章：mainSections 里的常规页面 */}}
+{{- $pages := where site.RegularPages "Type" "in" site.Params.mainSections }}
+{{- $pages = where $pages "Params.hiddenInHomeList" "!=" "true" }}
+
+{{- /* 全站标签（按文章数倒序） */}}
+{{- $tags := site.Taxonomies.tags.ByCount }}
+
+<div class="mz-page">
+
+    <header class="mz-page-head">
+        <h1 class="mz-page-title">{{ $title }}</h1>
+        <p class="mz-page-sub">{{ $sub }}</p>
+    </header>
+
+    {{- with $tags }}
+    <section class="mz-panel mz-tagcloud" id="mzTagCloud" data-total="{{ len $pages }}">
+        <div class="mz-tagcloud-head">
+            <span class="mz-tagcloud-label">
+                {{ partial "icon.html" "tag" }}
+                <span>话题标签 ({{ len . }})</span>
+            </span>
+            <button class="mz-link-underlined" type="button" id="mzTagClear" hidden>清除标签过滤</button>
+        </div>
+        <div class="mz-tagcloud-list">
+            {{- range . }}
+            <button class="mz-tagchip" type="button" data-mz-tag="{{ .Page.LinkTitle }}" aria-pressed="false">
+                <span>#{{ .Page.LinkTitle }}</span>
+                <span class="mz-tagchip-count">{{ .Count }}</span>
+            </button>
+            {{- end }}
+        </div>
+    </section>
+    {{- end }}
+
+    <p class="mz-filter-status" id="mzTagStatus" hidden></p>
+
+    <section class="mz-catgroups" id="mzCatGroups">
+        {{- range site.Taxonomies.categories.ByCount }}
+        {{- $cat := .Page }}
+        {{- $items := .Pages }}
+        <section class="mz-catgroup" data-mz-cat="{{ $cat.LinkTitle }}">
+            <div class="mz-catgroup-head">
+                {{ partial "icon.html" "folder" }}
+                <h2 class="mz-catgroup-title">{{ $cat.LinkTitle }}</h2>
+                <span class="mz-catgroup-count">{{ len $items }} 篇</span>
+            </div>
+            <div class="mz-catlist">
+                {{- range $items }}
+                {{- $tagsOfPost := slice }}
+                {{- range .GetTerms "tags" }}{{ $tagsOfPost = $tagsOfPost | append .LinkTitle }}{{ end }}
+                <a class="mz-catrow" href="{{ .RelPermalink }}" data-mz-tags="{{ delimit $tagsOfPost "|" }}">
+                    <span class="mz-catrow-main">
+                        <span class="mz-catrow-title">{{ .Title }}</span>
+                        <span class="mz-catrow-meta">
+                            <span>{{ .Date | time.Format "2006-01-02" }}</span>
+                            <span aria-hidden="true">·</span>
+                            <span>{{ .ReadingTime }} 分钟</span>
+                        </span>
+                    </span>
+                    {{ partial "icon.html" (dict "name" "arrow-right" "class" "mz-catrow-arrow") }}
+                </a>
+                {{- end }}
+            </div>
+        </section>
+        {{- end }}
+    </section>
+
+    <p class="mz-empty" id="mzTagEmpty" hidden>没有文章同时带有这些标签。</p>
+
+</div>
+
+{{- end }}

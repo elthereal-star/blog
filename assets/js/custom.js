@@ -334,6 +334,96 @@
         }
     }
 
+    /* 一声上扬的「啵」：用于收藏、点赞、切换主题这类轻快动作 */
+    function pop() {
+        if (!soundOn) return;
+        try {
+            var Ctx = window.AudioContext || window.webkitAudioContext;
+            if (!Ctx) return;
+            if (!audioCtx) audioCtx = new Ctx();
+            if (audioCtx.state === "suspended") audioCtx.resume();
+
+            var t = audioCtx.currentTime;
+            var osc = audioCtx.createOscillator();
+            var gain = audioCtx.createGain();
+
+            osc.type = "triangle";
+            osc.frequency.setValueAtTime(320, t);
+            osc.frequency.exponentialRampToValueAtTime(540, t + 0.06);
+
+            gain.gain.setValueAtTime(0.05, t);
+            gain.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(t);
+            osc.stop(t + 0.06);
+        } catch (e) {
+            /* 忽略 */
+        }
+    }
+
+    /* 一声清亮的铃音；pitchMultiplier 越大音越高（连击点赞时递增） */
+    function chime(pitchMultiplier) {
+        if (!soundOn) return;
+        try {
+            var Ctx = window.AudioContext || window.webkitAudioContext;
+            if (!Ctx) return;
+            if (!audioCtx) audioCtx = new Ctx();
+            if (audioCtx.state === "suspended") audioCtx.resume();
+
+            var mult = Math.min(2, Math.max(0.8, pitchMultiplier || 1));
+            var t = audioCtx.currentTime;
+            var osc = audioCtx.createOscillator();
+            var gain = audioCtx.createGain();
+
+            osc.type = "sine";
+            var base = 587.33 * mult; // D5
+            osc.frequency.setValueAtTime(base, t);
+            osc.frequency.exponentialRampToValueAtTime(base * 1.5, t + 0.12);
+
+            gain.gain.setValueAtTime(0.06, t);
+            gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.15);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(t);
+            osc.stop(t + 0.15);
+        } catch (e) {
+            /* 忽略 */
+        }
+    }
+
+    /* 对外暴露：mz-base.js / mz-reading.js 里的新组件共用同一套音效，
+       避免各自 new 一个 AudioContext 导致「音效开关」失效。 */
+    window.mzSfx = {
+        click: tap,
+        pop: pop,
+        chime: chime,
+        isOn: function () {
+            return soundOn;
+        },
+        toggle: function () {
+            soundOn = !soundOn;
+            store("mz-sound", soundOn ? "on" : "off");
+            var b = $("#mzSoundBtn");
+            if (b) {
+                b.classList.toggle("is-on", soundOn);
+                b.setAttribute("aria-pressed", soundOn ? "true" : "false");
+                b.setAttribute("title", soundOn ? "触感微音效已开启（点击静音）" : "触感微音效已静音（点击开启）");
+            }
+            var onEl = $("[data-sfx-on]", document);
+            var offEl = $("[data-sfx-off]", document);
+            // 页面上可能有多个（桌面导航 + 抽屉），统一处理
+            $$("[data-sfx-on]").forEach(function (el) { el.hidden = !soundOn; });
+            $$("[data-sfx-off]").forEach(function (el) { el.hidden = soundOn; });
+            if (onEl) onEl.hidden = !soundOn;
+            if (offEl) offEl.hidden = soundOn;
+            if (soundOn) tap();
+            return soundOn;
+        }
+    };
+
     function initSound() {
         var btn = $("#mzSoundBtn");
         var on = $("[data-sfx-on]", btn || document);
@@ -370,6 +460,22 @@
                 if (t.closest("#mzSoundBtn")) return;
                 if (t.closest(".mz-iconbtn, .mz-btn, .mz-tab, .mz-filter, .mz-card-bookmark, .mz-nav-link, .pagination a, .pagination .page-num, .mz-brand"))
                     tap();
+            },
+            true
+        );
+
+        // 带 data-mz-sfx="pop|chime" 的元素（改良版新增的一批按钮）走各自的音色
+        document.addEventListener(
+            "click",
+            function (e) {
+                var t = e.target;
+                if (!t || !t.closest) return;
+                var el = t.closest("[data-mz-sfx]");
+                if (!el) return;
+                var kind = el.getAttribute("data-mz-sfx");
+                if (kind === "pop") window.mzSfx.pop();
+                else if (kind === "chime") window.mzSfx.chime(1);
+                else window.mzSfx.click();
             },
             true
         );
@@ -531,6 +637,11 @@
         }
     }
 
+    /* 弹窗开关对外暴露：mz-base.js / mz-reading.js 里的新弹窗（白噪音、分享卡片）
+       复用同一套逻辑，保证焦点管理、ESC 关闭、背景点击关闭的行为一致。 */
+    window.mzOpenModal = openModal;
+    window.mzCloseModal = closeModal;
+
     function initModals() {
         var deploy = $("#mzDeployModal");
         var bookmarks = $("#mzBookmarkModal");
@@ -677,6 +788,12 @@
     function initTocSpy() {
         var toc = $(".toc");
         if (!toc) return;
+
+        // 窄屏下目录不再吸在右侧，而是整块落到正文上方；
+        // 二十多条标题全展开会把正文推得很远，所以默认折叠起来（仍可点开）。
+        if (window.matchMedia("(max-width: 1120px)").matches) {
+            toc.removeAttribute("open");
+        }
 
         var links = $$('a[href^="#"]', toc);
         if (!links.length) return;

@@ -1,0 +1,14 @@
+{{- /* 项目级覆盖：主题原版目录是默认折叠的 <details>，在右侧 aside 里
+       只会显示一行「目录」标题，看起来像一张空卡片。
+       这里保持 <details> 结构（复用 custom.css 里已写好的卡片样式），
+       但加上 open 让它默认展开，同时仍可点击折叠。 */ -}}
+{{- if .TableOfContents -}}
+<details class="toc" open>
+    <summary accesskey="c" title="(Alt + C)" aria-label="目录">
+        <span class="title">{{ i18n "toc" | default "目录" }}</span>
+    </summary>
+    <div class="inner">
+        {{- .TableOfContents -}}
+    </div>
+</details>
+{{- end -}}

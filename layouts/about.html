@@ -1,0 +1,153 @@
+{{- /*
+  「关于」页 —— 项目级覆盖（content/about.md 里 layout: "about" 指向这里）
+
+  版式对齐「墨序」改良版的 AboutView：
+    1. 顶部名片：头像铭牌 + 名字 + 身份徽章 + 一句话简介 + 位置/仓库/邮箱
+    2. 创作热力图：最近 N 周 × 7 天，格子深浅 = 当天发布的文章数
+       （真实数据，按 content/ 里文章的 date 统计，不是随机数）
+    3. 设计哲学 / 自我介绍：直接渲染 content/about.md 的正文
+    4. 技术栈网格：hugo.yaml 的 params.about.techStack
+    5. 近期阅读：hugo.yaml 的 params.about.readingList
+*/ -}}
+
+{{- define "main" }}
+
+{{- $about := site.Params.about | default dict }}
+{{- $brand := site.Params.brand | default dict }}
+{{- $mark := $brand.mark | default "星" }}
+{{- $repo := site.Params.repo | default dict }}
+
+{{- $pages := where site.RegularPages "Type" "in" site.Params.mainSections }}
+{{- $pages = where $pages "Params.hiddenInHomeList" "!=" "true" }}
+
+{{- /* ---- 统计：总字数 ---- */}}
+{{- $words := 0 }}
+{{- range $pages }}{{ $words = add $words .WordCount }}{{ end }}
+
+{{- /* ---- 热力图：按日期归组计数 ---- */}}
+{{- $weeks := $about.heatmapWeeks | default 24 }}
+{{- $today := now }}
+{{- $start := $today.AddDate 0 0 (mul -1 (sub (mul $weeks 7) 1)) }}
+{{- $start = $start.AddDate 0 0 (mul -1 (int $start.Weekday)) }}
+{{- $counts := dict }}
+{{- range $pages }}
+    {{- $k := .Date.Format "2006-01-02" }}
+    {{- $counts = merge $counts (dict $k (add (index $counts $k | default 0) 1)) }}
+{{- end }}
+
+<div class="mz-page mz-about">
+
+    {{- /* ---------- 1. 名片 ---------- */}}
+    <section class="mz-profile">
+        <span class="mz-profile-avatar" aria-hidden="true">{{ $mark }}</span>
+        <div class="mz-profile-main">
+            <div class="mz-profile-namerow">
+                <h1 class="mz-profile-name">{{ $about.name | default site.Params.author }}</h1>
+                {{- with $about.badge }}<span class="mz-profile-badge">{{ . }}</span>{{ end }}
+            </div>
+            {{- with $about.tagline }}<p class="mz-profile-tagline">{{ . }}</p>{{ end }}
+            <div class="mz-profile-links">
+                {{- with $about.location }}
+                <span class="mz-profile-link">{{ partial "icon.html" "map-pin" }}<span>{{ . }}</span></span>
+                <span aria-hidden="true">·</span>
+                {{- end }}
+                {{- with $about.github }}
+                <a class="mz-profile-link" href="{{ . }}" target="_blank" rel="noopener">{{ partial "icon.html" "github" }}<span>GitHub 仓库</span></a>
+                <span aria-hidden="true">·</span>
+                {{- end }}
+                {{- with $about.email }}
+                <a class="mz-profile-link" href="mailto:{{ . }}">{{ partial "icon.html" "mail" }}<span>邮件交流</span></a>
+                {{- end }}
+                <span aria-hidden="true">·</span>
+                <span class="mz-profile-link">{{ partial "icon.html" "file" }}<span>{{ len $pages }} 篇文章</span></span>
+                <span aria-hidden="true">·</span>
+                <span class="mz-profile-link">{{ partial "icon.html" "book" }}<span>约 {{ div $words 1000 }}k 字</span></span>
+            </div>
+        </div>
+    </section>
+
+    {{- /* ---------- 2. 创作热力图 ---------- */}}
+    <section class="mz-panel mz-heat" id="mzHeat" data-weeks="{{ $weeks }}">
+        <div class="mz-heat-head">
+            <h2 class="mz-heat-title">{{ partial "icon.html" "activity" }}<span>{{ $about.heatmapTitle | default "近期创作与思考热力图" }}</span></h2>
+            <span class="mz-heat-label" id="mzHeatLabel">{{ $about.heatmapNote | default "按发布日期统计" }}</span>
+        </div>
+
+        <div class="mz-heat-scroll">
+            <div class="mz-heat-grid">
+                {{- range $w := seq 0 (sub $weeks 1) }}
+                <div class="mz-heat-week">
+                    {{- range $d := seq 0 6 }}
+                    {{- $day := $start.AddDate 0 0 (add (mul $w 7) $d) }}
+                    {{- $key := $day.Format "2006-01-02" }}
+                    {{- $c := index $counts $key | default 0 }}
+                    {{- $lv := 0 }}
+                    {{- if ge $c 3 }}{{ $lv = 3 }}{{ else if eq $c 2 }}{{ $lv = 2 }}{{ else if eq $c 1 }}{{ $lv = 1 }}{{ end }}
+                    {{- $future := $day.After $today }}
+                    <span class="mz-heat-cell{{ if $future }} is-future{{ else }} lv{{ $lv }}{{ end }}"
+                        data-date="{{ $key }}" data-count="{{ $c }}"
+                        title="{{ $key }} · {{ if $future }}未来{{ else if eq $c 0 }}无记录{{ else }}{{ $c }} 篇{{ end }}"></span>
+                    {{- end }}
+                </div>
+                {{- end }}
+            </div>
+        </div>
+
+        <div class="mz-heat-legend">
+            <span>Less</span>
+            <span class="mz-heat-cell lv0"></span>
+            <span class="mz-heat-cell lv1"></span>
+            <span class="mz-heat-cell lv2"></span>
+            <span class="mz-heat-cell lv3"></span>
+            <span>More 持续沉淀</span>
+        </div>
+    </section>
+
+    {{- /* ---------- 3. 正文（content/about.md）---------- */}}
+    <section class="mz-about-body">
+        <h2 class="mz-section-title">{{ partial "icon.html" "coffee" }}<span>博客初衷与设计哲学</span></h2>
+        <div class="md-content">
+            {{ .Content }}
+        </div>
+    </section>
+
+    {{- /* ---------- 4. 技术栈 ---------- */}}
+    {{- with $about.techStack }}
+    <section class="mz-about-stack">
+        <h2 class="mz-section-title">{{ partial "icon.html" "code" }}<span>本博客技术栈</span></h2>
+        <div class="mz-stack-grid">
+            {{- range . }}
+            <div class="mz-stack-item">
+                <h3 class="mz-stack-name">{{ .name }}</h3>
+                <p class="mz-stack-desc">{{ .desc }}</p>
+            </div>
+            {{- end }}
+        </div>
+    </section>
+    {{- end }}
+
+    {{- /* ---------- 5. 书单 ---------- */}}
+    {{- with $about.readingList }}
+    <section class="mz-about-books">
+        <h2 class="mz-section-title">{{ partial "icon.html" "book" }}<span>近期阅读与启迪</span></h2>
+        <div class="mz-book-list">
+            {{- range . }}
+            <div class="mz-book-item">
+                <span class="mz-book-main">
+                    <span class="mz-book-title">{{ .title }}</span>
+                    <span class="mz-book-author">({{ .author }})</span>
+                </span>
+                <span class="mz-book-note">{{ .note }}</span>
+            </div>
+            {{- end }}
+        </div>
+    </section>
+    {{- end }}
+
+    {{- with $about.sign }}
+    <p class="mz-about-sign">{{ . }}</p>
+    {{- end }}
+
+</div>
+
+{{- end }}

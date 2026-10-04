@@ -1,0 +1,69 @@
+{{- /*
+  「碎碎念」页 —— section 级模板（layouts/moments/list.html）
+
+  版式对齐「墨序」改良版的 MomentsView：
+    页头（标题 + 条数徽章 + 说明 + 「写碎碎念」按钮）
+    → 可展开的发表框（心情标签挑一个）
+    → 时间线卡片流（时间 · 心情 · 位置 / 正文 / #即时闪念 + 点赞）
+
+  数据来源：data/moments.yaml
+  页面上「发布」的碎碎念只写进本机 localStorage（mz-moments），
+  静态站点没有后端，这是刻意为之——刷新后依然可见，换设备不同步。
+*/ -}}
+
+{{- define "main" }}
+
+{{- $moments := hugo.Data.moments | default slice }}
+{{- $moments = sort $moments "date" "desc" }}
+{{- $cfg := site.Params.moments | default dict }}
+{{- $moods := $cfg.moods | default (slice "💭 闪念记录") }}
+
+<div class="mz-page mz-moments-page" id="mzMomentsPage">
+
+    <header class="mz-moments-head">
+        <div>
+            <h1 class="mz-page-title">
+                <span>{{ .Title | default "碎碎念 · 灵感手记" }}</span>
+                <span class="mz-count-badge" id="mzMomentCount">{{ len $moments }}</span>
+            </h1>
+            <p class="mz-page-sub">{{ .Description | default "不及长文的短小闪念、日常吉光片羽与灵感碎片。" }}</p>
+        </div>
+        <button class="mz-btn mz-btn-solid" type="button" id="mzMomentCompose" data-mz-sfx="click">
+            {{ partial "icon.html" "plus" }}<span>写碎碎念</span>
+        </button>
+    </header>
+
+    {{- /* ---------- 发表框 ---------- */}}
+    <form class="mz-moment-composer" id="mzMomentComposer" data-moods='{{ $moods | jsonify }}'
+        data-placeholder="{{ $cfg.locationPlaceholder | default "生活手记" }}" hidden>
+        <textarea class="mz-moment-input" id="mzMomentInput" rows="3"
+            placeholder="记录此时此刻的想法、一句书摘或日常微瞬间..."></textarea>
+        <div class="mz-moment-composer-foot">
+            <div class="mz-mood-chips" id="mzMoodChips">
+                {{- range $i, $m := $moods }}
+                <button class="mz-mood-chip{{ if eq $i 0 }} is-active{{ end }}" type="button" data-mz-mood="{{ $m }}">{{ $m }}</button>
+                {{- end }}
+            </div>
+            <div class="mz-moment-composer-actions">
+                <button class="mz-btn mz-btn-ghost" type="button" id="mzMomentCancel">取消</button>
+                <button class="mz-btn mz-btn-solid" type="submit" id="mzMomentSubmit" disabled>
+                    {{ partial "icon.html" "send" }}<span>发布</span>
+                </button>
+            </div>
+        </div>
+    </form>
+
+    {{- /* ---------- 时间线 ---------- */}}
+    <div class="mz-moment-list" id="mzMomentList">
+        {{- range $moments }}
+        {{ partial "moment_card.html" . }}
+        {{- end }}
+
+        {{- if not $moments }}
+        <p class="mz-empty">还没有碎碎念，点右上角写一条吧。</p>
+        {{- end }}
+    </div>
+
+</div>
+
+{{- end }}

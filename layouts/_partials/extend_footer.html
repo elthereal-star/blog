@@ -1,5 +1,12 @@
-{{- /* 页脚自定义区：顶部阅读进度条 + 自定义交互脚本 */ -}}
-<div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+{{- /* 页脚自定义区：自定义交互脚本
+       注意：顶部阅读进度条已交由 mz-reading.js + single.html 里的 .mz-readbar 负责，
+       这里不再输出旧的 .scroll-progress 元素（custom.js 会自动跳过）。 */ -}}
 
 {{- $customJS := resources.Get "js/custom.js" | resources.Minify | resources.Fingerprint }}
 <script defer src="{{ $customJS.RelPermalink }}" integrity="{{ $customJS.Data.Integrity }}" crossorigin="anonymous"></script>
+
+{{- $baseJS := resources.Get "js/mz-base.js" | resources.Minify | resources.Fingerprint }}
+<script defer src="{{ $baseJS.RelPermalink }}" integrity="{{ $baseJS.Data.Integrity }}" crossorigin="anonymous"></script>
+
+{{- $readingJS := resources.Get "js/mz-reading.js" | resources.Minify | resources.Fingerprint }}
+<script defer src="{{ $readingJS.RelPermalink }}" integrity="{{ $readingJS.Data.Integrity }}" crossorigin="anonymous"></script>

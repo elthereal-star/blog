@@ -3,9 +3,12 @@
 个人技术博客的源码，基于 **Hugo + PaperMod**，通过 **GitHub Actions** 自动构建并部署到 **GitHub Pages**。
 视觉上是一套叫「墨序」的极简风格：纸白 / 玄黑 / 羊皮纸三态配色、衬线标题、发丝边框、零渐变零发光。
 
+站点是五个视图：**文章**（列表 + 阅读页）、**碎碎念**（短动态流）、**专栏**（标签云 + 分类分组）、**归档**（年份时间轴）、**关于**（名片 + 创作热力图）。
+
 - 线上地址：https://elthereal-star.github.io/blog/
 - 文章目录：`content/posts/`（36 篇，其中 22 篇带内联 SVG 示意图）
 - 项目介绍：`content/projects/`（5 篇）
+- 碎碎念数据：`data/moments.yaml`（短动态，与真实文章互链）
 - 图库：`assets/svg/`（24 张自绘 SVG，主题自适配深浅色）
 - 字体：`static/fonts/`（5 个自托管子集 woff2，共约 1.3 MB）
 
@@ -73,26 +76,38 @@ git push
 ```text
 blog/
 ├── .github/workflows/hugo.yml    # 自动部署流水线
-├── hugo.yaml                     # 站点主配置（品牌、菜单、Hero、搜索等）
+├── hugo.yaml                     # 站点主配置（品牌、菜单、Hero、碎碎念、白噪音等）
 ├── archetypes/default.md         # 新建文章模板
 ├── assets/
 │   ├── css/extended/
 │   │   ├── 00-fonts.css          # @font-face（由 fetch-fonts.py 生成，勿手改）
-│   │   └── custom.css            # 「墨序」样式表，分 0~15 节
-│   ├── js/custom.js              # 交互脚本，分 14 个模块
+│   │   └── custom.css            # 「墨序」样式表，分 0~18 节
+│   ├── js/
+│   │   ├── custom.js             # 基础交互，分 14 个模块（主题 / 时钟 / 音效 / 目录…）
+│   │   ├── mz-base.js            # 全局组件：Toast / 白噪音 / 光标 / 点赞 / 筛选 / 灯箱…
+│   │   └── mz-reading.js         # 文章页：阅读偏好 / 专注 / 连击 / 评论 / 分享卡
 │   └── svg/                      # SVG 示意图图库（shortcode 内联使用）
+├── data/
+│   └── moments.yaml              # 碎碎念内容（模板用 hugo.Data.moments 读取）
 ├── layouts/                      # 项目级模板覆盖（优先于主题）
 │   ├── baseof.html               # 页面骨架：三态主题初值 + 页头页脚挂载
 │   ├── list.html                 # 列表页覆盖：卡片 + 带页码的分页导航
+│   ├── single.html               # 文章页覆盖：阅读设置栏 + 两栏正文/目录 + 评论区
+│   ├── about.html                # 关于页：名片 + 创作热力图 + 技术栈 + 书单
+│   ├── archives.html             # 归档页：按年份分组的时间轴
+│   ├── _default/terms.html       # 专栏页：标签云 + 按分类分组
+│   ├── moments/list.html         # 碎碎念页：发表框 + 时间线
 │   ├── _partials/
 │   │   ├── header.html           # 顶部导航（品牌 / 菜单 / 搜索胶囊 / 图标组）
-│   │   ├── footer.html           # 页脚 + 移动端标签栏 + 两个弹窗
+│   │   ├── footer.html           # 页脚 + 移动端标签栏 + 灯箱 / 白噪音 / 选中工具栏
 │   │   ├── home_info.html        # 首页 Hero 区块
-│   │   ├── post_card.html        # 文章卡片（列表页复用）
+│   │   ├── post_card.html        # 文章卡片（列表页复用，含点赞与光标聚光）
+│   │   ├── moment_card.html      # 碎碎念卡片
+│   │   ├── toc.html              # 文章目录（覆盖主题：默认展开成侧栏卡片）
 │   │   ├── icon.html             # 内联 Lucide 图标字典
 │   │   ├── deploy_guide.html     # 部署指南弹窗内容
 │   │   ├── extend_head.html      # <head> 注入点：主题预置 + js-reveal
-│   │   └── extend_footer.html    # </body> 前注入点：进度条 + 指纹化脚本
+│   │   └── extend_footer.html    # </body> 前注入点：指纹化脚本
 │   └── shortcodes/
 │       ├── svg.html              # 通用 SVG 图库：{{< svg "名字" >}}
 │       └── sb-compare.html       # Spring Boot 2 vs 3 对比动画
@@ -101,6 +116,7 @@ blog/
 │   ├── about.md                  # 关于我
 │   ├── search.md                 # 搜索页
 │   ├── archives.md               # 归档页
+│   ├── moments/_index.md         # 碎碎念 section 声明
 │   ├── posts/                    # 文章（36 篇）
 │   └── projects/                 # 项目介绍（5 篇）
 ├── scripts/                      # 内容生成脚本（Python，非构建依赖）
@@ -167,14 +183,42 @@ python scripts/fetch-fonts.py --css-only  # 只重生成 @font-face
 | 三态底色 / 文字色 / 边框 | `custom.css` 第 0 节「设计令牌」的 `--mz-*` |
 | 品牌方块字与副行 | `hugo.yaml` 的 `params.brand` |
 | 首页状态胶囊 / 大标题 / 金句 | `hugo.yaml` 的 `params.hero` |
+| 关于页名片 / 热力图 / 技术栈 / 书单 | `hugo.yaml` 的 `params.about` |
+| 碎碎念的心情与地点选项 | `hugo.yaml` 的 `params.moments` |
+| 白噪音的音景列表与默认音量 | `hugo.yaml` 的 `params.ambient` |
+| 碎碎念内容本身 | `data/moments.yaml` |
+| 专栏页标签云 / 分类分组 | `layouts/_default/terms.html` |
+| 归档页时间轴分组 | `layouts/archives.html` |
+| 文章页阅读设置栏的按钮 | `layouts/single.html` 的 `.mz-readtool` 块 |
+| 正文三档宽度（660 / 760 / 920） | `custom.css` 第 17 节 `:root[data-mz-width]` |
 | 主题按钮的三态图标 | `custom.css` 里 `.mz-theme-btn [data-icon=...]` 那几条 |
 | 首页实时时钟 | `assets/js/custom.js` 第 5 模块 `initClock()` |
 | 书签存储键 / 触感音效 | `assets/js/custom.js` 第 7 / 8 模块 |
+| 点赞 / Toast / 白噪音 / 灯箱 | `assets/js/mz-base.js` |
+| 阅读偏好 / 专注 / 连击 / 评论 / 分享卡 | `assets/js/mz-reading.js` |
 | SVG 图库样式（描边、动画节奏） | `custom.css` 第 13 / 14 节 |
 | 图库内容本身 | `assets/svg/*.svg`（由 `scripts/make-svgs.py` 生成） |
 | 每页显示几条 | `hugo.yaml` 的 `pagination.pagerSize`（当前 10） |
 | 分页页码外观 | `custom.css` 第 9 节「分页页码导航」 |
 | 分页文案（首页/末页/第 N 页） | `i18n/zh-cn.yaml` 的 `first_page` / `last_page` / `page_counter` |
+
+## 五个视图
+
+| 视图 | 地址 | 模板 | 数据来源 |
+| --- | --- | --- | --- |
+| 文章 | `/posts/` | `list.html` + `_partials/post_card.html` | `content/posts/` |
+| 阅读页 | `/posts/<slug>/` | `single.html` | 文章 front matter |
+| 碎碎念 | `/moments/` | `moments/list.html` + `_partials/moment_card.html` | `data/moments.yaml` + 浏览器本地新发的 |
+| 专栏 | `/categories/` | `_default/terms.html` | `site.Taxonomies.categories` / `.tags` |
+| 归档 | `/archives/` | `archives.html` | `site.RegularPages` 按年份分组 |
+| 关于 | `/about/` | `about.html` | `params.about` + `content/about.md` |
+
+几个实现要点：
+
+- **碎碎念**用 `hugo.Data.moments` 读取 `data/moments.yaml`（`site.Data` 已弃用），每条可带 `url` / `title` 指向仓库里的真实文章，渲染成一张可点的内嵌链接卡。
+- **专栏页**列出 `site.Taxonomies.tags.ByCount` 做标签云，并给出计数；下方按 `site.Taxonomies.categories.ByCount` 分组，每行挂 `data-mz-tags="tag1|tag2"`，`mz-base.js` 里做**多标签 AND 过滤**（整组无命中就隐藏）。
+- **归档页**在模板里用 `dict` + `merge` 手工按年归组，倒序遍历，左侧年份徽章取 `slicestr` 的末两位（`2026` → `26`）。
+- **关于页热力图**是按 `content/posts` 的真实 `date` 现算的：24 周 × 7 天 = 168 格，每格 `data-count` 写进 DOM，悬停时由 JS 读出日期与篇数。
 
 ### 已实现的交互
 
@@ -184,8 +228,15 @@ python scripts/fetch-fonts.py --css-only  # 只重生成 @font-face
 - 文章卡片：置顶优先排序、元信息行（日期 / 阅读时长 / 分类）、衬线标题 + hover 露出箭头、两行摘要、标签与字数
 - **书签收藏**：卡片右上角一键收藏，存 `localStorage`，导航栏角标显示数量
 - **触感音效**：切换主题 / 收藏 / 复制代码时用 Web Audio 合成一声轻响，可一键静音
-- 文章页：目录卡片 + scrollspy 当前位置高亮、代码块一键复制
-- 移动端底部标签栏（文章 / 项目 / 搜索 / 归档 / 主题）+ 抽屉式导航
+- **阅读设置栏**：文章页顶部常驻，可切正文字体（衬线 / 黑体）、四档字号、三档正文宽度，偏好存 `localStorage`
+- **专注模式**：隐藏导航、页脚、侧栏与目录，只留正文；`ESC` 退出
+- **连击点赞（Claps）**：连续点击叠加 xN 徽章与 emoji 粒子，音调随连击升高
+- **分享卡片**：把文章渲染成纸白 / 羊皮纸 / 玄黑三种配色的书签卡，一键复制文案
+- **评论**：纯前端评论区，按文章存 `localStorage`，无需后端
+- **伴读白噪音**：Web Audio 实时合成雨声 / 柴火 / 微风，音量可调并持久化，导航栏有呼吸指示灯
+- **选中文案工具栏**：选中正文后浮出「引用金句 / 复制」，不依赖第三方库
+- **图片灯箱**：正文图片点击放大，`ESC` / 点击遮罩关闭
+- 移动端底部标签栏（文章 / 碎念 / 专栏 / 搜索 / 主题）+ 抽屉式导航
 - 部署指南弹窗、下载源码提示、⌘K / Ctrl+K / `/` 唤起搜索
 
 > 所有动效都遵循 `prefers-reduced-motion`：系统里关闭动画后会自动降级为静态显示。
@@ -288,15 +339,27 @@ rm -rf themes/PaperMod && mv hugo-PaperMod-master themes/PaperMod && rm -rf them
 用带引号的模式去 `grep` 会误判成「shortcode 没渲染」，实际上渲染得好好的。验证时改成 `grep -o 'class=[a-z-]*'`。
 
 **6. 无头 Chrome 不能用来判断移动端是否溢出。**
-无头 Chrome 的窗口有**最小宽度**，`--window-size=390` 截出来的图是被裁切过的，看起来「溢出」其实是假象。
-要测窄屏布局，得在同源页面里放个 iframe 探针量 `scrollWidth`。
+无头 Chrome 的窗口有**最小宽度**（Windows 上实测约 494px），`--window-size=390` 渲染出来的布局其实是 494px 宽，截图只截了左边 390px，看起来「文字被切了」——**是裁切，不是溢出**。
+判断有没有真溢出要量 `document.documentElement.scrollWidth`，而且要排除 `overflow:auto` 祖先里的元素（它们的 `getBoundingClientRect()` 会报告未被裁剪的宽度，属于假阳性）。
+绕开最小宽度的办法：直接截 520～560px 宽，对着 `@media (max-width: 767px)` 这一档核对。
 
-**7. 别复用 `data-theme` 这个属性名。**
+**7. `hidden` 属性会被类选择器上的 `display` 盖掉。**
+浏览器 UA 里是 `[hidden] { display: none }`，权重只有一个属性选择器。一旦自己在 `.mz-lightbox { display: flex }` 这类规则里写了 `display`，`hidden` 就完全失效——现象是灯箱/工具栏**默认铺满全屏**，页面上盖着一层半透明黑，右上角还挂着个关闭按钮。
+`custom.css` 第 18.0 节统一兜了底：`[hidden] { display: none !important }`。新增覆盖层组件时别忘了这条。
+
+**8. 折叠的 `<details>` 不能靠 CSS 强行展开。**
+文章目录是主题的 `<details class="toc">`，默认折叠（`TocOpen: false`）。想让它在侧栏里常开，写 `.toc .inner { display: block !important }` 是**没用的**——关闭状态的 `<details>` 直接不进渲染树，子元素怎么写都白搭。
+正确做法是覆盖 `layouts/_partials/toc.html`，在 `<details>` 上直接加 `open` 属性；折叠态下仍可点击收合。
+
+**9. 窄屏下把目录默认收起来。**
+`@media (max-width: 1120px)` 时目录不再是右侧粘性栏，而是整块落到正文上方。二十多条标题全展开会把正文推得很远，所以 `custom.js` 的 `initTocSpy()` 在这个断点下会主动 `removeAttribute("open")`。
+
+**10. 别复用 `data-theme` 这个属性名。**
 PaperMod 自己也用 `<html data-theme="auto|light|dark">`，而且是在 `:root[data-theme="dark"]` 里整块重定义 `--theme` / `--entry` / `--code-bg` 等变量。
 本项目一开始把三态也挂在 `data-theme` 上，结果撞了两个坑：`auto` 这个初值在两边的取值集合里含义不同；服务端渲染出 `auto` 时，主题的 `prefers-color-scheme` 规则会先把 `body` 刷成深色，而页头还是浅色，出现半截错色。
 现在的做法是：**三态色板挂独立属性 `data-mz-theme`**，`data-theme` 只由脚本同步成 `light` / `dark`（羊皮纸算浅色系）给主题组件用，并且把选择器的值写回主题认的 `pref-theme` 键，两边始终一致。
 
-**8. 自定义变量映射要压住主题的权重。**
+**11. 自定义变量映射要压住主题的权重。**
 主题的暗色变量是写在 `:root[data-theme="dark"]`（权重 `0,2,0`）里的，如果映射只写 `:root`（`0,1,0`），自定义值会被静默盖掉。
 现象很隐蔽：`body` 和 `.main` 之间出现一条对不上的色缝（`#1d1e20` vs `#111113`）。
 所以映射块写成 `html:root, html:root[data-mz-theme]`（`0,2,1`），确保任何一态下都赢。

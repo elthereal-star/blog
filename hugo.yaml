@@ -52,23 +52,24 @@ markup:
     tabWidth: 4
 
 # ---------- 导航菜单 ----------
+# 与「墨序」改良版对齐：文章 / 碎碎念 / 专栏 / 归档 / 关于
 menu:
   main:
     - identifier: posts
       name: 文章
       url: /posts/
       weight: 10
-    - identifier: projects
-      name: 项目
-      url: /projects/
+    - identifier: moments
+      name: 碎碎念
+      url: /moments/
       weight: 20
+    - identifier: categories
+      name: 专栏
+      url: /categories/
+      weight: 30
     - identifier: archives
       name: 归档
       url: /archives/
-      weight: 30
-    - identifier: tags
-      name: 标签
-      url: /tags/
       weight: 40
     - identifier: about
       name: 关于
@@ -76,6 +77,7 @@ menu:
       weight: 50
     # 说明：搜索不再放进主导航，而是右上角那颗带 ⌘K 的胶囊按钮，
     #       目标页仍然是 /search/（由 PaperMod 的 Fuse.js 全文检索提供）。
+    #       项目文章仍留在 mainSections 里，会出现在首页列表与归档中。
 
 # ---------- 站点参数 ----------
 params:
@@ -149,6 +151,80 @@ params:
     - name: rss
       title: RSS 订阅
       url: "https://elthereal-star.github.io/blog/index.xml"
+
+  # ---------- 「关于」页（layouts/about.html 渲染）----------
+  # 顶部名片 / 热力图 / 技术栈 / 书单都从这里取；正文仍是 content/about.md
+  about:
+    name: "elthereal-star"
+    tagline: "Java 后端学习者 · 测试工程师 · 把踩过的坑写成文"
+    badge: "独立创作者"
+    location: "中国 · 杭州"
+    github: "https://github.com/elthereal-star"
+    email: "2838984524@qq.com"
+    # 创作热力图：展示最近多少周（每列一周，每格一天）
+    heatmapWeeks: 24
+    heatmapTitle: "近期创作与思考热力图"
+    heatmapNote: "按文章发布日期统计 · 每格一天"
+    # 技术栈
+    techStack:
+      - name: "Java / Spring Boot 3"
+        desc: "主线技术栈，业务代码与工程化"
+      - name: "MyBatis-Plus / MySQL / Redis"
+        desc: "数据层与缓存、分布式锁实践"
+      - name: "Hugo + PaperMod"
+        desc: "本站骨架，静态站点与模板覆盖"
+      - name: "GitHub Actions"
+        desc: "推送即构建，零服务器成本上线"
+      - name: "Appium + Groovy"
+        desc: "仪表 UI 自动化测试"
+      - name: "原生 JS / Web Audio"
+        desc: "零依赖动效与纯客户端白噪音合成"
+    # 书单
+    readingList:
+      - title: "《深入理解 Java 虚拟机》"
+        author: "周志明"
+        note: "把「为什么」讲透的一本书"
+      - title: "《重构：改善既有代码的设计》"
+        author: "Martin Fowler"
+        note: "保持代码呼吸感的圣经"
+      - title: "《凤凰项目》"
+        author: "Gene Kim"
+        note: "从故事里理解交付流水线"
+      - title: "《数字极简主义》"
+        author: "Cal Newport"
+        note: "在过度连接的世界重建深度工作"
+    sign: "保持好奇，踏实行走 · Crafted with care & quiet typography"
+
+  # ---------- 「碎碎念」页（content/moments/ + data/moments.yaml）----------
+  moments:
+    # 发表框里可选的「心情」标签
+    moods:
+      - "💭 闪念记录"
+      - "☕️ 咖啡心流"
+      - "🌧️ 细雨心流"
+      - "💡 灵感涌现"
+      - "🌙 深夜思考"
+      - "🚀 灵光一闪"
+    locationPlaceholder: "生活手记"
+
+  # ---------- 禅意伴读白噪音（纯 Web Audio 合成，无外部音频文件）----------
+  ambient:
+    title: "禅意伴读白噪音"
+    subtitle: "纯客户端 Web Audio 实时声学合成 · 助您沉浸心流"
+    defaultVolume: 0.35
+    sounds:
+      - id: "rain"
+        label: "静谧细雨"
+        desc: "淅淅沥沥的自然雨滴与水汽"
+        icon: "cloud-rain"
+      - id: "fireplace"
+        label: "温暖壁炉"
+        desc: "木柴静静燃烧的温热爆裂声"
+        icon: "flame"
+      - id: "breeze"
+        label: "旷野微风"
+        desc: "穿过松林原野的柔和气流"
+        icon: "wind"
 
   # ---------- 界面开关 ----------
   defaultTheme: auto          # 跟随系统深浅色，读者也能手动切换

@@ -1,5 +1,6 @@
 ---
 title: "关于我"
+layout: "about"
 date: 2026-09-01
 hidemeta: true
 ShowToc: false

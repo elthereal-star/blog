@@ -8,14 +8,20 @@
          │ 标题（衬线）                        [↗ 悬停滑出] │
          │ 副标题                                       │
          │ 摘要（两行截断）                              │
-         │ #标签 #标签                          1.2k 字 │
-         └────────────────────────────────────────────┘ */ -}}
+         │ #标签 #标签                    [♥ 点赞] N 字 │
+         └────────────────────────────────────────────┘
+
+       光标聚光层（.mz-card-spot）由 mz-pages.js 跟随鼠标更新 CSS 变量。
+       点赞数 = front matter 的 likes（默认 0）+ 本机 localStorage 累加，
+       计数为 0 时只显示一颗空心心形，避免满屏都是「0」。 */ -}}
 
 {{- $sections := dict "posts" "文章" "projects" "项目" -}}
 {{- $sectionName := index $sections .Section | default .Section -}}
+{{- $likes := .Params.likes | default 0 -}}
 
 <article class="post-entry" data-section="{{ .Section }}" data-url="{{ .Permalink }}">
     <a class="mz-card-link" href="{{ .Permalink }}" aria-label="{{ .Title | plainify }}"></a>
+    <span class="mz-card-spot" aria-hidden="true"></span>
 
     <div class="mz-card-body">
 
@@ -59,8 +65,14 @@
                 <span>#{{ .LinkTitle }}</span>
                 {{- end }}
             </div>
-            <span class="mz-card-like" title="正文字数">
-                {{ partial "icon.html" "heart" }}{{ .WordCount }} 字
+            <span class="mz-card-foot-right">
+                <button class="mz-card-like" type="button" data-mz-like data-like-key="{{ .Permalink }}"
+                    data-like-base="{{ $likes }}" data-mz-sfx="pop"
+                    aria-label="给《{{ .Title }}》点个赞" aria-pressed="false" title="点个赞">
+                    {{ partial "icon.html" "heart" }}
+                    <span class="mz-card-like-count">{{ $likes }}</span>
+                </button>
+                <span class="mz-card-words">{{ .WordCount }} 字</span>
             </span>
         </div>
     </div>

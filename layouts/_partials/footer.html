@@ -25,20 +25,20 @@
 </a>
 {{- end }}
 
-{{- /* ---------- 移动端底部标签栏 ---------- */}}
+{{- /* ---------- 移动端底部标签栏（对齐改良版：文章 / 碎念 / 专栏 / 搜索 / 主题）---------- */}}
 <nav class="mz-tabbar" aria-label="快捷导航">
     <div class="mz-tabbar-inner">
         <a class="mz-tab{{ if hasPrefix .RelPermalink "/posts/" }} is-active{{ end }}" href="{{ "posts/" | relLangURL }}">
             {{ partial "icon.html" "book" }}<span>文章</span>
         </a>
-        <a class="mz-tab{{ if hasPrefix .RelPermalink "/projects/" }} is-active{{ end }}" href="{{ "projects/" | relLangURL }}">
-            {{ partial "icon.html" "folder" }}<span>项目</span>
+        <a class="mz-tab{{ if hasPrefix .RelPermalink "/moments/" }} is-active{{ end }}" href="{{ "moments/" | relLangURL }}">
+            {{ partial "icon.html" "sparkles" }}<span>碎念</span>
+        </a>
+        <a class="mz-tab{{ if hasPrefix .RelPermalink "/categories/" }} is-active{{ end }}" href="{{ "categories/" | relLangURL }}">
+            {{ partial "icon.html" "folder" }}<span>专栏</span>
         </a>
         <a class="mz-tab" href="{{ "search/" | relLangURL }}">
             {{ partial "icon.html" "search" }}<span>搜索</span>
-        </a>
-        <a class="mz-tab" href="{{ "archives/" | relLangURL }}">
-            {{ partial "icon.html" "archive" }}<span>归档</span>
         </a>
         <button class="mz-tab" type="button" id="mzTabTheme">
             {{ partial "icon.html" "sun" }}<span id="mzTabThemeLabel">纸白</span>
@@ -90,6 +90,81 @@
         <div class="mz-modal-foot">
             <span id="mzBookmarkFoot">本地存储 · localStorage</span>
             <button class="mz-btn mz-btn-ghost" type="button" id="mzBookmarkClear">清空全部</button>
+        </div>
+    </div>
+</div>
+
+{{- /* ---------- 全局 Toast 反馈 ---------- */}}
+<div class="mz-toast" id="mzToast" role="status" aria-live="polite" hidden>
+    <span class="mz-toast-icon">{{ partial "icon.html" "check-circle" }}</span>
+    <span class="mz-toast-text" id="mzToastText"></span>
+</div>
+
+{{- /* ---------- 选中文案浮动工具栏（文章页用）---------- */}}
+<div class="mz-selbar" id="mzSelBar" role="toolbar" aria-label="选中文本操作" hidden>
+    <button class="mz-selbar-btn" type="button" data-mz-sel="quote">
+        {{ partial "icon.html" "quote" }}<span>引用金句</span>
+    </button>
+    <span class="mz-selbar-sep" aria-hidden="true"></span>
+    <button class="mz-selbar-btn mz-selbar-btn-sub" type="button" data-mz-sel="copy">
+        {{ partial "icon.html" "copy" }}<span>复制</span>
+    </button>
+</div>
+
+{{- /* ---------- 图片灯箱 ---------- */}}
+<div class="mz-lightbox" id="mzLightbox" role="dialog" aria-modal="true" aria-label="放大查看图片" hidden>
+    <img class="mz-lightbox-img" id="mzLightboxImg" src="" alt="">
+    <button class="mz-lightbox-close" type="button" id="mzLightboxClose" aria-label="关闭">
+        {{ partial "icon.html" "close" }}
+    </button>
+</div>
+
+{{- /* ---------- 禅意伴读白噪音弹窗 ---------- */}}
+{{- $amb := site.Params.ambient | default dict }}
+{{- $ambSounds := $amb.sounds | default slice }}
+{{- $ambVol := $amb.defaultVolume | default 0.35 }}
+<div class="mz-modal" id="mzAmbientModal" role="dialog" aria-modal="true" aria-labelledby="mzAmbientTitle" hidden>
+    <div class="mz-modal-card" style="max-width:520px">
+        <div class="mz-modal-head">
+            <div class="mz-modal-head-left">
+                <span class="mz-modal-icon">{{ partial "icon.html" "headphones" }}</span>
+                <div>
+                    <h2 class="mz-modal-title" id="mzAmbientTitle">{{ $amb.title | default "禅意伴读白噪音" }}</h2>
+                    <p class="mz-modal-sub">{{ $amb.subtitle | default "纯客户端 Web Audio 实时声学合成" }}</p>
+                </div>
+            </div>
+            <button class="mz-iconbtn" type="button" data-modal-close aria-label="关闭">
+                {{ partial "icon.html" "close" }}
+            </button>
+        </div>
+        <div class="mz-modal-body">
+            <div class="mz-amb-list" id="mzAmbList">
+                {{- range $ambSounds }}
+                <button class="mz-amb-item" type="button" data-mz-amb="{{ .id }}" aria-pressed="false">
+                    <span class="mz-amb-icon">{{ partial "icon.html" .icon }}</span>
+                    <span class="mz-amb-text">
+                        <span class="mz-amb-label">
+                            <span>{{ .label }}</span>
+                            <span class="mz-amb-ping" hidden aria-hidden="true"><span></span><span></span></span>
+                        </span>
+                        <span class="mz-amb-desc">{{ .desc }}</span>
+                    </span>
+                    <span class="mz-amb-state">点击开启</span>
+                </button>
+                {{- end }}
+            </div>
+            <div class="mz-amb-volume">
+                <div class="mz-amb-volume-head">
+                    <span class="mz-amb-volume-label">
+                        {{ partial "icon.html" "volume" }}
+                        <span>音量调节 (<span id="mzAmbVolumeLabel">{{ math.Round (mul $ambVol 100) }}%</span>)</span>
+                    </span>
+                    <button class="mz-amb-stop" type="button" id="mzAmbStop" hidden>停止伴读音</button>
+                </div>
+                <input class="mz-amb-range" type="range" id="mzAmbVolume" min="0" max="1" step="0.05"
+                    value="{{ $ambVol }}" aria-label="白噪音音量">
+            </div>
+            <p class="mz-amb-note">完全免外置音频加载，随开随关，不消耗额外网络流量</p>
         </div>
     </div>
 </div>

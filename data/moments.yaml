@@ -1,0 +1,63 @@
+# ============================================================
+#  「碎碎念」数据源
+#  加一条就往下面追加一项即可；page 上「写碎碎念」发表的只存在本机
+#  localStorage 里，不会写回这个文件。
+#
+#  字段说明：
+#    content  正文（纯文本或行内 Markdown 均可）
+#    date     日期 YYYY-MM-DD
+#    time     时间 HH:MM（可空）
+#    mood     心情标签（可空）
+#    location 位置（可空）
+#    likes    点赞数
+#    url      关联文章链接（可空，填了标题就变成可点链接）
+#    title    关联文章标题（可空）
+# ============================================================
+
+- content: "把 filetidy 的 4 个真实缺陷收尾了：Windows 控制台 GBK 乱码、异常堆栈外泄、隐藏文件判定跨平台不一致、undo 残留空目录。测试从 4 个补到 31 个全绿——「能跑通」和「能交付」之间，差的往往就是这些不起眼的地方。"
+  date: "2026-10-04"
+  time: "22:10"
+  mood: "🚀 灵光一闪"
+  location: "书房"
+  likes: 26
+  title: "filetidy 可撤销 CLI 的设计取舍"
+  url: "/posts/filetidy-reversible-cli-design/"
+
+- content: "今天又踩了一次 git push 挂死的坑。上次是凭据 helper 交互挂死，这次是 Windows schannel 握手失败——同一个现象，两个完全不同的根因。排查这类问题真的不能靠猜，得先看它挂在哪一步。"
+  date: "2026-10-03"
+  time: "16:40"
+  mood: "☕️ 咖啡心流"
+  location: "自习室"
+  likes: 18
+
+- content: "写用例这件事，越写越觉得「怎么验证」比「写什么」更难。接口能抓包、能看日志，但前端测试同事只能看界面——所以用例的最后一步必须落在一个肉眼可见的现象上，否则它就不是一条能手动执行的用例。"
+  date: "2026-09-28"
+  time: "20:05"
+  mood: "💡 灵感涌现"
+  location: "工位"
+  likes: 31
+
+- content: "Redis 分布式锁从手搓 SETNX 一路看到 Redisson 的看门狗续期，越看越明白一件事：所有「防并发」的方案，本质都是在回答「锁什么时候会失效」。想清楚失效边界，方案自己就浮出来了。"
+  date: "2026-09-21"
+  time: "23:30"
+  mood: "🌙 深夜思考"
+  location: "书房"
+  likes: 24
+  title: "一个分布式锁把面试官整emo了"
+  url: "/posts/redis-distributed-lock/"
+
+- content: "「简洁是智慧的灵魂，克制是最高级的设计审美。」——把博客的极光渐变全砍掉、换成纸白底与衬线字之后，反而更愿意在这里写字了。少即是多不是空话。"
+  date: "2026-09-14"
+  time: "11:05"
+  mood: "🌧️ 细雨心流"
+  location: "书房"
+  likes: 41
+
+- content: "第一次把 Hugo 的站点推上 GitHub Pages，302 页面 26 秒构建完。零服务器成本、push 即上线——这种「把流程做顺」的爽感，比写完一个功能还上头。"
+  date: "2026-09-01"
+  time: "15:20"
+  mood: "💭 闪念记录"
+  location: "自习室"
+  likes: 15
+  title: "用 Hugo + PaperMod 搭一个自己的博客"
+  url: "/posts/build-blog-with-hugo-papermod/"

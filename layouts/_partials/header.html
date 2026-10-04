@@ -58,6 +58,12 @@
                 <span data-sfx-off hidden>{{ partial "icon.html" "volume-off" }}</span>
             </button>
 
+            <button class="mz-iconbtn mz-ambient-btn" id="mzAmbientBtn" type="button"
+                aria-label="禅意伴读白噪音" title="开启禅意伴读白噪音（雨声 / 柴火 / 微风）">
+                {{ partial "icon.html" "headphones" }}
+                <span class="mz-ambient-dot" id="mzAmbientDot" hidden aria-hidden="true"></span>
+            </button>
+
             <button class="mz-iconbtn mz-theme-btn" id="mzThemeBtn" type="button"
                 aria-label="切换主题模式" title="当前：纸白（点击切换）">
                 <span data-icon="sun">{{ partial "icon.html" "sun" }}</span>

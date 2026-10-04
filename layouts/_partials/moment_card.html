@@ -1,0 +1,49 @@
+{{- /*
+  一条「碎碎念」卡片。
+  入参：data/moments.yaml 里的一项（dict）
+
+  用法：{{ partial "moment_card.html" $m }}
+
+  JS 侧（mz-pages.js）发表新碎碎念时会克隆这个结构，
+  所以改动时注意同步 #mzMomentTpl 那段。
+*/ -}}
+{{- $m := . -}}
+{{- $likes := $m.likes | default 0 -}}
+
+<article class="mz-moment" data-mz-moment>
+    <div class="mz-moment-meta">
+        <span class="mz-moment-time">
+            <span>{{ $m.date }}</span>
+            {{- with $m.time }}<span>{{ . }}</span>{{ end }}
+        </span>
+        {{- with $m.mood }}
+        <span aria-hidden="true">·</span>
+        <span class="mz-moment-mood">{{ . }}</span>
+        {{- end }}
+        {{- with $m.location }}
+        <span aria-hidden="true">·</span>
+        <span class="mz-moment-loc">{{ partial "icon.html" "map-pin" }}<span>{{ . }}</span></span>
+        {{- end }}
+    </div>
+
+    <p class="mz-moment-text">{{ $m.content }}</p>
+
+    {{- with $m.url }}
+    <a class="mz-moment-link" href="{{ . | relLangURL }}">
+        {{ partial "icon.html" "book" }}
+        <span>{{ $m.title | default "相关文章" }}</span>
+        {{ partial "icon.html" (dict "name" "arrow-right" "class" "mz-moment-link-arrow") }}
+    </a>
+    {{- end }}
+
+    <div class="mz-moment-foot">
+        <span class="mz-moment-hash">#即时闪念</span>
+        <button class="mz-moment-like" type="button" data-mz-like data-mz-sfx="pop"
+            data-like-key="moment-{{ $m.date }}-{{ $m.time | default "0000" }}"
+            data-like-base="{{ $likes }}"
+            aria-label="点赞这条碎碎念" aria-pressed="false">
+            {{ partial "icon.html" "heart" }}
+            <span class="mz-moment-like-count">{{ $likes }}</span>
+        </button>
+    </div>
+</article>

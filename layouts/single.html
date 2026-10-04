@@ -1,0 +1,267 @@
+{{- /*
+  文章页 —— 项目级覆盖 themes/PaperMod/layouts/single.html
+
+  在主题原版基础上加入「墨序」改良版的阅读增强：
+    · 顶部阅读进度条
+    · 悬浮阅读设置栏：返回 / 伴读音 / 专注模式 / 字体衬线或黑体 /
+      字号 A- A+ / 正文宽度 / 分享卡片 / 收藏
+    · 文章头部元信息含「预计 HH:MM 读完」
+    · 正文 + 右侧粘性目录（滚动高亮，脚本在 custom.js 的 initTocSpy）
+    · 底部 Claps 点赞（连击 xN + emoji 粒子 + 音高递增）
+    · 上一篇 / 下一篇
+    · 免登录评论（localStorage，按文章隔离）
+    · 分享书签卡片弹窗（米白 / 羊皮纸 / 墨夜三种配色）
+
+  依赖脚本：assets/js/mz-reading.js（本页增强）+ mz-base.js（全局）。
+  阅读偏好（字体 / 字号 / 宽度）与点赞、评论都记在 localStorage。
+*/ -}}
+
+{{- define "main" }}
+
+{{- $likes := .Params.likes | default 0 }}
+{{- $excerpt := "" }}
+{{- if .Description }}{{ $excerpt = .Description }}{{ else }}{{ $excerpt = .Summary | plainify | htmlUnescape }}{{ end }}
+{{- $cat := "" }}
+{{- with .GetTerms "categories" }}{{ $cat = (index . 0).LinkTitle }}{{ end }}
+{{- $backURL := .CurrentSection.RelPermalink | default ("posts/" | relLangURL) }}
+
+<article class="post-single mz-article" id="mzArticle"
+    data-mz-title="{{ .Title }}"
+    data-mz-url="{{ .Permalink }}"
+    data-mz-date="{{ .Date | time.Format (site.Params.DateFormat | default "2006年1月2日") }}"
+    data-mz-excerpt="{{ $excerpt | truncate 90 }}"
+    data-mz-author="{{ site.Params.author }}"
+    data-mz-readtime="{{ .ReadingTime }}"
+    data-mz-key="{{ .Permalink }}"
+    data-mz-like-base="{{ $likes }}">
+
+    {{- /* ---------- 顶部阅读进度条 ---------- */}}
+    <div class="mz-readbar" aria-hidden="true"><span class="mz-readbar-fill" id="mzReadBarFill"></span></div>
+
+    {{- /* ---------- 专注模式退出条 ---------- */}}
+    <div class="mz-focusbar" id="mzFocusBar" hidden>
+        <button class="mz-btn mz-btn-solid" type="button" id="mzFocusExit">
+            {{ partial "icon.html" "eye-off" }}<span>退出专注模式 (ESC)</span>
+        </button>
+    </div>
+
+    {{- /* ---------- 悬浮阅读设置栏 ---------- */}}
+    <div class="mz-readtool" id="mzReadTool">
+        <a class="mz-readtool-back" href="{{ $backURL }}">
+            {{ partial "icon.html" "arrow-left" }}<span>返回列表</span>
+        </a>
+
+        <div class="mz-readtool-right">
+            <button class="mz-readtool-btn" type="button" id="mzAmbientOpen"
+                title="禅意伴读白噪音（雨声 / 柴火 / 微风）" data-mz-sfx="click">
+                {{ partial "icon.html" "headphones" }}<span class="mz-hide-sm">伴读音</span>
+            </button>
+
+            <button class="mz-readtool-btn" type="button" id="mzFocusBtn"
+                title="专注模式（隐藏干扰元素）" data-mz-sfx="pop">
+                {{ partial "icon.html" "eye" }}<span class="mz-hide-sm">专注</span>
+            </button>
+
+            <button class="mz-readtool-btn" type="button" id="mzFontBtn"
+                title="切换正文字体（衬线 / 黑体）" data-mz-sfx="click">
+                {{ partial "icon.html" "type" }}<span class="mz-hide-sm mz-mono" id="mzFontLabel">Serif</span>
+            </button>
+
+            <span class="mz-sizegroup" role="group" aria-label="调整字号">
+                <button class="mz-readtool-btn" type="button" data-mz-size="-" title="减小字号" data-mz-sfx="click">A-</button>
+                <button class="mz-readtool-btn" type="button" data-mz-size="+" title="增大字号" data-mz-sfx="click">A+</button>
+            </span>
+
+            <button class="mz-readtool-btn mz-hide-sm" type="button" id="mzWidthBtn"
+                title="调节正文宽度" data-mz-sfx="click">
+                {{ partial "icon.html" "align-left" }}<span class="mz-mono" id="mzWidthLabel">normal</span>
+            </button>
+
+            <button class="mz-readtool-btn" type="button" id="mzShareCardOpen"
+                title="生成精美分享书签卡片" data-mz-sfx="pop">
+                {{ partial "icon.html" "image" }}<span class="mz-hide-sm">卡片</span>
+            </button>
+
+            <button class="mz-readtool-btn mz-card-bookmark mz-interactive" type="button"
+                data-bookmark-id="{{ .Permalink }}" data-bookmark-title="{{ .Title }}"
+                aria-label="收藏《{{ .Title }}》" aria-pressed="false" title="收藏此文" data-mz-sfx="pop">
+                {{ partial "icon.html" "bookmark" }}
+            </button>
+        </div>
+    </div>
+
+    {{- /* ---------- 正文容器（宽度可调）---------- */}}
+    <div class="mz-readwrap" id="mzReadWrap" data-mz-width="normal" data-mz-font="serif" data-mz-size="base">
+
+        <header class="mz-article-head">
+            <div class="mz-article-meta">
+                <span class="mz-article-meta-item">{{ partial "icon.html" "calendar" }}<time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date | time.Format (site.Params.DateFormat | default "2006年1月2日") }}</time></span>
+                <span aria-hidden="true">·</span>
+                <span class="mz-article-meta-item">{{ partial "icon.html" "clock" }}<span>{{ .ReadingTime }} 分钟</span></span>
+                <span aria-hidden="true">·</span>
+                <span class="mz-article-meta-item mz-mono">预计 <span id="mzFinishTime">--:--</span> 读完</span>
+                <span aria-hidden="true">·</span>
+                <span class="mz-article-meta-item">约 {{ .WordCount }} 字</span>
+                {{- with $cat }}
+                <span aria-hidden="true">·</span>
+                <a class="mz-article-meta-item is-strong" href="{{ ("categories/" | relLangURL) }}{{ . | urlize }}/">{{ . }}</a>
+                {{- end }}
+            </div>
+
+            <h1 class="mz-article-title">{{ .Title }}</h1>
+
+            {{- with .Description }}
+            <p class="mz-article-subtitle">{{ . }}</p>
+            {{- end }}
+
+            {{- with .GetTerms "tags" }}
+            <div class="mz-article-tags">
+                <span class="mz-article-tags-icon">{{ partial "icon.html" "tag" }}</span>
+                {{- range . }}
+                <a href="{{ .RelPermalink }}">#{{ .LinkTitle }}</a>
+                {{- end }}
+            </div>
+            {{- end }}
+
+            {{- $isHidden := (.Param "cover.hiddenInSingle") | default (.Param "cover.hidden") | default false }}
+            {{- partial "cover.html" (dict "cxt" . "IsSingle" true "isHidden" $isHidden) }}
+        </header>
+
+        <div class="mz-article-grid">
+            <div class="post-content md-content mz-article-body" id="mzArticleBody">
+                {{- if .Content }}
+                {{- if not (.Param "disableAnchoredHeadings") }}
+                {{- partial "anchored_headings.html" .Content -}}
+                {{- else }}{{ .Content }}{{ end }}
+                {{- end }}
+            </div>
+
+            {{- if (.Param "ShowToc") }}
+            <aside class="mz-article-aside">
+                {{- partial "toc.html" . }}
+            </aside>
+            {{- end }}
+        </div>
+
+        {{- /* ---------- Claps / 收藏 / 分享 ---------- */}}
+        <div class="mz-article-actions">
+            <div class="mz-clap-wrap">
+                <button class="mz-clap" type="button" id="mzClapBtn"
+                    data-mz-like data-like-key="{{ .Permalink }}" data-like-base="{{ $likes }}"
+                    aria-label="为这篇文章点赞" aria-pressed="false">
+                    {{ partial "icon.html" "heart" }}
+                    <span class="mz-clap-count" id="mzClapCount">{{ $likes }}</span>
+                    <span class="mz-clap-word">点赞</span>
+                    <span class="mz-clap-combo" id="mzClapCombo" hidden></span>
+                </button>
+                <span class="mz-clap-particles" id="mzClapParticles" aria-hidden="true"></span>
+            </div>
+
+            <button class="mz-pillbtn mz-card-bookmark mz-interactive" type="button"
+                data-bookmark-id="{{ .Permalink }}" data-bookmark-title="{{ .Title }}"
+                aria-pressed="false" data-mz-sfx="pop">
+                {{ partial "icon.html" "bookmark" }}
+                <span data-bookmark-label>收藏</span>
+            </button>
+
+            <button class="mz-pillbtn" type="button" id="mzShareCardOpen2" data-mz-sfx="pop">
+                {{ partial "icon.html" "share" }}<span>分享卡片</span>
+            </button>
+
+            <span class="mz-article-hint">提示：选中文本可直接引用金句 · 按 ESC 退出专注模式</span>
+        </div>
+
+        {{- if (.Param "ShowPostNavLinks") }}
+        {{- partial "post_nav_links.html" . }}
+        {{- end }}
+
+        {{- /* ---------- 免登录评论 ---------- */}}
+        <section class="mz-comments" id="mzComments" data-mz-comment-key="{{ .Permalink }}">
+            <div class="mz-comments-head">
+                <h3 class="mz-comments-title">
+                    {{ partial "icon.html" "message" }}
+                    <span>读者探讨 (<span id="mzCommentCount">0</span>)</span>
+                </h3>
+                <span class="mz-comments-note">免登录即时评论 · 仅存在本机浏览器</span>
+            </div>
+
+            <form class="mz-comment-form" id="mzCommentForm">
+                <input class="mz-comment-name" type="text" id="mzCommentName" placeholder="您的昵称（选填）" maxlength="24">
+                <textarea class="mz-comment-text" id="mzCommentText" rows="3" placeholder="写下您的思考、探讨或指正..."></textarea>
+                <div class="mz-comment-form-foot">
+                    <button class="mz-btn mz-btn-solid" type="submit" id="mzCommentSubmit" disabled>
+                        {{ partial "icon.html" "send" }}<span>发表评论</span>
+                    </button>
+                </div>
+            </form>
+
+            <div class="mz-comment-list" id="mzCommentList"></div>
+        </section>
+    </div>
+
+    {{- /* ---------- 分享书签卡片弹窗 ---------- */}}
+    <div class="mz-modal" id="mzShareModal" role="dialog" aria-modal="true" aria-labelledby="mzShareTitle" hidden>
+        <div class="mz-modal-card" style="max-width:560px">
+            <div class="mz-modal-head">
+                <div class="mz-modal-head-left">
+                    <span class="mz-modal-icon">{{ partial "icon.html" "sparkle" }}</span>
+                    <div>
+                        <h2 class="mz-modal-title" id="mzShareTitle">生成精美分享书签卡片</h2>
+                        <p class="mz-modal-sub">适合长按分享至朋友圈、即刻或小红书</p>
+                    </div>
+                </div>
+                <div class="mz-share-head-right">
+                    <div class="mz-share-themebar" id="mzShareThemes">
+                        <button type="button" class="is-active" data-mz-card-theme="paper">米白</button>
+                        <button type="button" data-mz-card-theme="sepia">羊皮纸</button>
+                        <button type="button" data-mz-card-theme="dark">墨夜</button>
+                    </div>
+                    <button class="mz-iconbtn" type="button" data-modal-close aria-label="关闭">
+                        {{ partial "icon.html" "close" }}
+                    </button>
+                </div>
+            </div>
+            <div class="mz-modal-body mz-share-body">
+                <div class="mz-sharecard is-paper" id="mzShareCard">
+                    <div class="mz-sharecard-head">
+                        <span class="mz-sharecard-brand">
+                            <span class="mz-sharecard-mark">{{ site.Params.brand.mark | default "星" }}</span>
+                            <span>{{ site.Params.label.text | default site.Title }}</span>
+                        </span>
+                        <span class="mz-sharecard-date">{{ .Date | time.Format "2006-01-02" }}</span>
+                    </div>
+                    <div class="mz-sharecard-titlewrap">
+                        <span class="mz-sharecard-kicker">{{ with $cat }}{{ . }} · {{ end }}{{ .ReadingTime }} 分钟</span>
+                        <h2 class="mz-sharecard-title">{{ .Title }}</h2>
+                    </div>
+                    <div class="mz-sharecard-quote">
+                        {{ partial "icon.html" "quote" }}
+                        <p>{{ $excerpt | truncate 90 }}</p>
+                    </div>
+                    <div class="mz-sharecard-foot">
+                        <span class="mz-sharecard-author">
+                            <span class="mz-sharecard-avatar">{{ site.Params.brand.mark | default "星" }}</span>
+                            <span class="mz-sharecard-authortext">
+                                <span class="mz-sharecard-name">{{ site.Params.author }}</span>
+                                <span class="mz-sharecard-host">{{ (urls.Parse site.BaseURL).Host }}</span>
+                            </span>
+                        </span>
+                        <span class="mz-sharecard-qr">
+                            {{ partial "icon.html" "qr-code" }}
+                            <span>扫码速读</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="mz-modal-foot">
+                <span>卡片文案一键复制到剪贴板</span>
+                <button class="mz-btn mz-btn-solid" type="button" id="mzShareCopy">
+                    {{ partial "icon.html" "copy" }}<span>一键复制分享图文</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+</article>
+
+{{- end }}{{/* end main */}}
