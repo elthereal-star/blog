@@ -78,6 +78,7 @@ blog/
 │   ├── js/custom.js              # 自定义交互脚本
 │   └── svg/                      # SVG 示意图图库（shortcode 内联使用）
 ├── layouts/
+│   ├── list.html                 # 列表页覆盖：带页码的分页导航
 │   ├── _partials/
 │   │   ├── home_info.html        # 首页 Hero 区块
 │   │   ├── extend_head.html      # <head> 注入点
@@ -121,6 +122,9 @@ blog/
 | 动效速度、开关 | `assets/js/custom.js` 顶部的 `TYPE_SPEED` / `HOLD_TIME` / `MAX_TILT` |
 | SVG 图库样式（描边、动画节奏） | `custom.css` 第 13 节「通用 SVG 示意图图库」 |
 | 图库内容本身 | `assets/svg/*.svg`（由 `scripts/make-svgs.py` 生成） |
+| 每页显示几条 | `hugo.yaml` 的 `pagination.pagerSize`（当前 10） |
+| 分页页码外观 | `custom.css` 第 14 节「分页页码导航」 |
+| 分页文案（首页/末页/第 N 页） | `i18n/zh-cn.yaml` 的 `first_page` / `last_page` / `page_counter` |
 
 已经实现的动效清单：
 
@@ -134,6 +138,28 @@ blog/
 
 > 所有动效都遵循 `prefers-reduced-motion`：系统里关闭动画后会自动降级为静态显示。
 > 全部动效只用 CSS 与少量原生 JS 实现，整站**不请求任何第三方 CDN 或字体**。
+
+## 分页导航：可以直接点页码跳转
+
+列表页（首页 / 文章列表 / 标签页）底部的分页换成了带页码的版本，不必再一页页点「下一页」：
+
+```text
+««   « 上一页   [1] [2] [3] [4] [5]   下一页 »   »»
+第 3 / 5 页
+```
+
+- 当前页用品牌渐变常亮；「首页 / 末页」是双箭头，方便来回跳。
+- 首尾页会自动把对应的按钮**置灰**（`is-disabled`），而不是藏起来，避免按钮位置跳动。
+- 页数多时自动折叠：只显示第 1 页、最后一页和当前页前后各 2 页，中间用 `…` 占位；**总页数 ≤ 7 时全部列出**。
+- 窄屏（≤ 560px）隐藏两个双箭头按钮，只留「上一页 + 页码 + 下一页」。
+
+### 它是怎么实现的
+
+PaperMod 把分页内联写死在 `themes/PaperMod/layouts/list.html` 里（不是独立 partial），所以这里用**项目级模板覆盖**：`layouts/list.html` 是主题该文件的副本，只改了末尾的 `<footer class="page-footer">` 那段。Hugo 的查找顺序里项目 `layouts/` 优先于主题，所以覆盖生效，**完全没碰主题源码**。
+
+> 升级主题时，记得比对主题新版 `list.html` 除分页外是否还有其它改动，再同步到本项目这份副本里。
+
+样式在 `custom.css` 第 14 节。有个细节值得记：主题 `main.css` 里有一条 `.pagination a { background: var(--primary) }`，会把所有分页链接涂成实心胶囊；它的选择器权重是 `(0,1,1)`，比单个类名 `.page-num` 的 `(0,1,0)` 高，所以自定义样式统一写成 `.pagination .page-num`（`(0,2,0)`）才压得住。
 
 ## 动态内容：三种形态
 

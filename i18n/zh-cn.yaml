@@ -31,3 +31,13 @@
 
 - id: code_copied
   translation: "已复制！"
+
+# ---- 分页页码导航（layouts/list.html）----
+- id: first_page
+  translation: "首页"
+
+- id: last_page
+  translation: "末页"
+
+- id: page_counter
+  translation: "第 {{ .Current }} / {{ .Total }} 页"

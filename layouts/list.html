@@ -1,0 +1,168 @@
+{{- /*
+  列表页模板 —— 项目级覆盖 PaperMod 的 themes/PaperMod/layouts/list.html
+
+  唯一的改动是文件末尾的 <footer class="page-footer"> 分页区块：
+  主题原版只渲染「上一页 / 下一页」，本版额外渲染：
+    « 首页 · ‹ 上一页 · [1][2][3]…[n] · 下一页 › · 末页 »
+  当前页高亮、页数多时自动折叠成省略号（总页数 ≤ 7 时全部显示）。
+
+  其余逻辑与主题保持一致；如升级主题，请比对主题新版的 list.html 是否
+  有其它变更，再同步到这里（改这里的效果不会丢，因为项目级覆盖优先于主题）。
+*/ -}}
+{{- define "main" }}
+
+{{- if (and site.Params.profileMode.enabled .IsHome) }}
+{{- partial "index_profile.html" . }}
+{{- else }} {{/* if not profileMode */}}
+
+{{- if not .IsHome | and .Title }}
+<header class="page-header">
+  {{- partial "breadcrumbs.html" . }}
+  <h1>
+    {{ .Title }}
+    {{- if and (or (eq .Kind `term`) (eq .Kind `section`)) (.Param "ShowRssButtonInSectionTermList") }}
+    {{- with .OutputFormats.Get "rss" }}
+    <a href="{{ .RelPermalink }}" title="RSS" aria-label="RSS">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round" height="23">
+        <path d="M4 11a9 9 0 0 1 9 9" />
+        <path d="M4 4a16 16 0 0 1 16 16" />
+        <circle cx="5" cy="19" r="1" />
+      </svg>
+    </a>
+    {{- end }}
+    {{- end }}
+  </h1>
+  {{- if .Description }}
+  <div class="post-description">
+    {{ .Description | markdownify }}
+  </div>
+  {{- end }}
+</header>
+{{- end }}
+
+{{- if .Content }}
+<div class="post-content md-content">
+  {{- if not (.Param "disableAnchoredHeadings") }}
+  {{- partial "anchored_headings.html" .Content -}}
+  {{- else }}{{ .Content }}{{ end }}
+</div>
+{{- end }}
+
+{{- $pages := union .RegularPages .Sections }}
+
+{{- if .IsHome }}
+{{- $pages = where site.RegularPages "Type" "in" site.Params.mainSections }}
+{{- $pages = where $pages "Params.hiddenInHomeList" "!=" "true"  }}
+{{- end }}
+
+{{- $paginator := .Paginate $pages }}
+
+{{- if and .IsHome site.Params.homeInfoParams (eq $paginator.PageNumber 1) }}
+{{- partial "home_info.html" . }}
+{{- end }}
+
+{{- $term := .Data.Term }}
+{{- range $index, $page := $paginator.Pages }}
+
+{{- $class := "post-entry" }}
+
+{{- $user_preferred := or site.Params.disableSpecial1stPost site.Params.homeInfoParams }}
+{{- if (and $.IsHome (eq $paginator.PageNumber 1) (eq $index 0) (not $user_preferred)) }}
+{{- $class = "first-entry" }}
+{{- else if $term }}
+{{- $class = "post-entry tag-entry" }}
+{{- end }}
+
+<article class="{{ $class }}">
+  {{- $isHidden := (.Param "cover.hiddenInList") | default (.Param "cover.hidden") | default false }}
+  {{- partial "cover.html" (dict "cxt" . "IsSingle" false "isHidden" $isHidden) }}
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">
+      {{- .Title }}
+      {{- if .Draft }}
+      <span class="entry-hint" title="Draft">
+        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" fill="currentColor">
+          <path
+            d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
+        </svg>
+      </span>
+      {{- end }}
+    </h2>
+  </header>
+  {{- if (ne (.Param "hideSummary") true) }}
+  <div class="entry-content">
+    <p>{{ .Summary | plainify | htmlUnescape }}{{ if .Truncated }}...{{ end }}</p>
+  </div>
+  {{- end }}
+  {{- if not (.Param "hideMeta") }}
+  <footer class="entry-footer">
+    {{- partial "post_meta.html" . -}}
+  </footer>
+  {{- end }}
+  <a class="entry-link" aria-label="post link to {{ .Title | plainify }}" href="{{ .Permalink }}"></a>
+</article>
+{{- end }}
+
+{{- if gt $paginator.TotalPages 1 }}
+<footer class="page-footer">
+  <nav class="pagination" aria-label="分页导航">
+    {{- $cur := $paginator.PageNumber }}
+    {{- $total := $paginator.TotalPages }}
+    {{- /* 总页数少时全部列出，多时只显示首尾 + 当前页附近 ±2 页 */}}
+    {{- $showAll := le $total 7 }}
+
+    {{- /* ---- 首页 / 上一页 ---- */}}
+    {{- if $paginator.HasPrev }}
+    <a class="page-ctl page-edge" href="{{ $paginator.First.URL | absURL }}" aria-label="{{ i18n "first_page" }}" title="{{ i18n "first_page" }}">
+      &laquo;&laquo;
+    </a>
+    <a class="page-ctl" href="{{ $paginator.Prev.URL | absURL }}" rel="prev" aria-label="{{ i18n "prev_page" }}" title="{{ i18n "prev_page" }}">
+      &laquo;&nbsp;{{ i18n "prev_page" }}
+    </a>
+    {{- else }}
+    <span class="page-ctl page-edge is-disabled" aria-hidden="true">&laquo;&laquo;</span>
+    <span class="page-ctl is-disabled" aria-hidden="true">&laquo;&nbsp;{{ i18n "prev_page" }}</span>
+    {{- end }}
+
+    {{- /* ---- 页码 ---- */}}
+    <span class="page-nums">
+      {{- $prevShown := 0 }}
+      {{- range $paginator.Pagers }}
+        {{- $n := .PageNumber }}
+        {{- if or $showAll (eq $n 1) (eq $n $total) (and (ge $n (sub $cur 2)) (le $n (add $cur 2))) }}
+          {{- if gt (sub $n $prevShown) 1 }}
+          <span class="page-gap" aria-hidden="true">&hellip;</span>
+          {{- end }}
+          {{- if eq $n $cur }}
+          <span class="page-num is-active" aria-current="page" title="第 {{ $n }} 页">{{ $n }}</span>
+          {{- else }}
+          <a class="page-num" href="{{ .URL | absURL }}" aria-label="第 {{ $n }} 页" title="第 {{ $n }} 页">{{ $n }}</a>
+          {{- end }}
+          {{- $prevShown = $n }}
+        {{- end }}
+      {{- end }}
+    </span>
+
+    {{- /* ---- 下一页 / 末页 ---- */}}
+    {{- if $paginator.HasNext }}
+    <a class="page-ctl" href="{{ $paginator.Next.URL | absURL }}" rel="next" aria-label="{{ i18n "next_page" }}" title="{{ i18n "next_page" }}">
+      {{ i18n "next_page" }}&nbsp;&raquo;
+    </a>
+    <a class="page-ctl page-edge" href="{{ $paginator.Last.URL | absURL }}" aria-label="{{ i18n "last_page" }}" title="{{ i18n "last_page" }}">
+      &raquo;&raquo;
+    </a>
+    {{- else }}
+    <span class="page-ctl is-disabled" aria-hidden="true">{{ i18n "next_page" }}&nbsp;&raquo;</span>
+    <span class="page-ctl page-edge is-disabled" aria-hidden="true">&raquo;&raquo;</span>
+    {{- end }}
+  </nav>
+  <p class="page-counter">
+    {{- i18n "page_counter" (dict "Current" $cur "Total" $total) -}}
+  </p>
+</footer>
+{{- end }}
+
+{{- end }}{{/* end profileMode */}}
+
+{{- end }}{{- /* end main */ -}}
