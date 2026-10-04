@@ -20,3 +20,6 @@ Thumbs.db
 
 # ===== 本地预览截图（无头 Chrome 产物） =====
 .preview/
+
+# 字体抓取脚本的源字体缓存（约 24MB，不入库）
+.fontcache/

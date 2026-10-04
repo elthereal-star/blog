@@ -70,14 +70,12 @@ menu:
       name: 标签
       url: /tags/
       weight: 40
-    - identifier: search
-      name: 搜索
-      url: /search/
-      weight: 50
     - identifier: about
       name: 关于
       url: /about/
-      weight: 60
+      weight: 50
+    # 说明：搜索不再放进主导航，而是右上角那颗带 ⌘K 的胶囊按钮，
+    #       目标页仍然是 /search/（由 PaperMod 的 Fuse.js 全文检索提供）。
 
 # ---------- 站点参数 ----------
 params:
@@ -99,33 +97,46 @@ params:
     iconHeight: 35
 
   # 首页简介块（homeInfoParams 必须保留：主题靠它判断首页是否渲染 info 区块）
+  # Content 会作为 Hero 大标题下方的简介正文，写成一段最合适。
   homeInfoParams:
-    Title: "Hi，我是 elthereal-star"
+    Title: "记录思维火花，让文字与代码留下痕迹"
     Content: >
       这里记录我的 Java 后端学习笔记、项目复盘和一些测试工程上的踩坑记录。
-      目前主要折腾 Spring Boot 3 / MyBatis-Plus / Vue 3 这条技术线，
-      也在持续补 Git 工作流和自动化测试的功课。
-      <br><br>
-      顶部菜单可以直接看 **文章** 和 **项目**，右上角有搜索 —— 想到什么随时搜。
+      目前主要折腾 Spring Boot 3 / MyBatis-Plus / Vue 3 这条技术线，也在持续补
+      Git 工作流和自动化测试的功课。
 
-  # 首页 Hero 区块的额外内容（由 layouts/_partials/home_info.html 渲染）
+  # ---------- 品牌与仓库 ----------
+  # 导航栏左上角那个方块里的字；改成你喜欢的单字即可
+  brand:
+    mark: "星"
+    # 品牌名下方那行小字。留空则自动取 baseURL 的 域名+路径
+    sub: ""
+
+  # 用于「写文章」「下载源码」两个按钮；换了仓库地址只改这里
+  repo:
+    url: "https://github.com/elthereal-star/blog"
+    branch: "main"
+
+  # 首页 Hero 区块（由 layouts/_partials/home_info.html 渲染）
+  # 注意：Hero 上的文章数 / 项目数 / 总字数 / 最近更新时间都是模板实时算出来的，
+  #       不要在这里写死，改了文章它们会自动更新。
   hero:
-    badge: "Hugo × PaperMod · 自动部署"
-    emoji: "👋"
-    # 打字机轮播的句子，想改就改这里
-    typing:
-      - "Java 后端学习者"
-      - "Spring Boot 3 / MyBatis-Plus"
-      - "Vue 3 全栈折腾"
-      - "工程化与自动化测试"
-    # 技能标签
-    chips:
-      - "Java 21"
-      - "Spring Boot 3"
-      - "MyBatis-Plus"
-      - "Vue 3"
-      - "Docker"
-      - "GitHub Actions"
+    status: "持续创作中"
+    location: "中国"
+    # 大标题，数组里第一个元素是主行，其余元素作为强调行另起一行
+    title:
+      - "把踩过的坑写下来，"
+      - "让代码与思考留下痕迹。"
+    # 头像。留空则显示成品牌单字的铭牌；填了就给一张图片（放 static/ 下）
+    avatar: ""
+    # 金句卡，点右侧刷新图标随机换一句
+    quotes:
+      - "简洁是智慧的灵魂，克制是最高级的设计审美。"
+      - "程序是写给人读的，只是顺便让计算机执行。"
+      - "过早的优化是万恶之源，但过早的放弃也是。"
+      - "任何足够复杂的系统，都诞生于一个足够简单的原型。"
+      - "把问题写清楚，就已经解决了一半。"
+      - "能跑通不算完，能讲明白才算真懂。"
 
   # 首页社交图标
   socialIcons:
@@ -177,6 +188,8 @@ params:
     favicon32x32: "favicon-32x32.png"
     apple_touch_icon: "apple-touch-icon.png"
     safari_pinned_tab: "safari-pinned-tab.svg"
+    # 移动端浏览器地址栏配色，跟「纸白」主题一致
+    theme_color: "#faf9f6"
 
   # ---------- 全文搜索（Fuse.js）----------
   fuseOpts:

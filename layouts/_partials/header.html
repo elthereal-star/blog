@@ -1,0 +1,111 @@
+{{- /* 吸顶导航栏（项目级覆盖主题 header.html）
+
+       结构：品牌 → 主导航 → 图标动作区 → 移动端抽屉
+       文案与链接都走 hugo.yaml，改配置即可，不用动模板。 */ -}}
+
+{{- $repo := site.Params.repo | default dict -}}
+{{- $repoURL := $repo.url | default "" -}}
+{{- $branch := $repo.branch | default "main" -}}
+{{- $brand := site.Params.brand | default dict -}}
+{{- $mark := $brand.mark | default "星" -}}
+{{- $sub := $brand.sub -}}
+{{- if not $sub -}}
+    {{- $u := urls.Parse site.BaseURL -}}
+    {{- $sub = printf "%s%s" $u.Host (strings.TrimSuffix "/" $u.Path) -}}
+{{- end -}}
+{{- $cur := .RelPermalink -}}
+
+<header class="mz-header" id="mzHeader">
+    <div class="mz-header-inner">
+
+        {{- /* ---------- 品牌 ---------- */}}
+        <a class="mz-brand" href="{{ "" | absLangURL }}" accesskey="h" title="{{ site.Title }} (Alt + H)">
+            <span class="mz-brand-logo" aria-hidden="true">{{ $mark }}</span>
+            <span class="mz-brand-text">
+                <span class="mz-brand-title">{{ site.Params.label.text | default site.Title }}</span>
+                <span class="mz-brand-sub">{{ $sub }}</span>
+            </span>
+        </a>
+
+        {{- /* ---------- 主导航 ---------- */}}
+        <nav class="mz-nav" aria-label="主导航">
+            {{- range site.Menus.main }}
+            {{- $url := .URL | relLangURL -}}
+            {{- $active := or (eq $cur $url) (and (ne $url "/") (hasPrefix $cur $url)) -}}
+            <a class="mz-nav-link{{ if $active }} is-active{{ end }}" href="{{ .URL | absLangURL }}"
+                title="{{ .Title | default .Name }}">{{ .Name }}</a>
+            {{- end }}
+        </nav>
+
+        {{- /* ---------- 动作区 ---------- */}}
+        <div class="mz-actions">
+
+            <a class="mz-searchpill" href="{{ "search/" | relLangURL }}" title="搜索（快捷键 /）">
+                {{ partial "icon.html" "search" }}
+                <span>搜索...</span>
+                <kbd>⌘K</kbd>
+            </a>
+
+            <button class="mz-iconbtn" id="mzBookmarkBtn" type="button"
+                aria-label="我的书签" title="查看已收藏的文章">
+                {{ partial "icon.html" "bookmark" }}
+                <span class="mz-badge" id="mzBookmarkCount">0</span>
+            </button>
+
+            <button class="mz-iconbtn is-on" id="mzSoundBtn" type="button"
+                aria-label="切换触感音效" title="触感微音效已开启（点击静音）" aria-pressed="true">
+                <span data-sfx-on>{{ partial "icon.html" "volume" }}</span>
+                <span data-sfx-off hidden>{{ partial "icon.html" "volume-off" }}</span>
+            </button>
+
+            <button class="mz-iconbtn mz-theme-btn" id="mzThemeBtn" type="button"
+                aria-label="切换主题模式" title="当前：纸白（点击切换）">
+                <span data-icon="sun">{{ partial "icon.html" "sun" }}</span>
+                <span data-icon="moon">{{ partial "icon.html" "moon" }}</span>
+                <span data-icon="sepia">{{ partial "icon.html" "scroll" }}</span>
+            </button>
+
+            {{- with $repoURL }}
+            <a class="mz-btn mz-btn-solid" href="{{ . }}/new/{{ $branch }}/content/posts"
+                target="_blank" rel="noopener" title="在 GitHub 上新建一篇文章">
+                {{ partial "icon.html" "pen" }}
+                <span>写文章</span>
+            </a>
+
+            <a class="mz-btn mz-btn-ok mz-only-xl" href="{{ . }}/archive/refs/heads/{{ $branch }}.zip"
+                target="_blank" rel="noopener" title="下载整站源码 ZIP">
+                {{ partial "icon.html" "download" }}
+                <span>下载源码</span>
+            </a>
+            {{- end }}
+
+            <button class="mz-btn mz-btn-ghost mz-only-lg" id="mzDeployBtn" type="button"
+                title="查看 GitHub Pages 部署指南">
+                {{ partial "icon.html" "github" }}
+                <span>部署指南</span>
+            </button>
+
+            <button class="mz-iconbtn mz-burger" id="mzBurger" type="button"
+                aria-label="展开菜单" aria-expanded="false">
+                <span data-burger-open>{{ partial "icon.html" "menu" }}</span>
+                <span data-burger-close hidden>{{ partial "icon.html" "close" }}</span>
+            </button>
+        </div>
+    </div>
+
+    {{- /* ---------- 移动端抽屉 ---------- */}}
+    <div class="mz-drawer" id="mzDrawer">
+        <ul>
+            {{- range site.Menus.main }}
+            {{- $url := .URL | relLangURL -}}
+            {{- $active := or (eq $cur $url) (and (ne $url "/") (hasPrefix $cur $url)) -}}
+            <li><a class="{{ if $active }}is-active{{ end }}" href="{{ .URL | absLangURL }}">{{ .Name }}</a></li>
+            {{- end }}
+            {{- with $repoURL }}
+            <li><a href="{{ . }}/new/{{ $branch }}/content/posts" target="_blank" rel="noopener">写文章</a></li>
+            <li><a href="{{ . }}/archive/refs/heads/{{ $branch }}.zip" target="_blank" rel="noopener">下载源码 ZIP</a></li>
+            {{- end }}
+            <li><a href="#" id="mzDeployBtnMobile">部署指南</a></li>
+        </ul>
+    </div>
+</header>

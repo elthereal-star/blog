@@ -1,0 +1,140 @@
+{{- /* 页脚（项目级覆盖主题 footer.html）
+
+       除了页面底部的极简页脚，这里还挂三样东西：
+         · 移动端底部标签栏
+         · 「部署指南」弹窗
+         · 「我的书签」弹窗（内容由 JS 从 localStorage 填充）
+       plus 代码块复制按钮与回到顶部的脚本。 */ -}}
+
+<footer class="mz-footer">
+    <div class="mz-footer-inner">
+        <p>© {{ now.Year }} {{ site.Params.author | default site.Title }} · 基于 Hugo 与 PaperMod 构建</p>
+        <div class="mz-footer-links">
+            <button type="button" class="mz-link-underlined" id="mzFooterDeploy">部署到 GitHub.io</button>
+            <span aria-hidden="true">·</span>
+            <a href="{{ "index.xml" | relLangURL }}">RSS</a>
+            <span aria-hidden="true">·</span>
+            <button type="button" id="mzFooterTop">返回顶部</button>
+        </div>
+    </div>
+</footer>
+
+{{- if (not site.Params.disableScrollToTop) }}
+<a href="#top" id="top-link" class="top-link" aria-label="回到顶部" title="回到顶部 (Alt + G)" accesskey="g">
+    {{ partial "icon.html" "chevrons-up" }}
+</a>
+{{- end }}
+
+{{- /* ---------- 移动端底部标签栏 ---------- */}}
+<nav class="mz-tabbar" aria-label="快捷导航">
+    <div class="mz-tabbar-inner">
+        <a class="mz-tab{{ if hasPrefix .RelPermalink "/posts/" }} is-active{{ end }}" href="{{ "posts/" | relLangURL }}">
+            {{ partial "icon.html" "book" }}<span>文章</span>
+        </a>
+        <a class="mz-tab{{ if hasPrefix .RelPermalink "/projects/" }} is-active{{ end }}" href="{{ "projects/" | relLangURL }}">
+            {{ partial "icon.html" "folder" }}<span>项目</span>
+        </a>
+        <a class="mz-tab" href="{{ "search/" | relLangURL }}">
+            {{ partial "icon.html" "search" }}<span>搜索</span>
+        </a>
+        <a class="mz-tab" href="{{ "archives/" | relLangURL }}">
+            {{ partial "icon.html" "archive" }}<span>归档</span>
+        </a>
+        <button class="mz-tab" type="button" id="mzTabTheme">
+            {{ partial "icon.html" "sun" }}<span id="mzTabThemeLabel">纸白</span>
+        </button>
+    </div>
+</nav>
+
+{{- /* ---------- 部署指南弹窗 ---------- */}}
+<div class="mz-modal" id="mzDeployModal" role="dialog" aria-modal="true" aria-labelledby="mzDeployTitle" hidden>
+    <div class="mz-modal-card">
+        <div class="mz-modal-head">
+            <div class="mz-modal-head-left">
+                <span class="mz-modal-icon">{{ partial "icon.html" "github" }}</span>
+                <div>
+                    <h2 class="mz-modal-title" id="mzDeployTitle">部署到 GitHub.io 全指南</h2>
+                    <p class="mz-modal-sub">零服务器费用 · 自动化云端构建 · 全球 CDN 分发</p>
+                </div>
+            </div>
+            <button class="mz-iconbtn" type="button" data-modal-close aria-label="关闭">
+                {{ partial "icon.html" "close" }}
+            </button>
+        </div>
+        <div class="mz-modal-body">
+            {{ partial "deploy_guide.html" . }}
+        </div>
+        <div class="mz-modal-foot">
+            <span>Hugo + PaperMod + GitHub Actions</span>
+            <button class="mz-btn mz-btn-solid" type="button" data-modal-close>我已知晓</button>
+        </div>
+    </div>
+</div>
+
+{{- /* ---------- 我的书签弹窗 ---------- */}}
+<div class="mz-modal" id="mzBookmarkModal" role="dialog" aria-modal="true" aria-labelledby="mzBookmarkTitle" hidden>
+    <div class="mz-modal-card" style="max-width:560px">
+        <div class="mz-modal-head">
+            <div class="mz-modal-head-left">
+                <span class="mz-modal-icon">{{ partial "icon.html" "bookmark" }}</span>
+                <div>
+                    <h2 class="mz-modal-title" id="mzBookmarkTitle">我的书签</h2>
+                    <p class="mz-modal-sub">收藏记录只保存在这台设备上</p>
+                </div>
+            </div>
+            <button class="mz-iconbtn" type="button" data-modal-close aria-label="关闭">
+                {{ partial "icon.html" "close" }}
+            </button>
+        </div>
+        <div class="mz-modal-body" id="mzBookmarkList" style="gap:10px"></div>
+        <div class="mz-modal-foot">
+            <span id="mzBookmarkFoot">本地存储 · localStorage</span>
+            <button class="mz-btn mz-btn-ghost" type="button" id="mzBookmarkClear">清空全部</button>
+        </div>
+    </div>
+</div>
+
+{{- partial "extend_footer.html" . }}
+
+{{- if (and (eq .Kind "page") (ne .Layout "archives") (ne .Layout "search") (.Param "ShowCodeCopyButtons")) }}
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = '{{- i18n "code_copy" | default "copy" }}';
+
+        function copyingDone() {
+            copybutton.innerHTML = '{{- i18n "code_copied" | default "copied!" }}';
+            setTimeout(() => {
+                copybutton.innerHTML = '{{- i18n "code_copy" | default "copy" }}';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', () => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try { document.execCommand('copy'); copyingDone(); } catch (e) { }
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            // td containing LineNos
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+{{- end }}

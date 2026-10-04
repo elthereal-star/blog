@@ -1,60 +1,113 @@
-{{- /* 首页 Hero 区块
-       在主题同名的 partial 基础上重写，加入徽章、星形徽标、打字机副标题与技能标签。
-       可通过 hugo.yaml 的 params.hero 调整文案，不需要改这个文件。 */ -}}
+{{- /* 首页 Hero 区块（项目级覆盖主题同名 partial）
+
+       内容全部来自 hugo.yaml：
+         params.hero          状态词 / 位置 / 标题 / 金句 / 头像
+         params.homeInfoParams 简介正文
+       Hero 上的统计数字都是真实算出来的（文章数 / 总字数 / 最近更新），
+       不写死也不编造。 */ -}}
+
 {{- with site.Params.homeInfoParams }}
-{{- $hero := site.Params.hero }}
-<article class="first-entry home-info">
-    {{- with $hero.badge }}
-    <span class="hero-badge">
-        <span class="dot"></span>{{ . }}
-    </span>
-    {{- end }}
+{{- $hero := site.Params.hero | default dict }}
+{{- $brand := site.Params.brand | default dict }}
 
-    <div class="hero-avatar" aria-hidden="true">
-        <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <linearGradient id="heroStarGradient" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#4f6cf0" />
-                    <stop offset="55%" stop-color="#7c5ceb" />
-                    <stop offset="100%" stop-color="#e05dbe" />
-                </linearGradient>
-            </defs>
-            <path fill="url(#heroStarGradient)"
-                d="M24 2 C25.5 12.5 35.5 22.5 46 24 C35.5 25.5 25.5 35.5 24 46 C22.5 35.5 12.5 25.5 2 24 C12.5 22.5 22.5 12.5 24 2 Z" />
-        </svg>
-    </div>
+{{- /* ---- 真实统计 ---- */ -}}
+{{- $posts := where site.RegularPages "Section" "posts" }}
+{{- $projects := where site.RegularPages "Section" "projects" }}
+{{- $all := site.RegularPages }}
+{{- $words := 0 }}
+{{- range $all }}{{ $words = add $words .WordCount }}{{ end }}
+{{- $latest := "" }}
+{{- with $all }}{{ $latest = (index (sort . "Date" "desc") 0).Date }}{{ end }}
+{{- $wordLabel := "" }}
+{{- if ge $words 1000 }}{{ $wordLabel = printf "%.1fk" (div (float $words) 1000) }}{{ else }}{{ $wordLabel = printf "%d" $words }}{{ end }}
 
-    <header class="entry-header">
-        {{- /* 渐变文字用 background-clip 实现，会把 emoji 也一起染色，
-               所以标题文字和 emoji 分开放，emoji 单独做挥手动画 */}}
-        <h1>
-            <span class="hero-title-text">{{ .Title | markdownify }}</span>
-            {{- with $hero.emoji }}<span class="hero-wave">{{ . }}</span>{{ end }}
-        </h1>
-    </header>
+<section class="mz-hero">
+  <div class="mz-hero-inner">
+  <div class="mz-hero-main">
 
-    {{- with $hero.typing }}
-    {{- /* data-typing 交给 JS 做打字机效果；这里预置第一句，JS 失效时也能正常显示 */}}
-    <p class="hero-typing" data-typing='{{ . | jsonify }}'>
-        <span>{{ index . 0 }}</span><span class="caret"></span>
-    </p>
-    {{- end }}
+    <div class="mz-hero-left">
 
-    <div class="entry-content md-content">
-        {{- $opts := dict "display" "block" }}
-        {{ .Content | $.Page.RenderString $opts }}
-    </div>
-
-    {{- with $hero.chips }}
-    <div class="hero-chips">
-        {{- range . }}
-        <span class="hero-chip">{{ . }}</span>
+      {{- /* ---- 状态胶囊：呼吸点 + 状态 + 位置 + 实时时钟 ---- */}}
+      <div class="mz-status">
+        <span class="mz-status-dot" aria-hidden="true"><b></b><i></i></span>
+        <span class="mz-status-text">{{ $hero.status | default "持续创作中" }}</span>
+        {{- with $hero.location }}
+        <span class="mz-status-sep" aria-hidden="true">·</span>
+        <span class="mz-status-item">{{ partial "icon.html" "map-pin" }}{{ . }}</span>
         {{- end }}
-    </div>
-    {{- end }}
+        <span class="mz-status-sep" aria-hidden="true">·</span>
+        <span class="mz-status-item mz-status-clock" title="当前时间">
+          {{ partial "icon.html" "clock" }}<time id="mzClock">--:--:--</time>
+        </span>
+      </div>
 
-    <footer class="entry-footer">
-        {{ partial "social_icons.html" (dict "align" site.Params.homeInfoParams.AlignSocialIconsTo) }}
-    </footer>
-</article>
+      {{- /* ---- 大标题 ---- */}}
+      <h1 class="mz-hero-title">
+        {{- with $hero.title }}
+          {{- range $i, $line := . }}
+            {{- if eq $i 0 }}{{ $line }}{{ else }}<span class="mz-hero-accent">{{ $line }}</span>{{ end }}
+          {{- end }}
+        {{- else }}
+          {{ .Title | markdownify }}
+        {{- end }}
+      </h1>
+
+      {{- /* ---- 简介 ---- */}}
+      <p class="mz-hero-desc">{{ .Content | plainify }}</p>
+
+      {{- /* ---- 金句卡（JS 轮换，禁用 JS 时显示第一句） ---- */}}
+      {{- with $hero.quotes }}
+      <div class="mz-quote" data-quotes='{{ . | jsonify }}'>
+        {{ partial "icon.html" "sparkles" }}
+        <span class="mz-quote-text">{{ index . 0 }}</span>
+        <button class="mz-quote-btn" id="mzQuoteBtn" type="button" aria-label="换一句">
+          {{ partial "icon.html" "refresh" }}
+        </button>
+      </div>
+      {{- end }}
+
+      {{- /* ---- 元信息：全部是真实数据 ---- */}}
+      <div class="mz-hero-meta">
+        {{- range site.Params.socialIcons }}
+          {{- if in (slice "github" "email") .name }}
+          <a href="{{ .url }}"{{ if not (hasPrefix .url "mailto:") }} target="_blank" rel="noopener"{{ end }}>
+            {{ partial "icon.html" (cond (eq .name "github") "github" "mail") }}
+            <span>{{ cond (eq .name "github") "GitHub" (strings.TrimPrefix "mailto:" .url) }}</span>
+          </a>
+          <span class="mz-sep" aria-hidden="true">·</span>
+          {{- end }}
+        {{- end }}
+        <span class="mz-meta-dim">{{ partial "icon.html" "file" }}{{ len $posts }} 篇文章</span>
+        <span class="mz-sep" aria-hidden="true">·</span>
+        <span class="mz-meta-dim">{{ partial "icon.html" "folder" }}{{ len $projects }} 个项目</span>
+        <span class="mz-sep" aria-hidden="true">·</span>
+        <span class="mz-meta-dim">{{ partial "icon.html" "book" }}约 {{ $wordLabel }} 字</span>
+        {{- with $latest }}
+        <span class="mz-sep" aria-hidden="true">·</span>
+        <span class="mz-meta-dim">{{ partial "icon.html" "clock" }}更新于 {{ .Format "2006-01-02" }}</span>
+        {{- end }}
+      </div>
+    </div>
+
+    {{- /* ---- 头像 / 铭牌 ---- */}}
+    <div class="mz-avatar">
+      {{- with $hero.avatar }}
+      <img src="{{ . | relURL }}" alt="{{ site.Title }}" width="96" height="96" loading="lazy">
+      {{- else }}
+      <div class="mz-avatar-monogram" aria-hidden="true">{{ $brand.mark | default "星" }}</div>
+      {{- end }}
+    </div>
+  </div>
+
+  {{- /* ---- 分类直达：跳到对应的栏目列表页，跨分页也能用 ---- */}}
+  <div class="mz-filters">
+    <div class="mz-filter-list" aria-label="按类型浏览">
+      <a class="mz-filter{{ if .IsHome }} is-active{{ end }}" href="{{ "" | absLangURL }}">全部（{{ add (len $posts) (len $projects) }}）</a>
+      <a class="mz-filter" href="{{ "posts/" | relLangURL }}">文章（{{ len $posts }}）</a>
+      <a class="mz-filter" href="{{ "projects/" | relLangURL }}">项目（{{ len $projects }}）</a>
+    </div>
+    <span class="mz-filter-hint">共 {{ add (len $posts) (len $projects) }} 条</span>
+  </div>
+  </div>
+</section>
 {{- end -}}

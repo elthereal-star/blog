@@ -1,6 +1,48 @@
-{{- /* 头部自定义区：在 <head> 里尽早给 <html> 打上 js-reveal 标记，
-       这样滚动进场动画的「初始隐藏」状态不会出现闪一下再消失的问题。
-       若浏览器禁用 JS，则不会打这个标记，内容直接正常显示。 */ -}}
+{{- /* 头部自定义区：在 <head> 里尽早做两件事
+
+       1. 给 <html> 打上 js-reveal 标记 —— 这样滚动进场动画的「初始隐藏」
+          状态不会出现闪一下再消失的问题。若浏览器禁用 JS，则不会打这个
+          标记，内容直接正常显示。
+       2. 三态主题（纸白 / 玄黑 / 羊皮纸）的取值。必须在 <body> 渲染前定下来，
+          否则刷新时会先亮一下再用暗色重绘。 */ -}}
 <script>
-    document.documentElement.classList.add("js-reveal");
+    (function () {
+        var root = document.documentElement;
+        root.classList.add("js-reveal");
+
+        var THEMES = ["light", "dark", "sepia"];
+        var saved = null;
+        try {
+            saved = localStorage.getItem("mz-theme");
+        } catch (e) { }
+
+        // 允许用 ?theme=dark 之类的地址直接指定主题（方便分享链接、截图存档）
+        var q = null;
+        try {
+            q = new URLSearchParams(window.location.search).get("theme");
+        } catch (e) { }
+        if (q && THEMES.indexOf(q) !== -1) {
+            saved = q;
+            try {
+                localStorage.setItem("mz-theme", q);
+            } catch (e) { }
+        }
+
+        if (THEMES.indexOf(saved) === -1) {
+            saved = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        }
+
+        // data-mz-theme 是我们自己的三态色板（light / dark / sepia）；
+        // data-theme 必须同时写掉，否则它会停在服务端的初值上，
+        // 让 PaperMod 自带的 prefers-color-scheme 规则先把 body 刷成深色。
+        root.dataset.mzTheme = saved;
+        root.dataset.theme = saved === "dark" ? "dark" : "light";
+
+        // 主题自带的 data-theme 脚本读的是 pref-theme 这个键，而且它在本文件
+        // 之前执行（见 themes/PaperMod/layouts/_partials/head.html）。
+        // 不把值写回去的话，下次刷新它会按系统偏好把我们选好的玄黑改回浅色。
+        try {
+            localStorage.setItem("pref-theme", saved === "dark" ? "dark" : "light");
+        } catch (e) { }
+    })();
 </script>

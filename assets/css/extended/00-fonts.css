@@ -1,0 +1,48 @@
+/* ============================================================
+   自托管字体（由 scripts/fetch-fonts.py 生成，请勿手工编辑）
+
+   全部字体文件位于 static/fonts/，整站不请求任何第三方字体服务。
+   均为「可变字体」，一个文件覆盖全部字重；中文按站点实际用字做了子集化。
+   若日后文章用到了新的生僻字，重新执行一次脚本即可补齐。
+   ============================================================ */
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('../../fonts/inter-var.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Newsreader';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('../../fonts/newsreader-var.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Newsreader';
+  font-style: italic;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('../../fonts/newsreader-italic-var.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url('../../fonts/jetbrains-mono-var.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Noto Serif SC';
+  font-style: normal;
+  font-weight: 200 900;
+  font-display: swap;
+  src: url('../../fonts/noto-serif-sc-var.woff2') format('woff2');
+}
+

@@ -1,13 +1,14 @@
 {{- /*
   列表页模板 —— 项目级覆盖 PaperMod 的 themes/PaperMod/layouts/list.html
 
-  唯一的改动是文件末尾的 <footer class="page-footer"> 分页区块：
-  主题原版只渲染「上一页 / 下一页」，本版额外渲染：
-    « 首页 · ‹ 上一页 · [1][2][3]…[n] · 下一页 › · 末页 »
-  当前页高亮、页数多时自动折叠成省略号（总页数 ≤ 7 时全部显示）。
+  两处自定义：
+   1. 卡片换成本站自己的版式（layouts/_partials/post_card.html）
+   2. 分页在主题的「上一页 / 下一页」之外，增加页码直达与首页 / 末页：
+        « 首页 · ‹ 上一页 · [1][2][3]…[n] · 下一页 › · 末页 »
+      当前页高亮，页数多时折叠成省略号（总页数 ≤ 7 时全部列出）。
 
   其余逻辑与主题保持一致；如升级主题，请比对主题新版的 list.html 是否
-  有其它变更，再同步到这里（改这里的效果不会丢，因为项目级覆盖优先于主题）。
+  有其它变更，再同步到这里（项目级覆盖优先于主题，改动不会丢）。
 */ -}}
 {{- define "main" }}
 
@@ -23,12 +24,7 @@
     {{- if and (or (eq .Kind `term`) (eq .Kind `section`)) (.Param "ShowRssButtonInSectionTermList") }}
     {{- with .OutputFormats.Get "rss" }}
     <a href="{{ .RelPermalink }}" title="RSS" aria-label="RSS">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-        stroke-linecap="round" stroke-linejoin="round" height="23">
-        <path d="M4 11a9 9 0 0 1 9 9" />
-        <path d="M4 4a16 16 0 0 1 16 16" />
-        <circle cx="5" cy="19" r="1" />
-      </svg>
+      {{ partial "icon.html" "rss" }}
     </a>
     {{- end }}
     {{- end }}
@@ -53,7 +49,18 @@
 
 {{- if .IsHome }}
 {{- $pages = where site.RegularPages "Type" "in" site.Params.mainSections }}
-{{- $pages = where $pages "Params.hiddenInHomeList" "!=" "true"  }}
+{{- $pages = where $pages "Params.hiddenInHomeList" "!=" "true" }}
+{{- end }}
+
+{{- /* 「置顶」的文章排到最前：front matter 里写 pin: true 即可。
+       用两次手工 append 而不是 union，是为了确保顺序稳定可控。 */ -}}
+{{- $pinned := where $pages "Params.pin" true }}
+{{- if $pinned }}
+{{- $normal := where $pages "Params.pin" "!=" true }}
+{{- $ordered := slice }}
+{{- range $pinned }}{{ $ordered = $ordered | append . }}{{ end }}
+{{- range $normal }}{{ $ordered = $ordered | append . }}{{ end }}
+{{- $pages = $ordered }}
 {{- end }}
 
 {{- $paginator := .Paginate $pages }}
@@ -63,46 +70,22 @@
 {{- end }}
 
 {{- $term := .Data.Term }}
-{{- range $index, $page := $paginator.Pages }}
 
-{{- $class := "post-entry" }}
-
-{{- $user_preferred := or site.Params.disableSpecial1stPost site.Params.homeInfoParams }}
-{{- if (and $.IsHome (eq $paginator.PageNumber 1) (eq $index 0) (not $user_preferred)) }}
-{{- $class = "first-entry" }}
-{{- else if $term }}
-{{- $class = "post-entry tag-entry" }}
-{{- end }}
-
-<article class="{{ $class }}">
-  {{- $isHidden := (.Param "cover.hiddenInList") | default (.Param "cover.hidden") | default false }}
-  {{- partial "cover.html" (dict "cxt" . "IsSingle" false "isHidden" $isHidden) }}
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">
-      {{- .Title }}
-      {{- if .Draft }}
-      <span class="entry-hint" title="Draft">
-        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" fill="currentColor">
-          <path
-            d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
-        </svg>
-      </span>
-      {{- end }}
-    </h2>
-  </header>
-  {{- if (ne (.Param "hideSummary") true) }}
-  <div class="entry-content">
-    <p>{{ .Summary | plainify | htmlUnescape }}{{ if .Truncated }}...{{ end }}</p>
+{{- /* 主页第 2 页起，给个返回首页的入口（否则筛选条只在第 1 页有） */}}
+{{- if and .IsHome (gt $paginator.PageNumber 1) }}
+<div class="mz-filters" style="border:0;padding-top:0;margin:0 0 18px">
+  <div class="mz-filter-list">
+    <a class="mz-filter is-active" href="{{ "" | absLangURL }}">← 回到首页</a>
   </div>
-  {{- end }}
-  {{- if not (.Param "hideMeta") }}
-  <footer class="entry-footer">
-    {{- partial "post_meta.html" . -}}
-  </footer>
-  {{- end }}
-  <a class="entry-link" aria-label="post link to {{ .Title | plainify }}" href="{{ .Permalink }}"></a>
-</article>
+  <span class="mz-filter-hint">{{ i18n "page_counter" (dict "Current" $paginator.PageNumber "Total" $paginator.TotalPages) }}</span>
+</div>
 {{- end }}
+
+<div class="mz-list">
+{{- range $paginator.Pages }}
+{{- partial "post_card.html" . }}
+{{- end }}
+</div>
 
 {{- if gt $paginator.TotalPages 1 }}
 <footer class="page-footer">

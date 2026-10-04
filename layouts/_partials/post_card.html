@@ -1,0 +1,67 @@
+{{- /* 单张文章卡片。
+       入参：页面对象（.）
+       用法：{{ partial "post_card.html" . }}
+
+       结构（整卡可点，但书签按钮是独立可点的）：
+         ┌────────────────────────────────────────────┐
+         │ 置顶 · 日期 · N 分钟阅读 · 分类        [书签] │
+         │ 标题（衬线）                        [↗ 悬停滑出] │
+         │ 副标题                                       │
+         │ 摘要（两行截断）                              │
+         │ #标签 #标签                          1.2k 字 │
+         └────────────────────────────────────────────┘ */ -}}
+
+{{- $sections := dict "posts" "文章" "projects" "项目" -}}
+{{- $sectionName := index $sections .Section | default .Section -}}
+
+<article class="post-entry" data-section="{{ .Section }}" data-url="{{ .Permalink }}">
+    <a class="mz-card-link" href="{{ .Permalink }}" aria-label="{{ .Title | plainify }}"></a>
+
+    <div class="mz-card-body">
+
+        <div class="mz-card-meta">
+            <div class="mz-card-meta-left">
+                {{- if .Params.pin }}
+                <span class="mz-card-pin">{{ partial "icon.html" "pin" }}<span>置顶</span></span>
+                <span class="mz-card-sep" aria-hidden="true">·</span>
+                {{- end }}
+                <span class="mz-card-date">{{ .Date | time.Format (site.Params.DateFormat | default "2006年1月2日") }}</span>
+                <span class="mz-card-sep" aria-hidden="true">·</span>
+                <span class="mz-card-read">{{ .ReadingTime }} 分钟阅读</span>
+                <span class="mz-card-sep" aria-hidden="true">·</span>
+                <span class="mz-card-cat">{{ $sectionName }}</span>
+            </div>
+            <button class="mz-card-bookmark mz-interactive" type="button"
+                data-bookmark-id="{{ .Permalink }}"
+                data-bookmark-title="{{ .Title }}"
+                aria-label="收藏《{{ .Title }}》" aria-pressed="false"
+                title="收藏到我的书签">
+                {{ partial "icon.html" "bookmark" }}
+            </button>
+        </div>
+
+        <h2 class="mz-card-title">
+            <span>{{ .Title }}</span>
+            {{ partial "icon.html" (dict "name" "arrow-up-right" "class" "mz-card-arrow") }}
+        </h2>
+
+        {{- with .Description }}
+        <p class="mz-card-sub">{{ . }}</p>
+        {{- end }}
+
+        {{- if not (.Param "hideSummary") }}
+        <p class="mz-card-excerpt">{{ .Summary | plainify | htmlUnescape }}{{ if .Truncated }}…{{ end }}</p>
+        {{- end }}
+
+        <div class="mz-card-foot">
+            <div class="mz-card-tags">
+                {{- range first 4 (.GetTerms "tags") }}
+                <span>#{{ .LinkTitle }}</span>
+                {{- end }}
+            </div>
+            <span class="mz-card-like" title="正文字数">
+                {{ partial "icon.html" "heart" }}{{ .WordCount }} 字
+            </span>
+        </div>
+    </div>
+</article>
