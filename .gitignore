@@ -17,3 +17,6 @@ Thumbs.db
 *.log
 *.tmp
 *.bak
+
+# ===== 本地预览截图（无头 Chrome 产物） =====
+.preview/
