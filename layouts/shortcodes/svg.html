@@ -1,0 +1,31 @@
+{{- /* 通用 SVG 示意图短代码
+       ------------------------------------------------------------------
+       用法：
+         {{< svg "cache-breakdown" >}}
+         {{< svg "cache-breakdown" "缓存击穿：热点 key 过期的瞬间" >}}
+
+       第一个参数是 assets/svg/<名字>.svg 的文件名（不带扩展名）
+       第二个参数是可选图注
+
+       为什么内联而不是 <img>：
+       - 内联后 SVG 里的元素能直接继承页面的 CSS 变量，
+         深色模式自动适配，不用准备两套图
+       - 可以用 IntersectionObserver 控制「滚进视口才播放动画」
+       - 禁用 JS 时内容依然完整可读（见 custom.css 第 13 节）
+       ------------------------------------------------------------------ */ -}}
+{{- $name := .Get 0 | default (.Get "name") -}}
+{{- $caption := .Get 1 | default (.Get "caption") -}}
+{{- $res := resources.Get (printf "svg/%s.svg" $name) -}}
+{{- with $res -}}
+<figure class="svg-fig" data-anim-play>
+  {{ .Content | safeHTML }}
+  {{- with $caption }}
+  <figcaption>{{ . | markdownify }}</figcaption>
+  {{- end }}
+</figure>
+{{- else -}}
+{{- warnf "svg 短代码找不到图：assets/svg/%s.svg" $name -}}
+<figure class="svg-fig svg-fig-missing">
+  <div class="svg-fig-missing-inner">缺图：{{ $name }}.svg</div>
+</figure>
+{{- end -}}

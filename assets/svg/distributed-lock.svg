@@ -1,0 +1,22 @@
+<svg viewBox="0 0 720 420" role="img" aria-labelledby="distributed-lock-t">
+<title id="distributed-lock-t">分布式锁：多台服务器抢一把全局锁</title>
+<defs><marker id="distributed-lock-ah-acc" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="distributed-lock-ah-warn" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-warn)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="distributed-lock-ah-ok" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-ok)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="distributed-lock-ah-dim" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--border)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="sf-title" x="24" y="26">分布式锁：为什么 synchronized 不够用</text>
+<text class="sf-sub" x="24" y="48">锁必须放在所有机器都能看到的地方，JVM 内部的东西别人看不见</text>
+<g class="sf-pop" style="--d:0.08s"><rect class="sf-box" x="85" y="88" width="170" height="50" rx="10"/><text class="sf-t sf-mid" x="170" y="105" text-anchor="middle">服务器 A</text><text class="sf-t-sm sf-mid" x="170" y="123" text-anchor="middle">各自一个 JVM</text></g>
+<g class="sf-pop" style="--d:0.18s"><rect class="sf-box" x="275" y="88" width="170" height="50" rx="10"/><text class="sf-t sf-mid" x="360" y="105" text-anchor="middle">服务器 B</text><text class="sf-t-sm sf-mid" x="360" y="123" text-anchor="middle">各自一个 JVM</text></g>
+<g class="sf-pop" style="--d:0.28s"><rect class="sf-box" x="465" y="88" width="170" height="50" rx="10"/><text class="sf-t sf-mid" x="550" y="105" text-anchor="middle">服务器 C</text><text class="sf-t-sm sf-mid" x="550" y="123" text-anchor="middle">各自一个 JVM</text></g>
+<path class="sf-line sf-draw" d="M170 138 L230 194" pathLength="1" marker-end="url(#distributed-lock-ah-acc)" style="--d:0.4s"/>
+<path class="sf-line sf-draw" d="M360 138 L360 194" pathLength="1" marker-end="url(#distributed-lock-ah-acc)" style="--d:0.45s"/>
+<path class="sf-line sf-draw" d="M550 138 L490 194" pathLength="1" marker-end="url(#distributed-lock-ah-acc)" style="--d:0.5s"/>
+<g class="sf-pop" style="--d:0.6s"><rect class="sf-box-solid" x="140" y="196" width="440" height="62" rx="10"/><text class="sf-t-inv sf-mid" x="360" y="219" text-anchor="middle">Redis 小黑板</text><text class="sf-t-inv sf-mid" x="360" y="237" text-anchor="middle">SETNX 抢锁 → 业务执行 → DEL 释放</text></g>
+<circle class="sf-ring" cx="360" cy="227" r="84" fill="none" stroke="var(--sf-warn)" stroke-width="1.6" style="--d:0.9s"/>
+<path class="sf-line-dim" d="M170 258 L170 288" stroke-dasharray="4 4" style="--d:0.8s"/>
+<path class="sf-line-dim" d="M360 258 L360 288" stroke-dasharray="4 4" style="--d:0.8s"/>
+<path class="sf-line-dim" d="M550 258 L550 288" stroke-dasharray="4 4" style="--d:0.8s"/>
+<g class="sf-pop" style="--d:0.9s"><rect class="sf-box-ok" x="85" y="292" width="170" height="48" rx="10"/><text class="sf-t-ok sf-mid" x="170" y="316" text-anchor="middle">抢到锁 ✓</text></g>
+<g class="sf-pop" style="--d:0.98s"><rect class="sf-box" x="275" y="292" width="170" height="48" rx="10"/><text class="sf-t-dim sf-mid" x="360" y="316" text-anchor="middle">抢锁失败，稍后重试</text></g>
+<g class="sf-pop" style="--d:1.06s"><rect class="sf-box" x="465" y="292" width="170" height="48" rx="10"/><text class="sf-t-dim sf-mid" x="550" y="316" text-anchor="middle">抢锁失败，稍后重试</text></g>
+<g class="sf-pop" style="--d:1.2s"><text class="sf-t-dim" x="24" y="378" text-anchor="start">关键：锁的「可见范围」必须大于被保护资源的范围。</text></g>
+<g class="sf-pop" style="--d:1.3s"><text class="sf-t-dim" x="24" y="400" text-anchor="start">Zookeeper 分布式锁、数据库乐观锁解决的是同一件事，只是「小黑板」换了个地方。</text></g>
+</svg>

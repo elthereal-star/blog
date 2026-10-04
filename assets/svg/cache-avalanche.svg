@@ -1,0 +1,28 @@
+<svg viewBox="0 0 720 440" role="img" aria-labelledby="cache-avalanche-t">
+<title id="cache-avalanche-t">缓存雪崩：大量 key 同时过期</title>
+<defs><marker id="cache-avalanche-ah-acc" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="cache-avalanche-ah-warn" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-warn)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="cache-avalanche-ah-ok" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-ok)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="cache-avalanche-ah-dim" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--border)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="sf-title" x="24" y="26">缓存雪崩：大量 key 同一时刻集体过期</text>
+<text class="sf-sub" x="24" y="48">请求瞬间全落到 DB 上。和击穿的区别是：击穿是「一个热点」，雪崩是「量大面广」</text>
+<g class="sf-pop" style="--d:0.05s"><rect class="sf-box-ghost" x="24" y="84" width="660" height="140" rx="14"/><text class="sf-t-sm" x="38" y="100" text-anchor="start">① 没打散：过期时间撞在一起</text></g>
+<g class="sf-pop" style="--d:0.15s"><rect class="sf-box-a" x="60" y="116" width="340" height="8" rx="4"/><text class="sf-t sf-mid" x="230" y="120" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.2s"><rect class="sf-box-a" x="60" y="129" width="340" height="8" rx="4"/><text class="sf-t sf-mid" x="230" y="133" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.25s"><rect class="sf-box-a" x="60" y="142" width="340" height="8" rx="4"/><text class="sf-t sf-mid" x="230" y="146" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.3s"><rect class="sf-box-a" x="60" y="155" width="340" height="8" rx="4"/><text class="sf-t sf-mid" x="230" y="159" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.35s"><rect class="sf-box-a" x="60" y="168" width="340" height="8" rx="4"/><text class="sf-t sf-mid" x="230" y="172" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.4s"><rect class="sf-box-a" x="60" y="181" width="340" height="8" rx="4"/><text class="sf-t sf-mid" x="230" y="185" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.45s"><rect class="sf-box-a" x="60" y="194" width="340" height="8" rx="4"/><text class="sf-t sf-mid" x="230" y="198" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.5s"><rect class="sf-box-a" x="60" y="207" width="340" height="8" rx="4"/><text class="sf-t sf-mid" x="230" y="211" text-anchor="middle"></text></g>
+<path class="sf-line-warn sf-draw" d="M400 108 L400 218" pathLength="1"/>
+<g class="sf-pop" style="--d:0.6s"><text class="sf-t-warn" x="414" y="164" text-anchor="start">同一秒全过期 → DB 出现尖峰</text></g>
+<g class="sf-pop" style="--d:0.4s"><rect class="sf-box-ghost" x="24" y="244" width="660" height="140" rx="14"/><text class="sf-t-sm" x="38" y="260" text-anchor="start">② 打散后：过期时间错开</text></g>
+<g class="sf-pop" style="--d:0.5s"><rect class="sf-box-ok" x="60" y="276" width="180" height="8" rx="4"/><text class="sf-t sf-mid" x="150" y="280" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.55s"><rect class="sf-box-ok" x="60" y="289" width="240" height="8" rx="4"/><text class="sf-t sf-mid" x="180" y="293" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.6s"><rect class="sf-box-ok" x="60" y="302" width="200" height="8" rx="4"/><text class="sf-t sf-mid" x="160" y="306" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.65s"><rect class="sf-box-ok" x="60" y="315" width="292" height="8" rx="4"/><text class="sf-t sf-mid" x="206" y="319" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.7s"><rect class="sf-box-ok" x="60" y="328" width="232" height="8" rx="4"/><text class="sf-t sf-mid" x="176" y="332" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.75s"><rect class="sf-box-ok" x="60" y="341" width="320" height="8" rx="4"/><text class="sf-t sf-mid" x="220" y="345" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.8s"><rect class="sf-box-ok" x="60" y="354" width="262" height="8" rx="4"/><text class="sf-t sf-mid" x="191" y="358" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.85s"><rect class="sf-box-ok" x="60" y="367" width="340" height="8" rx="4"/><text class="sf-t sf-mid" x="230" y="371" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:1s"><text class="sf-t-ok" x="414" y="322" text-anchor="start">过期时刻被摊开 → DB 压力平缓</text></g>
+<g class="sf-pop" style="--d:1.1s"><text class="sf-t-dim" x="24" y="416" text-anchor="start">解法：过期时间加随机抖动、多级缓存、热点数据永不过期、过期时刻加互斥锁。</text></g>
+</svg>

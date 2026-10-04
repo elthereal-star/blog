@@ -1,0 +1,17 @@
+<svg viewBox="0 0 720 400" role="img" aria-labelledby="cache-penetration-t">
+<title id="cache-penetration-t">缓存穿透：查询不存在的数据导致每次都打到数据库</title>
+<defs><marker id="cache-penetration-ah-acc" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="cache-penetration-ah-warn" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-warn)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="cache-penetration-ah-ok" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-ok)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="cache-penetration-ah-dim" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--border)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="sf-title" x="24" y="26">缓存穿透：查一个根本不存在的数据</text>
+<text class="sf-sub" x="24" y="48">缓存和数据库都没有，于是每次请求都打到 DB —— 被人刷时数据库必挂</text>
+<g class="sf-pop" style="--d:0.05s"><rect class="sf-box-warn" x="24" y="118" width="180" height="64" rx="10"/><text class="sf-t-warn sf-mid" x="114" y="142" text-anchor="middle">请求 id = -1</text><text class="sf-t-sm sf-mid" x="114" y="160" text-anchor="middle">不存在的数据</text></g>
+<path class="sf-line-warn sf-draw" d="M204 150 L228 150" pathLength="1" marker-end="url(#cache-penetration-ah-warn)" style="--d:0.3s"/>
+<g class="sf-pop" style="--d:0.15s"><rect class="sf-box-warn" x="230" y="118" width="180" height="64" rx="10"/><text class="sf-t-warn sf-mid" x="320" y="142" text-anchor="middle">Redis</text><text class="sf-t-sm sf-mid" x="320" y="160" text-anchor="middle">永远查不到，不会缓存</text></g>
+<path class="sf-line-warn sf-draw" d="M410 150 L434 150" pathLength="1" marker-end="url(#cache-penetration-ah-warn)" style="--d:0.4s"/>
+<g class="sf-pop" style="--d:0.25s"><rect class="sf-box-warn" x="436" y="118" width="260" height="64" rx="10"/><text class="sf-t-warn sf-mid" x="566" y="142" text-anchor="middle">MySQL</text><text class="sf-t-sm sf-mid" x="566" y="160" text-anchor="middle">也查不到 → 返回空结果</text></g>
+<path class="sf-line-warn sf-flow" d="M566 184 L566 242 L114 242 L114 186" marker-end="url(#cache-penetration-ah-warn)" stroke-dasharray="5 5"/>
+<g class="sf-pop" style="--d:0.6s"><text class="sf-t-warn" x="340" y="266" text-anchor="middle">查不到就什么都不写 → 下一个同样的请求，完整重复一遍</text></g>
+<g class="sf-pop" style="--d:0.7s"><text class="sf-t-dim" x="24" y="306" text-anchor="start">三种常见解法</text></g>
+<g class="sf-pop" style="--d:0.75s"><rect class="sf-box-a" x="24" y="320" width="206" height="44" rx="10"/><text class="sf-t-acc sf-mid" x="127" y="342" text-anchor="middle">布隆过滤器：先挡掉肯定不存在的</text></g>
+<g class="sf-pop" style="--d:0.85s"><rect class="sf-box-a" x="244" y="320" width="206" height="44" rx="10"/><text class="sf-t-acc sf-mid" x="347" y="342" text-anchor="middle">缓存空值：查不到也写个空对象</text></g>
+<g class="sf-pop" style="--d:0.95s"><rect class="sf-box-a" x="464" y="320" width="208" height="44" rx="10"/><text class="sf-t-acc sf-mid" x="568" y="342" text-anchor="middle">参数校验：非法 id 直接拒掉</text></g>
+</svg>

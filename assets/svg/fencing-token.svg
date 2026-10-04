@@ -1,0 +1,18 @@
+<svg viewBox="0 0 720 380" role="img" aria-labelledby="fencing-token-t">
+<title id="fencing-token-t">Fencing Token 用递增编号拒绝旧客户端写入</title>
+<defs><marker id="fencing-token-ah-acc" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="fencing-token-ah-warn" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-warn)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="fencing-token-ah-ok" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-ok)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="fencing-token-ah-dim" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--border)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="sf-title" x="24" y="26">Fencing Token：挡住「睡醒的老客户端」</text>
+<text class="sf-sub" x="24" y="48">存储端记住见过的最大编号，编号比它小的写入一律拒绝</text>
+<g class="sf-pop" style="--d:0.05s"><rect class="sf-box" x="24" y="104" width="200" height="56" rx="10"/><text class="sf-t sf-mid" x="124" y="124" text-anchor="middle">客户端 A</text><text class="sf-t-sm sf-mid" x="124" y="142" text-anchor="middle">拿到 token = 33</text></g>
+<g class="sf-pop" style="--d:0.15s"><rect class="sf-box" x="24" y="254" width="200" height="56" rx="10"/><text class="sf-t sf-mid" x="124" y="274" text-anchor="middle">客户端 B</text><text class="sf-t-sm sf-mid" x="124" y="292" text-anchor="middle">拿到 token = 34</text></g>
+<g class="sf-pop" style="--d:0.3s"><rect class="sf-box" x="300" y="164" width="170" height="96" rx="10"/><text class="sf-t sf-mid" x="385" y="195" text-anchor="middle">存储端</text><text class="sf-t-sm sf-mid" x="385" y="211" text-anchor="middle">记住见过的最大编号</text><text class="sf-mono sf-mid" x="385" y="227" text-anchor="middle">max token = 34</text></g>
+<g class="sf-pop" style="--d:0.45s"><rect class="sf-box-warn" x="520" y="96" width="176" height="68" rx="10"/><text class="sf-t-warn sf-mid" x="608" y="122" text-anchor="middle">✗ 拒绝</text><text class="sf-t-sm sf-mid" x="608" y="140" text-anchor="middle">33 &lt; 34</text></g>
+<g class="sf-pop" style="--d:0.55s"><rect class="sf-box-ok" x="520" y="248" width="176" height="68" rx="10"/><text class="sf-t-ok sf-mid" x="608" y="274" text-anchor="middle">✓ 接受</text><text class="sf-t-sm sf-mid" x="608" y="292" text-anchor="middle">34 ≥ 34</text></g>
+<path class="sf-line-warn sf-draw" d="M224 128 L296 178" pathLength="1" marker-end="url(#fencing-token-ah-warn)" style="--d:0.65s"/>
+<g class="sf-pop" style="--d:0.7s"><text class="sf-t-warn" x="238" y="146" text-anchor="start">写 token=33</text></g>
+<path class="sf-line-warn sf-draw" d="M470 188 L516 134" pathLength="1" marker-end="url(#fencing-token-ah-warn)" style="--d:0.8s"/>
+<path class="sf-line-ok sf-draw" d="M224 286 L296 246" pathLength="1" marker-end="url(#fencing-token-ah-ok)" style="--d:0.75s"/>
+<g class="sf-pop" style="--d:0.82s"><text class="sf-t-ok" x="238" y="300" text-anchor="start">写 token=34</text></g>
+<path class="sf-line-ok sf-draw" d="M470 232 L516 278" pathLength="1" marker-end="url(#fencing-token-ah-ok)" style="--d:0.9s"/>
+<g class="sf-pop" style="--d:1.05s"><text class="sf-t-dim" x="24" y="344" text-anchor="start">关键：锁服务和存储端要共享同一个单调递增计数器，否则「老客户端」根本无法被识别。</text></g>
+</svg>

@@ -1,0 +1,27 @@
+<svg viewBox="0 0 720 450" role="img" aria-labelledby="websocket-vs-http-t">
+<title id="websocket-vs-http-t">HTTP 轮询与 WebSocket 长连接的对比</title>
+<defs><marker id="websocket-vs-http-ah-acc" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="websocket-vs-http-ah-warn" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-warn)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="websocket-vs-http-ah-ok" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-ok)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="websocket-vs-http-ah-dim" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--border)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="sf-title" x="24" y="26">HTTP 轮询 vs WebSocket</text>
+<text class="sf-sub" x="24" y="48">同样是「服务端有新消息就推给我」，两种做法的代价差很多</text>
+<g class="sf-pop" style="--d:0.05s"><rect class="sf-box-ghost" x="24" y="84" width="660" height="160" rx="14"/><text class="sf-t-sm" x="38" y="100" text-anchor="start">① HTTP 轮询：反复建连，大量空响应</text></g>
+<g class="sf-pop" style="--d:0.1s"><rect class="sf-box" x="48" y="140" width="120" height="56" rx="10"/><text class="sf-t sf-mid" x="108" y="168" text-anchor="middle">客户端</text></g>
+<g class="sf-pop" style="--d:0.1s"><rect class="sf-box" x="556" y="140" width="120" height="56" rx="10"/><text class="sf-t sf-mid" x="616" y="168" text-anchor="middle">服务端</text></g>
+<path class="sf-line sf-draw" d="M168 150 L552 150" pathLength="1" marker-end="url(#websocket-vs-http-ah-acc)" style="--d:0.2s"/>
+<path class="sf-line sf-draw" d="M552 162 L168 162" pathLength="1" marker-end="url(#websocket-vs-http-ah-dim)" style="--d:0.25s"/>
+<g class="sf-pop" style="--d:0.3s"><text class="sf-t-sm" x="360" y="142" text-anchor="middle">无新数据</text></g>
+<path class="sf-line sf-draw" d="M168 186 L552 186" pathLength="1" marker-end="url(#websocket-vs-http-ah-acc)" style="--d:0.3s"/>
+<path class="sf-line sf-draw" d="M552 198 L168 198" pathLength="1" marker-end="url(#websocket-vs-http-ah-dim)" style="--d:0.35s"/>
+<g class="sf-pop" style="--d:0.4s"><text class="sf-t-sm" x="360" y="178" text-anchor="middle">无新数据</text></g>
+<path class="sf-line sf-draw" d="M168 222 L552 222" pathLength="1" marker-end="url(#websocket-vs-http-ah-acc)" style="--d:0.4s"/>
+<path class="sf-line sf-draw" d="M552 234 L168 234" pathLength="1" marker-end="url(#websocket-vs-http-ah-dim)" style="--d:0.45s"/>
+<g class="sf-pop" style="--d:0.5s"><text class="sf-t-ok" x="360" y="214" text-anchor="middle">有新数据 ✓</text></g>
+<g class="sf-pop" style="--d:0.6s"><rect class="sf-box-ghost" x="24" y="268" width="660" height="160" rx="14"/><text class="sf-t-sm" x="38" y="284" text-anchor="start">② WebSocket：一次握手，之后双向随时推</text></g>
+<g class="sf-pop" style="--d:0.65s"><rect class="sf-box-a" x="48" y="310" width="120" height="56" rx="10"/><text class="sf-t sf-mid" x="108" y="338" text-anchor="middle">客户端</text></g>
+<g class="sf-pop" style="--d:0.65s"><rect class="sf-box-a" x="556" y="310" width="120" height="56" rx="10"/><text class="sf-t sf-mid" x="616" y="338" text-anchor="middle">服务端</text></g>
+<path class="sf-line sf-draw" d="M168 338 L552 338" pathLength="1" marker-end="url(#websocket-vs-http-ah-acc)" style="--d:0.8s"/>
+<g class="sf-pop" style="--d:0.85s"><text class="sf-t-sm" x="360" y="328" text-anchor="middle">① 握手升级协议（只这一次）</text></g>
+<path class="sf-line-ok sf-flow" d="M168 372 L552 372" stroke-dasharray="5 5" style="--d:0.95s"/>
+<path class="sf-line-ok sf-flow" d="M552 388 L168 388" stroke-dasharray="5 5" style="--d:1s"/>
+<g class="sf-pop" style="--d:1.1s"><text class="sf-t-ok" x="360" y="410" text-anchor="middle">② 之后任何时候，双方都能直接推</text></g>
+<g class="sf-pop" style="--d:1.2s"><text class="sf-t-dim" x="24" y="448" text-anchor="start">轮询实现简单但浪费连接和带宽；WebSocket 一次连接长期复用，代价是要自己处理断线重连。</text></g>
+</svg>

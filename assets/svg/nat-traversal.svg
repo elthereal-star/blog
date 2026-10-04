@@ -1,0 +1,19 @@
+<svg viewBox="0 0 720 380" role="img" aria-labelledby="nat-traversal-t">
+<title id="nat-traversal-t">内网穿透：内网机器主动连出去建立隧道</title>
+<defs><marker id="nat-traversal-ah-acc" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="nat-traversal-ah-warn" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-warn)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="nat-traversal-ah-ok" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-ok)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="nat-traversal-ah-dim" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--border)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="sf-title" x="24" y="26">内网穿透：让没有公网 IP 的服务也能被访问</text>
+<text class="sf-sub" x="24" y="48">内网机器主动连出去，在有公网 IP 的服务器上开一个入口</text>
+<g class="sf-pop" style="--d:0.05s"><rect class="sf-box-ghost" x="24" y="96" width="260" height="210" rx="14"/><text class="sf-t-sm" x="38" y="112" text-anchor="start">内网（没有公网 IP）</text></g>
+<g class="sf-pop" style="--d:0.1s"><rect class="sf-box" x="44" y="130" width="220" height="50" rx="10"/><text class="sf-t sf-mid" x="154" y="147" text-anchor="middle">frp 客户端</text><text class="sf-t-sm sf-mid" x="154" y="165" text-anchor="middle">始终主动连出去</text></g>
+<g class="sf-pop" style="--d:0.2s"><rect class="sf-box-a" x="44" y="216" width="220" height="50" rx="10"/><text class="sf-t sf-mid" x="154" y="233" text-anchor="middle">本地服务 :8080</text><text class="sf-t-sm sf-mid" x="154" y="251" text-anchor="middle">真正干活的程序</text></g>
+<path class="sf-line sf-draw" d="M154 214 L154 184" pathLength="1" marker-end="url(#nat-traversal-ah-acc)" style="--d:0.4s"/>
+<g class="sf-pop" style="--d:0.5s"><rect class="sf-box-solid" x="330" y="140" width="180" height="110" rx="10"/><text class="sf-t-inv sf-mid" x="420" y="187" text-anchor="middle">云服务器</text><text class="sf-t-inv sf-mid" x="420" y="205" text-anchor="middle">frp 服务端 + Nginx</text></g>
+<g class="sf-pop" style="--d:0.6s"><rect class="sf-box" x="556" y="160" width="140" height="70" rx="10"/><text class="sf-t sf-mid" x="626" y="187" text-anchor="middle">外部用户</text><text class="sf-t-sm sf-mid" x="626" y="205" text-anchor="middle">访问你的域名</text></g>
+<path class="sf-line sf-draw" d="M264 156 L326 178" pathLength="1" marker-end="url(#nat-traversal-ah-acc)" style="--d:0.7s"/>
+<g class="sf-pop" style="--d:0.75s"><text class="sf-t-sm" x="292" y="140" text-anchor="middle">① 注册隧道</text></g>
+<path class="sf-line sf-draw" d="M552 188 L514 188" pathLength="1" marker-end="url(#nat-traversal-ah-acc)" style="--d:0.85s"/>
+<g class="sf-pop" style="--d:0.9s"><text class="sf-t-sm" x="533" y="178" text-anchor="middle">② 请求</text></g>
+<path class="sf-line sf-draw" d="M330 228 L268 246" pathLength="1" marker-end="url(#nat-traversal-ah-acc)" style="--d:1s"/>
+<g class="sf-pop" style="--d:1.05s"><text class="sf-t-sm" x="300" y="262" text-anchor="middle">③ 转发到内网</text></g>
+<g class="sf-pop" style="--d:1.2s"><text class="sf-t-dim" x="24" y="348" text-anchor="start">对外的入口只有一个公网地址，内网机器始终是主动连出去的 —— 不用改路由器，也不要公网 IP。</text></g>
+</svg>

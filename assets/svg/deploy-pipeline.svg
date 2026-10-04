@@ -1,0 +1,21 @@
+<svg viewBox="0 0 720 370" role="img" aria-labelledby="deploy-pipeline-t">
+<title id="deploy-pipeline-t">从本地代码到域名可访问的部署流程</title>
+<defs><marker id="deploy-pipeline-ah-acc" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="deploy-pipeline-ah-warn" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-warn)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="deploy-pipeline-ah-ok" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-ok)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="deploy-pipeline-ah-dim" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--border)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="sf-title" x="24" y="26">把一个项目部署到别人也能访问</text>
+<text class="sf-sub" x="24" y="48">从本地代码到域名可访问，每一步都在解决一个具体问题</text>
+<g class="sf-pop" style="--d:0.05s"><rect class="sf-box" x="24" y="100" width="150" height="62" rx="10"/><text class="sf-t sf-mid" x="99" y="123" text-anchor="middle">本地代码</text><text class="sf-t-sm sf-mid" x="99" y="141" text-anchor="middle">开发完成</text></g>
+<g class="sf-pop" style="--d:0.15s"><rect class="sf-box" x="198" y="100" width="150" height="62" rx="10"/><text class="sf-t sf-mid" x="273" y="123" text-anchor="middle">git push</text><text class="sf-t-sm sf-mid" x="273" y="141" text-anchor="middle">推到远程仓库</text></g>
+<g class="sf-pop" style="--d:0.25s"><rect class="sf-box" x="372" y="100" width="150" height="62" rx="10"/><text class="sf-t sf-mid" x="447" y="123" text-anchor="middle">服务器拉取</text><text class="sf-t-sm sf-mid" x="447" y="141" text-anchor="middle">git pull</text></g>
+<g class="sf-pop" style="--d:0.35s"><rect class="sf-box" x="546" y="100" width="150" height="62" rx="10"/><text class="sf-t sf-mid" x="621" y="123" text-anchor="middle">Maven 打包</text><text class="sf-t-sm sf-mid" x="621" y="141" text-anchor="middle">mvn package</text></g>
+<path class="sf-line sf-draw" d="M174 131 L198 131" pathLength="1" marker-end="url(#deploy-pipeline-ah-acc)" style="--d:0.5s"/>
+<path class="sf-line sf-draw" d="M348 131 L372 131" pathLength="1" marker-end="url(#deploy-pipeline-ah-acc)" style="--d:0.5s"/>
+<path class="sf-line sf-draw" d="M522 131 L546 131" pathLength="1" marker-end="url(#deploy-pipeline-ah-acc)" style="--d:0.5s"/>
+<g class="sf-pop" style="--d:0.7s"><rect class="sf-box-a" x="24" y="232" width="204" height="62" rx="10"/><text class="sf-t sf-mid" x="126" y="255" text-anchor="middle">启动 JAR</text><text class="sf-t-sm sf-mid" x="126" y="273" text-anchor="middle">nohup java -jar</text></g>
+<g class="sf-pop" style="--d:0.8s"><rect class="sf-box-a" x="254" y="232" width="204" height="62" rx="10"/><text class="sf-t sf-mid" x="356" y="255" text-anchor="middle">Nginx 反向代理</text><text class="sf-t-sm sf-mid" x="356" y="273" text-anchor="middle">80 端口 → 8080</text></g>
+<g class="sf-pop" style="--d:0.9s"><rect class="sf-box-a" x="484" y="232" width="204" height="62" rx="10"/><text class="sf-t sf-mid" x="586" y="255" text-anchor="middle">域名访问</text><text class="sf-t-sm sf-mid" x="586" y="273" text-anchor="middle">浏览器打开站点</text></g>
+<path class="sf-line sf-draw" d="M228 263 L252 263" pathLength="1" marker-end="url(#deploy-pipeline-ah-acc)" style="--d:1s"/>
+<path class="sf-line sf-draw" d="M458 263 L482 263" pathLength="1" marker-end="url(#deploy-pipeline-ah-acc)" style="--d:1.05s"/>
+<path class="sf-line sf-draw" d="M621 164 L621 200 L126 200 L126 228" pathLength="1" marker-end="url(#deploy-pipeline-ah-acc)" style="--d:1.15s"/>
+<g class="sf-pop" style="--d:1.25s"><text class="sf-t-sm" x="374" y="192" text-anchor="middle">打包产物在服务器上跑起来</text></g>
+<g class="sf-pop" style="--d:1.35s"><text class="sf-t-dim" x="24" y="336" text-anchor="start">如果只是想让别人看到，还有更省事的路线：Vercel / Netlify 直接连仓库，push 完自动部署。</text></g>
+</svg>

@@ -15,6 +15,8 @@
    9. 页脚与回到顶部
    10. 滚动进场动画
    11. 无障碍与移动端
+   12. 文章内 SVG 动画（Spring Boot 对比图专用）
+   13. 通用 SVG 示意图图库（svg 短代码）
    ============================================================ */
 
 /* ==================== 1. 品牌配色与主题变量 ==================== */
@@ -1034,5 +1036,343 @@ body::after {
 
     .sb-compare figcaption {
         text-align: left;
+    }
+}
+
+/* ==================== 13. 通用 SVG 示意图图库 ==================== */
+
+/* 用法：文章里写 {{< svg "图名" "图注" >}}
+   模板见 layouts/shortcodes/svg.html，图形文件在 assets/svg/<图名>.svg
+   图形由 scripts/make-svgs.py 生成，改图改脚本再重跑即可。
+
+   设计约束：
+   - 所有颜色走 CSS 变量，深浅色主题自动适配，不用准备两套图
+   - 无 JS 时内容完整显示；只有 html.js-reveal 存在时才先隐藏元素
+   - 所有动效在 prefers-reduced-motion 下整体降级为静态
+   ------------------------------------------------------------ */
+
+/* 语义色板 —— 让同一套图形在两种主题下都清晰 */
+:root {
+    --sf-accent: var(--brand-1);
+    --sf-accent-soft: rgba(79, 108, 240, 0.10);
+    --sf-accent-line: rgba(79, 108, 240, 0.42);
+    --sf-warn: #cf6f36;
+    --sf-warn-soft: rgba(207, 111, 54, 0.11);
+    --sf-warn-line: rgba(207, 111, 54, 0.42);
+    --sf-ok: #2b8f60;
+    --sf-ok-soft: rgba(43, 143, 96, 0.11);
+    --sf-ok-line: rgba(43, 143, 96, 0.42);
+    --sf-surface: var(--code-bg);
+}
+
+:root[data-theme="dark"] {
+    --sf-accent: #7c8cf5;
+    --sf-accent-soft: rgba(124, 140, 245, 0.15);
+    --sf-accent-line: rgba(124, 140, 245, 0.48);
+    --sf-warn: #e0a068;
+    --sf-warn-soft: rgba(224, 160, 104, 0.14);
+    --sf-warn-line: rgba(224, 160, 104, 0.48);
+    --sf-ok: #5cc98d;
+    --sf-ok-soft: rgba(92, 201, 141, 0.14);
+    --sf-ok-line: rgba(92, 201, 141, 0.48);
+    --sf-surface: #1a1d29;
+}
+
+/* ---- 外层容器 ---- */
+.svg-fig {
+    margin: 32px 0;
+}
+
+.svg-fig svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+}
+
+.svg-fig figcaption {
+    margin-top: 16px;
+    font-size: 13px;
+    line-height: 1.7;
+    text-align: center;
+    color: var(--secondary);
+}
+
+.svg-fig figcaption strong {
+    color: var(--primary);
+    font-weight: 500;
+}
+
+.svg-fig figcaption code {
+    font-size: 12px;
+    padding: 1px 5px;
+}
+
+/* 缺图时的兜底提示（构建期会同时 warnf 报警） */
+.svg-fig-missing {
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    text-align: center;
+    color: var(--secondary);
+    font-size: 13px;
+}
+
+/* ---- 文字 ---- */
+.svg-fig .sf-title {
+    font-size: 16.5px;
+    font-weight: 500;
+    fill: var(--primary);
+}
+
+.svg-fig .sf-sub {
+    font-size: 12.5px;
+    fill: var(--secondary);
+}
+
+.svg-fig .sf-t {
+    font-size: 13px;
+    fill: var(--primary);
+}
+
+.svg-fig .sf-t-dim {
+    font-size: 12.5px;
+    fill: var(--secondary);
+}
+
+.svg-fig .sf-t-sm {
+    font-size: 11.5px;
+    fill: var(--secondary);
+}
+
+.svg-fig .sf-t-acc {
+    font-size: 13px;
+    font-weight: 500;
+    fill: var(--sf-accent);
+}
+
+.svg-fig .sf-t-inv {
+    font-size: 13px;
+    font-weight: 500;
+    fill: #ffffff;
+}
+
+.svg-fig .sf-t-warn {
+    font-size: 13px;
+    font-weight: 500;
+    fill: var(--sf-warn);
+}
+
+.svg-fig .sf-t-ok {
+    font-size: 13px;
+    font-weight: 500;
+    fill: var(--sf-ok);
+}
+
+.svg-fig .sf-mono {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    letter-spacing: -0.2px;
+}
+
+/* 居中基线：图形里的文字大多要垂直居中在盒子里 */
+.svg-fig .sf-mid {
+    dominant-baseline: central;
+}
+
+/* ---- 盒子 ---- */
+.svg-fig .sf-box {
+    fill: var(--sf-surface);
+    stroke: var(--border);
+    stroke-width: 1;
+}
+
+.svg-fig .sf-box-a {
+    fill: var(--sf-accent-soft);
+    stroke: var(--sf-accent-line);
+    stroke-width: 1;
+}
+
+.svg-fig .sf-box-warn {
+    fill: var(--sf-warn-soft);
+    stroke: var(--sf-warn-line);
+    stroke-width: 1;
+}
+
+.svg-fig .sf-box-ok {
+    fill: var(--sf-ok-soft);
+    stroke: var(--sf-ok-line);
+    stroke-width: 1;
+}
+
+.svg-fig .sf-box-solid {
+    fill: var(--sf-accent);
+    stroke: transparent;
+}
+
+.svg-fig .sf-box-strong {
+    fill: var(--tertiary);
+    stroke: transparent;
+}
+
+.svg-fig .sf-box-ghost {
+    fill: none;
+    stroke: var(--border);
+    stroke-width: 1.2;
+    stroke-dasharray: 5 4;
+}
+
+/* ---- 连接线与箭头 ---- */
+.svg-fig .sf-line {
+    fill: none;
+    stroke: var(--sf-accent-line);
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.svg-fig .sf-line-strong {
+    fill: none;
+    stroke: var(--sf-accent);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.svg-fig .sf-line-dim {
+    fill: none;
+    stroke: var(--border);
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-dasharray: 5 5;
+}
+
+.svg-fig .sf-line-warn {
+    fill: none;
+    stroke: var(--sf-warn);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.svg-fig .sf-line-ok {
+    fill: none;
+    stroke: var(--sf-ok);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* ---- 动效：入场（错峰靠元素上的 --d 变量）---- */
+.js-reveal .svg-fig .sf-pop {
+    opacity: 0;
+}
+
+.js-reveal .svg-fig.is-playing .sf-pop {
+    animation: sf-pop-in 0.55s var(--ease-out) var(--d, 0s) both;
+}
+
+@keyframes sf-pop-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 描边逐段画出：配合 pathLength="1" 归一化，任意长度曲线都能均匀生长 */
+.js-reveal .svg-fig .sf-draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+}
+
+.js-reveal .svg-fig.is-playing .sf-draw {
+    animation: sf-draw-in 0.7s var(--ease-out) var(--d, 0s) forwards;
+}
+
+@keyframes sf-draw-in {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* ---- 动效：持续型（强调与流向）---- */
+.svg-fig.is-playing .sf-flow {
+    animation: sf-flow-march 1.6s linear var(--d, 0s) infinite;
+}
+
+@keyframes sf-flow-march {
+    to {
+        stroke-dashoffset: -20;
+    }
+}
+
+.svg-fig.is-playing .sf-pulse {
+    animation: sf-pulse 2.2s ease-in-out var(--d, 0s) infinite;
+}
+
+@keyframes sf-pulse {
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+/* 扩散光圈：用于标记「重点 / 出问题的地方」 */
+.svg-fig.is-playing .sf-ring {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: sf-ring-out 2.6s var(--ease-out) var(--d, 0s) infinite;
+}
+
+@keyframes sf-ring-out {
+    0% {
+        transform: scale(0.8);
+        opacity: 0.75;
+    }
+    70%,
+    100% {
+        transform: scale(1.35);
+        opacity: 0;
+    }
+}
+
+/* ---- 移动端：图不强行压缩，允许横向滑动看完整版式 ---- */
+@media screen and (max-width: 700px) {
+    .svg-fig {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .svg-fig svg {
+        min-width: 560px;
+    }
+
+    .svg-fig figcaption {
+        text-align: left;
+    }
+}
+
+/* ---- 无障碍：系统关闭动画时全部静态呈现，内容不丢 ---- */
+@media (prefers-reduced-motion: reduce) {
+    .svg-fig .sf-pop,
+    .svg-fig .sf-draw {
+        animation: none !important;
+        opacity: 1 !important;
+        stroke-dashoffset: 0 !important;
+    }
+
+    .svg-fig .sf-flow,
+    .svg-fig .sf-pulse,
+    .svg-fig .sf-ring {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
     }
 }

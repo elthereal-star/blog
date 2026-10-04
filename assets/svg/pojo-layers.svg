@@ -1,0 +1,28 @@
+<svg viewBox="0 0 720 380" role="img" aria-labelledby="pojo-layers-t">
+<title id="pojo-layers-t">PO、BO、DTO、VO 在各层之间的流动</title>
+<defs><marker id="pojo-layers-ah-acc" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="pojo-layers-ah-warn" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-warn)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="pojo-layers-ah-ok" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-ok)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="pojo-layers-ah-dim" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--border)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="sf-title" x="24" y="26">PO / BO / DTO / VO 到底谁是谁</text>
+<text class="sf-sub" x="24" y="48">同一份数据在不同层穿不同衣服，各层只依赖自己需要的那件</text>
+<g class="sf-pop" style="--d:0.05s"><text class="sf-t-sm" x="24" y="88" text-anchor="start">写入：前端表单 → 数据库</text></g>
+<g class="sf-pop" style="--d:0.1s"><rect class="sf-box" x="24" y="98" width="116" height="62" rx="10"/><text class="sf-t sf-mid" x="82" y="121" text-anchor="middle">DTO</text><text class="sf-t-sm sf-mid" x="82" y="139" text-anchor="middle">接收前端入参</text></g>
+<g class="sf-pop" style="--d:0.18s"><rect class="sf-box" x="163" y="98" width="116" height="62" rx="10"/><text class="sf-t sf-mid" x="221" y="121" text-anchor="middle">BO</text><text class="sf-t-sm sf-mid" x="221" y="139" text-anchor="middle">业务校验加工</text></g>
+<g class="sf-pop" style="--d:0.26s"><rect class="sf-box" x="302" y="98" width="116" height="62" rx="10"/><text class="sf-t sf-mid" x="360" y="121" text-anchor="middle">PO</text><text class="sf-t-sm sf-mid" x="360" y="139" text-anchor="middle">与表结构对应</text></g>
+<g class="sf-pop" style="--d:0.34s"><rect class="sf-box" x="441" y="98" width="116" height="62" rx="10"/><text class="sf-t sf-mid" x="499" y="121" text-anchor="middle">DAO</text><text class="sf-t-sm sf-mid" x="499" y="139" text-anchor="middle">只负责读写</text></g>
+<g class="sf-pop" style="--d:0.42s"><rect class="sf-box" x="580" y="98" width="116" height="62" rx="10"/><text class="sf-t sf-mid" x="638" y="121" text-anchor="middle">MySQL</text><text class="sf-t-sm sf-mid" x="638" y="139" text-anchor="middle">最终落库</text></g>
+<path class="sf-line sf-draw" d="M140 129 L163 129" pathLength="1" marker-end="url(#pojo-layers-ah-acc)" style="--d:0.6s"/>
+<path class="sf-line sf-draw" d="M279 129 L302 129" pathLength="1" marker-end="url(#pojo-layers-ah-acc)" style="--d:0.6s"/>
+<path class="sf-line sf-draw" d="M418 129 L441 129" pathLength="1" marker-end="url(#pojo-layers-ah-acc)" style="--d:0.6s"/>
+<path class="sf-line sf-draw" d="M557 129 L580 129" pathLength="1" marker-end="url(#pojo-layers-ah-acc)" style="--d:0.6s"/>
+<g class="sf-pop" style="--d:0.7s"><text class="sf-t-sm" x="24" y="206" text-anchor="start">读取：数据库 → 前端展示</text></g>
+<g class="sf-pop" style="--d:0.75s"><rect class="sf-box-a" x="24" y="216" width="116" height="62" rx="10"/><text class="sf-t sf-mid" x="82" y="239" text-anchor="middle">MySQL</text><text class="sf-t-sm sf-mid" x="82" y="257" text-anchor="middle">查出原始行</text></g>
+<g class="sf-pop" style="--d:0.83s"><rect class="sf-box-a" x="163" y="216" width="116" height="62" rx="10"/><text class="sf-t sf-mid" x="221" y="239" text-anchor="middle">PO</text><text class="sf-t-sm sf-mid" x="221" y="257" text-anchor="middle">映射成对象</text></g>
+<g class="sf-pop" style="--d:0.91s"><rect class="sf-box-a" x="302" y="216" width="116" height="62" rx="10"/><text class="sf-t sf-mid" x="360" y="239" text-anchor="middle">BO</text><text class="sf-t-sm sf-mid" x="360" y="257" text-anchor="middle">业务加工</text></g>
+<g class="sf-pop" style="--d:0.99s"><rect class="sf-box-a" x="441" y="216" width="116" height="62" rx="10"/><text class="sf-t sf-mid" x="499" y="239" text-anchor="middle">VO</text><text class="sf-t-sm sf-mid" x="499" y="257" text-anchor="middle">裁剪展示字段</text></g>
+<g class="sf-pop" style="--d:1.07s"><rect class="sf-box-a" x="580" y="216" width="116" height="62" rx="10"/><text class="sf-t sf-mid" x="638" y="239" text-anchor="middle">前端页面</text><text class="sf-t-sm sf-mid" x="638" y="257" text-anchor="middle">渲染成界面</text></g>
+<path class="sf-line sf-draw" d="M140 247 L163 247" pathLength="1" marker-end="url(#pojo-layers-ah-acc)" style="--d:1.2s"/>
+<path class="sf-line sf-draw" d="M279 247 L302 247" pathLength="1" marker-end="url(#pojo-layers-ah-acc)" style="--d:1.2s"/>
+<path class="sf-line sf-draw" d="M418 247 L441 247" pathLength="1" marker-end="url(#pojo-layers-ah-acc)" style="--d:1.2s"/>
+<path class="sf-line sf-draw" d="M557 247 L580 247" pathLength="1" marker-end="url(#pojo-layers-ah-acc)" style="--d:1.2s"/>
+<g class="sf-pop" style="--d:1.35s"><text class="sf-t-dim" x="24" y="312" text-anchor="start">PO 贴着表结构走，BO 贴着业务走，DTO 贴着接口走，VO 贴着页面走 —— 谁都不用迁就谁。</text></g>
+<g class="sf-pop" style="--d:1.45s"><text class="sf-t-dim" x="24" y="336" text-anchor="start">好处：改表结构不用改接口，改页面不用改业务。</text></g>
+</svg>

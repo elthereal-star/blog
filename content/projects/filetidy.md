@@ -1,7 +1,6 @@
 ---
 title: "filetidy 文件整理 CLI"
 date: 2026-09-15
-weight: 20
 description: "一条命令把下载文件夹收拾整齐：按 YAML 规则自动归类，支持 --dry-run 预览、--watch 监听、undo 一键撤销。"
 summary: "一个 jar 包 + 一份 YAML，把整理规则固化下来，并且永远可撤销。"
 tags: ["Java", "CLI", "picocli", "工具"]

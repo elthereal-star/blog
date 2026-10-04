@@ -1,0 +1,24 @@
+<svg viewBox="0 0 720 420" role="img" aria-labelledby="threadlocal-t">
+<title id="threadlocal-t">ThreadLocal 为每个线程保存独立副本</title>
+<defs><marker id="threadlocal-ah-acc" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="threadlocal-ah-warn" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-warn)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="threadlocal-ah-ok" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-ok)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="threadlocal-ah-dim" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--border)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="sf-title" x="24" y="26">ThreadLocal：每个线程一份自己的副本</text>
+<text class="sf-sub" x="24" y="48">同一个 ThreadLocal 对象当 key，但 value 分别存在各自的线程里</text>
+<g class="sf-pop" style="--d:0.05s"><rect class="sf-box-solid" x="24" y="150" width="160" height="80" rx="10"/><text class="sf-t-inv sf-mid" x="104" y="182" text-anchor="middle">ThreadLocal</text><text class="sf-t-inv sf-mid" x="104" y="200" text-anchor="middle">通常 static final</text></g>
+<g class="sf-pop" style="--d:0.15s"><rect class="sf-box" x="280" y="94" width="400" height="84" rx="10"/><text class="sf-t sf-mid" x="480" y="136" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.2s"><text class="sf-t" x="298" y="118" text-anchor="start">Thread-1</text></g>
+<g class="sf-pop" style="--d:0.25s"><rect class="sf-box-a" x="298" y="128" width="364" height="38" rx="8"/><text class="sf-t sf-mid" x="480" y="147" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.3s"><text class="sf-mono" x="480" y="147" text-anchor="middle">key = ThreadLocal  →  value = "用户A"</text></g>
+<g class="sf-pop" style="--d:0.27s"><rect class="sf-box" x="280" y="188" width="400" height="84" rx="10"/><text class="sf-t sf-mid" x="480" y="230" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.32s"><text class="sf-t" x="298" y="212" text-anchor="start">Thread-2</text></g>
+<g class="sf-pop" style="--d:0.37s"><rect class="sf-box-a" x="298" y="222" width="364" height="38" rx="8"/><text class="sf-t sf-mid" x="480" y="241" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.42s"><text class="sf-mono" x="480" y="241" text-anchor="middle">key = ThreadLocal  →  value = "用户B"</text></g>
+<g class="sf-pop" style="--d:0.39s"><rect class="sf-box" x="280" y="282" width="400" height="84" rx="10"/><text class="sf-t sf-mid" x="480" y="324" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.44s"><text class="sf-t" x="298" y="306" text-anchor="start">Thread-3</text></g>
+<g class="sf-pop" style="--d:0.49s"><rect class="sf-box-a" x="298" y="316" width="364" height="38" rx="8"/><text class="sf-t sf-mid" x="480" y="335" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.54s"><text class="sf-mono" x="480" y="335" text-anchor="middle">key = ThreadLocal  →  value = "用户C"</text></g>
+<path class="sf-line sf-draw" d="M184 190 L276 147" pathLength="1" marker-end="url(#threadlocal-ah-acc)" style="--d:0.5s"/>
+<path class="sf-line sf-draw" d="M184 190 L276 241" pathLength="1" marker-end="url(#threadlocal-ah-acc)" style="--d:0.5s"/>
+<path class="sf-line sf-draw" d="M184 190 L276 335" pathLength="1" marker-end="url(#threadlocal-ah-acc)" style="--d:0.5s"/>
+<g class="sf-pop" style="--d:0.6s"><text class="sf-t-sm" x="230" y="158" text-anchor="start">作为 key</text></g>
+<g class="sf-pop" style="--d:0.8s"><text class="sf-t-dim" x="24" y="396" text-anchor="start">Entry 的 key 是弱引用：ThreadLocal 对象被回收后 value 还留在 Map 里 —— 所以用完记得 remove()。</text></g>
+</svg>

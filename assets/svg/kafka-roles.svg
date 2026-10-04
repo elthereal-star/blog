@@ -1,0 +1,27 @@
+<svg viewBox="0 0 720 430" role="img" aria-labelledby="kafka-roles-t">
+<title id="kafka-roles-t">Kafka 中 Broker、Topic、Partition、Replica 的关系</title>
+<defs><marker id="kafka-roles-ah-acc" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="kafka-roles-ah-warn" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-warn)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="kafka-roles-ah-ok" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-ok)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="kafka-roles-ah-dim" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--border)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="sf-title" x="24" y="26">Kafka 的四大天王到底啥关系</text>
+<text class="sf-sub" x="24" y="48">一个 Topic 拆成多个 Partition，每个 Partition 在多个 Broker 上存多份 Replica</text>
+<g class="sf-pop" style="--d:0.05s"><rect class="sf-box-strong" x="184" y="64" width="418" height="50" rx="10"/><text class="sf-t sf-mid" x="393" y="81" text-anchor="middle">Topic：订单消息</text><text class="sf-t-sm sf-mid" x="393" y="99" text-anchor="middle">逻辑上的消息分类</text></g>
+<path class="sf-line sf-draw" d="M247 114 L247 132" pathLength="1" marker-end="url(#kafka-roles-ah-acc)" style="--d:0.25s"/>
+<g class="sf-pop" style="--d:0.35s"><text class="sf-t-acc" x="247" y="144" text-anchor="middle">P0</text></g>
+<path class="sf-line sf-draw" d="M393 114 L393 132" pathLength="1" marker-end="url(#kafka-roles-ah-acc)" style="--d:0.25s"/>
+<g class="sf-pop" style="--d:0.35s"><text class="sf-t-acc" x="393" y="144" text-anchor="middle">P1</text></g>
+<path class="sf-line sf-draw" d="M539 114 L539 132" pathLength="1" marker-end="url(#kafka-roles-ah-acc)" style="--d:0.25s"/>
+<g class="sf-pop" style="--d:0.35s"><text class="sf-t-acc" x="539" y="144" text-anchor="middle">P2</text></g>
+<g class="sf-pop" style="--d:0.45s"><rect class="sf-box-strong" x="24" y="160" width="140" height="46" rx="10"/><text class="sf-t sf-mid" x="94" y="183" text-anchor="middle">Broker 0</text></g>
+<g class="sf-pop" style="--d:0.55s"><rect class="sf-box-solid" x="184" y="160" width="126" height="46" rx="10"/><text class="sf-t-inv sf-mid" x="247" y="183" text-anchor="middle">Leader</text></g>
+<g class="sf-pop" style="--d:0.61s"><rect class="sf-box-a" x="330" y="160" width="126" height="46" rx="10"/><text class="sf-t-acc sf-mid" x="393" y="183" text-anchor="middle">Follower</text></g>
+<g class="sf-pop" style="--d:0.67s"><rect class="sf-box-a" x="476" y="160" width="126" height="46" rx="10"/><text class="sf-t-acc sf-mid" x="539" y="183" text-anchor="middle">Follower</text></g>
+<g class="sf-pop" style="--d:0.55s"><rect class="sf-box-strong" x="24" y="222" width="140" height="46" rx="10"/><text class="sf-t sf-mid" x="94" y="245" text-anchor="middle">Broker 1</text></g>
+<g class="sf-pop" style="--d:0.65s"><rect class="sf-box-a" x="184" y="222" width="126" height="46" rx="10"/><text class="sf-t-acc sf-mid" x="247" y="245" text-anchor="middle">Follower</text></g>
+<g class="sf-pop" style="--d:0.71s"><rect class="sf-box-solid" x="330" y="222" width="126" height="46" rx="10"/><text class="sf-t-inv sf-mid" x="393" y="245" text-anchor="middle">Leader</text></g>
+<g class="sf-pop" style="--d:0.77s"><rect class="sf-box-a" x="476" y="222" width="126" height="46" rx="10"/><text class="sf-t-acc sf-mid" x="539" y="245" text-anchor="middle">Follower</text></g>
+<g class="sf-pop" style="--d:0.65s"><rect class="sf-box-strong" x="24" y="284" width="140" height="46" rx="10"/><text class="sf-t sf-mid" x="94" y="307" text-anchor="middle">Broker 2</text></g>
+<g class="sf-pop" style="--d:0.75s"><rect class="sf-box-a" x="184" y="284" width="126" height="46" rx="10"/><text class="sf-t-acc sf-mid" x="247" y="307" text-anchor="middle">Follower</text></g>
+<g class="sf-pop" style="--d:0.81s"><rect class="sf-box-a" x="330" y="284" width="126" height="46" rx="10"/><text class="sf-t-acc sf-mid" x="393" y="307" text-anchor="middle">Follower</text></g>
+<g class="sf-pop" style="--d:0.87s"><rect class="sf-box-solid" x="476" y="284" width="126" height="46" rx="10"/><text class="sf-t-inv sf-mid" x="539" y="307" text-anchor="middle">Leader</text></g>
+<g class="sf-pop" style="--d:1.1s"><text class="sf-t-dim" x="24" y="368" text-anchor="start">Broker = 一台跑 Kafka 进程的服务器　　Topic = 消息的逻辑分类</text></g>
+<g class="sf-pop" style="--d:1.2s"><text class="sf-t-dim" x="24" y="392" text-anchor="start">Partition = Topic 的物理分片，决定并行度　　Replica = 分片的副本，决定可靠性</text></g>
+</svg>

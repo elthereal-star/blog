@@ -1,0 +1,28 @@
+<svg viewBox="0 0 720 400" role="img" aria-labelledby="fast-slow-pointer-t">
+<title id="fast-slow-pointer-t">快慢指针找链表环的入口</title>
+<defs><marker id="fast-slow-pointer-ah-acc" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="fast-slow-pointer-ah-warn" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-warn)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="fast-slow-pointer-ah-ok" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-ok)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="fast-slow-pointer-ah-dim" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--border)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="sf-title" x="24" y="26">快慢指针找环入口</text>
+<text class="sf-sub" x="24" y="48">快指针每次两步、慢指针一步；相遇后再让一个指针回到起点同速前进，再次相遇就是入口</text>
+<g class="sf-pop" style="--d:0.05s"><rect class="sf-box-a" x="50" y="120" width="40" height="40" rx="20"/><text class="sf-t-acc sf-mid" x="70" y="140" text-anchor="middle">1</text></g>
+<g class="sf-pop" style="--d:0.12s"><rect class="sf-box-a" x="140" y="120" width="40" height="40" rx="20"/><text class="sf-t-acc sf-mid" x="160" y="140" text-anchor="middle">2</text></g>
+<g class="sf-pop" style="--d:0.19s"><rect class="sf-box-a" x="230" y="120" width="40" height="40" rx="20"/><text class="sf-t-acc sf-mid" x="250" y="140" text-anchor="middle">3</text></g>
+<g class="sf-pop" style="--d:0.26s"><rect class="sf-box-a" x="320" y="120" width="40" height="40" rx="20"/><text class="sf-t-acc sf-mid" x="340" y="140" text-anchor="middle">4</text></g>
+<g class="sf-pop" style="--d:0.33s"><rect class="sf-box-a" x="410" y="120" width="40" height="40" rx="20"/><text class="sf-t-acc sf-mid" x="430" y="140" text-anchor="middle">5</text></g>
+<g class="sf-pop" style="--d:0.4s"><rect class="sf-box-a" x="500" y="120" width="40" height="40" rx="20"/><text class="sf-t-acc sf-mid" x="520" y="140" text-anchor="middle">6</text></g>
+<path class="sf-line sf-draw" d="M92 140 L138 140" pathLength="1" marker-end="url(#fast-slow-pointer-ah-acc)" style="--d:0.5s"/>
+<path class="sf-line sf-draw" d="M182 140 L228 140" pathLength="1" marker-end="url(#fast-slow-pointer-ah-acc)" style="--d:0.5s"/>
+<path class="sf-line sf-draw" d="M272 140 L318 140" pathLength="1" marker-end="url(#fast-slow-pointer-ah-acc)" style="--d:0.5s"/>
+<path class="sf-line sf-draw" d="M362 140 L408 140" pathLength="1" marker-end="url(#fast-slow-pointer-ah-acc)" style="--d:0.5s"/>
+<path class="sf-line sf-draw" d="M452 140 L498 140" pathLength="1" marker-end="url(#fast-slow-pointer-ah-acc)" style="--d:0.5s"/>
+<path class="sf-line sf-draw" d="M520 162 Q520 232 385 232 Q250 232 250 162" pathLength="1" marker-end="url(#fast-slow-pointer-ah-acc)" style="--d:0.9s"/>
+<g class="sf-pop" style="--d:1s"><text class="sf-t-sm" x="385" y="250" text-anchor="middle">环</text></g>
+<g class="sf-pop" style="--d:1.05s"><text class="sf-t-ok" x="250" y="186" text-anchor="middle">slow（每次 1 步）</text></g>
+<g class="sf-pop" style="--d:1.05s"><text class="sf-t-warn" x="430" y="110" text-anchor="middle">fast（每次 2 步）</text></g>
+<circle class="sf-ring" cx="340" cy="140" r="32" fill="none" stroke="var(--sf-warn)" stroke-width="1.6" style="--d:1.15s"/>
+<g class="sf-pop" style="--d:1.2s"><text class="sf-t-warn" x="340" y="100" text-anchor="middle">相遇点</text></g>
+<g class="sf-pop" style="--d:1.25s"><rect class="sf-box" x="24" y="300" width="200" height="84" rx="10"/><text class="sf-t sf-mid" x="124" y="325" text-anchor="middle">① 同时出发</text><text class="sf-t-sm sf-mid" x="124" y="341" text-anchor="middle">slow 走 1 步</text><text class="sf-t-sm sf-mid" x="124" y="357" text-anchor="middle">fast 走 2 步</text></g>
+<g class="sf-pop" style="--d:1.35s"><rect class="sf-box" x="250" y="300" width="200" height="84" rx="10"/><text class="sf-t sf-mid" x="350" y="325" text-anchor="middle">② 在环内相遇</text><text class="sf-t-sm sf-mid" x="350" y="341" text-anchor="middle">fast 追上 slow</text><text class="sf-t-sm sf-mid" x="350" y="357" text-anchor="middle">说明链上有环</text></g>
+<g class="sf-pop" style="--d:1.45s"><rect class="sf-box" x="476" y="300" width="200" height="84" rx="10"/><text class="sf-t sf-mid" x="576" y="325" text-anchor="middle">③ 定位入口</text><text class="sf-t-sm sf-mid" x="576" y="341" text-anchor="middle">一个指针回起点</text><text class="sf-t-sm sf-mid" x="576" y="357" text-anchor="middle">同速再遇即入口</text></g>
+<path class="sf-line sf-draw" d="M224 342 L248 342" pathLength="1" marker-end="url(#fast-slow-pointer-ah-acc)" style="--d:1.5s"/>
+<path class="sf-line sf-draw" d="M450 342 L474 342" pathLength="1" marker-end="url(#fast-slow-pointer-ah-acc)" style="--d:1.55s"/>
+</svg>

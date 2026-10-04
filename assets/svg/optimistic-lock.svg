@@ -1,0 +1,18 @@
+<svg viewBox="0 0 720 390" role="img" aria-labelledby="optimistic-lock-t">
+<title id="optimistic-lock-t">乐观锁用版本号解决超卖</title>
+<defs><marker id="optimistic-lock-ah-acc" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="optimistic-lock-ah-warn" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-warn)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="optimistic-lock-ah-ok" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-ok)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="optimistic-lock-ah-dim" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--border)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="sf-title" x="24" y="26">乐观锁：用版本号解决超卖</text>
+<text class="sf-sub" x="24" y="48">不提前加锁，更新时校验版本号 —— 谁改动了数据，谁的更新就会落空</text>
+<g class="sf-pop" style="--d:0.05s"><rect class="sf-box" x="24" y="104" width="190" height="56" rx="10"/><text class="sf-t sf-mid" x="119" y="124" text-anchor="middle">用户 A</text><text class="sf-t-sm sf-mid" x="119" y="142" text-anchor="middle">读出 version = 1</text></g>
+<g class="sf-pop" style="--d:0.15s"><rect class="sf-box" x="24" y="254" width="190" height="56" rx="10"/><text class="sf-t sf-mid" x="119" y="274" text-anchor="middle">用户 B</text><text class="sf-t-sm sf-mid" x="119" y="292" text-anchor="middle">也读出 version = 1</text></g>
+<g class="sf-pop" style="--d:0.3s"><rect class="sf-box-strong" x="290" y="164" width="180" height="86" rx="10"/><text class="sf-t sf-mid" x="380" y="199" text-anchor="middle">库存行</text><text class="sf-t-sm sf-mid" x="380" y="217" text-anchor="middle">version = 1</text></g>
+<g class="sf-pop" style="--d:0.45s"><rect class="sf-box-ok" x="520" y="96" width="176" height="68" rx="10"/><text class="sf-t-ok sf-mid" x="608" y="122" text-anchor="middle">✓ 更新成功</text><text class="sf-t-sm sf-mid" x="608" y="140" text-anchor="middle">version 1 → 2</text></g>
+<g class="sf-pop" style="--d:0.55s"><rect class="sf-box-warn" x="520" y="248" width="176" height="68" rx="10"/><text class="sf-t-warn sf-mid" x="608" y="274" text-anchor="middle">✗ 影响 0 行</text><text class="sf-t-sm sf-mid" x="608" y="292" text-anchor="middle">需要重新读再试</text></g>
+<path class="sf-line sf-draw" d="M214 128 L286 180" pathLength="1" marker-end="url(#optimistic-lock-ah-dim)" style="--d:0.65s"/>
+<path class="sf-line sf-draw" d="M214 286 L286 234" pathLength="1" marker-end="url(#optimistic-lock-ah-dim)" style="--d:0.7s"/>
+<path class="sf-line-ok sf-draw" d="M470 186 L516 136" pathLength="1" marker-end="url(#optimistic-lock-ah-ok)" style="--d:0.8s"/>
+<path class="sf-line-warn sf-draw" d="M470 228 L516 276" pathLength="1" marker-end="url(#optimistic-lock-ah-warn)" style="--d:0.85s"/>
+<g class="sf-pop" style="--d:1s"><text class="sf-t sf-mono" x="24" y="336" text-anchor="start">UPDATE stock SET count = count - 1, version = version + 1</text></g>
+<g class="sf-pop" style="--d:1.05s"><text class="sf-t sf-mono" x="24" y="358" text-anchor="start">WHERE id = 1 AND version = 1;</text></g>
+<g class="sf-pop" style="--d:1.15s"><text class="sf-t-dim" x="24" y="382" text-anchor="start">影响行数 = 1 → 抢到；= 0 → 期间被别人改过，重新读取再试一次。</text></g>
+</svg>

@@ -1,7 +1,6 @@
 ---
 title: "Offer Tracker 投递进度追踪器"
 date: 2026-09-08
-weight: 10
 description: "管理校招和实习投递全流程的单体应用：公司库、投递看板、可自由调整的状态、面试轮次与数据统计。"
 summary: "一个管理求职投递全流程的单体应用，一条 mvn package 出完整可运行 JAR，并提供免安装的 Windows 便携版。"
 tags: ["Java", "Spring Boot", "Vue", "全栈"]

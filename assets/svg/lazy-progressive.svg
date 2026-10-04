@@ -1,0 +1,22 @@
+<svg viewBox="0 0 720 330" role="img" aria-labelledby="lazy-progressive-t">
+<title id="lazy-progressive-t">一次性全量展示与渐进式披露的对比</title>
+<defs><marker id="lazy-progressive-ah-acc" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="lazy-progressive-ah-warn" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-warn)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="lazy-progressive-ah-ok" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-ok)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="lazy-progressive-ah-dim" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--border)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="sf-title" x="24" y="26">懒加载与渐进式披露：别一上来就全塞给用户</text>
+<text class="sf-sub" x="24" y="48">先给最小可用信息，剩下的按需展开 —— 加载性能和信息消化都是这个道理</text>
+<g class="sf-pop" style="--d:0.05s"><rect class="sf-box-ghost" x="24" y="92" width="320" height="180" rx="14"/><text class="sf-t-sm" x="38" y="108" text-anchor="start">一次性全部展示</text></g>
+<g class="sf-pop" style="--d:0.15s"><rect class="sf-box-warn" x="48" y="128" width="240" height="8" rx="4"/><text class="sf-t sf-mid" x="168" y="132" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.19s"><rect class="sf-box-warn" x="48" y="143" width="200" height="8" rx="4"/><text class="sf-t sf-mid" x="148" y="147" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.23s"><rect class="sf-box-warn" x="48" y="158" width="260" height="8" rx="4"/><text class="sf-t sf-mid" x="178" y="162" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.27s"><rect class="sf-box-warn" x="48" y="173" width="180" height="8" rx="4"/><text class="sf-t sf-mid" x="138" y="177" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.31s"><rect class="sf-box-warn" x="48" y="188" width="230" height="8" rx="4"/><text class="sf-t sf-mid" x="163" y="192" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.35s"><rect class="sf-box-warn" x="48" y="203" width="210" height="8" rx="4"/><text class="sf-t sf-mid" x="153" y="207" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.39s"><rect class="sf-box-warn" x="48" y="218" width="250" height="8" rx="4"/><text class="sf-t sf-mid" x="173" y="222" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.43s"><rect class="sf-box-warn" x="48" y="233" width="190" height="8" rx="4"/><text class="sf-t sf-mid" x="143" y="237" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.6s"><text class="sf-t-warn" x="184" y="256" text-anchor="middle">认知负担大，重点被淹没</text></g>
+<g class="sf-pop" style="--d:0.7s"><rect class="sf-box-ghost" x="376" y="92" width="320" height="180" rx="14"/><text class="sf-t-sm" x="390" y="108" text-anchor="start">先给主干，按需展开</text></g>
+<g class="sf-pop" style="--d:0.8s"><rect class="sf-box-ok" x="400" y="128" width="240" height="8" rx="4"/><text class="sf-t sf-mid" x="520" y="132" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.88s"><rect class="sf-box-ok" x="400" y="152" width="200" height="8" rx="4"/><text class="sf-t sf-mid" x="500" y="156" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:0.96s"><rect class="sf-box-ok" x="400" y="176" width="220" height="8" rx="4"/><text class="sf-t sf-mid" x="510" y="180" text-anchor="middle"></text></g>
+<g class="sf-pop" style="--d:1s"><rect class="sf-box-ghost" x="400" y="204" width="200" height="34" rx="10"/><text class="sf-t-dim sf-mid" x="500" y="221" text-anchor="middle">展开更多 ▾</text></g>
+<g class="sf-pop" style="--d:1.1s"><text class="sf-t-ok" x="536" y="256" text-anchor="middle">先看懂主线，细节随时展开</text></g>
+</svg>

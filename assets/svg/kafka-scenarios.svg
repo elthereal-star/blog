@@ -1,0 +1,19 @@
+<svg viewBox="0 0 720 340" role="img" aria-labelledby="kafka-scenarios-t">
+<title id="kafka-scenarios-t">Kafka 的四类常见使用场景</title>
+<defs><marker id="kafka-scenarios-ah-acc" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="kafka-scenarios-ah-warn" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-warn)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="kafka-scenarios-ah-ok" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-ok)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="kafka-scenarios-ah-dim" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--border)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="sf-title" x="24" y="26">Kafka 最常见的四类场景</text>
+<text class="sf-sub" x="24" y="48">本质都是同一件事：把「直接调用」换成「经消息中转」</text>
+<g class="sf-pop" style="--d:0.05s"><rect class="sf-box-ghost" x="24" y="92" width="400" height="200" rx="14"/><text class="sf-t-sm" x="38" y="108" text-anchor="start">削峰填谷</text></g>
+<path class="sf-line-dim" d="M56 250 L404 250"/>
+<path class="sf-line-dim" d="M56 250 L56 126"/>
+<path class="sf-line-warn sf-flow" d="M60 240 L90 168 L120 236 L150 150 L180 238 L210 158 L240 240 L270 152 L300 236 L330 164 L360 240 L400 232" stroke-dasharray="5 5" style="--d:0.2s"/>
+<path class="sf-line-ok sf-draw" d="M60 240 L120 224 L180 204 L240 188 L300 174 L360 165 L400 160" pathLength="1" style="--d:0.7s"/>
+<circle class="" cx="66" cy="130" r="3.4" fill="var(--sf-warn)" style="--d:0.3s"/>
+<g class="sf-pop" style="--d:0.3s"><text class="sf-t-warn" x="76" y="130" text-anchor="start">生产者：瞬时流量尖峰</text></g>
+<circle class="" cx="66" cy="152" r="3.4" fill="var(--sf-ok)" style="--d:0.8s"/>
+<g class="sf-pop" style="--d:0.8s"><text class="sf-t-ok" x="76" y="152" text-anchor="start">消费者：按自己的节奏稳稳消费</text></g>
+<g class="sf-pop" style="--d:1s"><text class="sf-t-dim" x="216" y="282" text-anchor="middle">中间这段差值，就是 Kafka 帮你扛下的峰值</text></g>
+<g class="sf-pop" style="--d:0.4s"><rect class="sf-box-a" x="440" y="92" width="256" height="58" rx="10"/><text class="sf-t sf-mid" x="568" y="113" text-anchor="middle">异步解耦</text><text class="sf-t-sm sf-mid" x="568" y="131" text-anchor="middle">下单后只发条消息，不等人</text></g>
+<g class="sf-pop" style="--d:0.52s"><rect class="sf-box-a" x="440" y="160" width="256" height="58" rx="10"/><text class="sf-t sf-mid" x="568" y="181" text-anchor="middle">延迟消息</text><text class="sf-t-sm sf-mid" x="568" y="199" text-anchor="middle">订单 30 分钟未支付自动关闭</text></g>
+<g class="sf-pop" style="--d:0.64s"><rect class="sf-box-a" x="440" y="228" width="256" height="58" rx="10"/><text class="sf-t sf-mid" x="568" y="249" text-anchor="middle">消息积压</text><text class="sf-t-sm sf-mid" x="568" y="267" text-anchor="middle">消费者扛不住时先堆在队列里</text></g>
+</svg>

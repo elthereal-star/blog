@@ -1,0 +1,28 @@
+<svg viewBox="0 0 720 400" role="img" aria-labelledby="http-vs-https-t">
+<title id="http-vs-https-t">HTTP 明文传输与 HTTPS 加密传输的对比</title>
+<defs><marker id="http-vs-https-ah-acc" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="http-vs-https-ah-warn" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-warn)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="http-vs-https-ah-ok" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-ok)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="http-vs-https-ah-dim" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--border)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="sf-title" x="24" y="26">HTTP 明文传输 vs HTTPS 加密传输</text>
+<text class="sf-sub" x="24" y="48">同一段账号密码，走两条路的结果完全不同</text>
+<g class="sf-pop" style="--d:0.05s"><text class="sf-t-warn" x="24" y="84" text-anchor="start">① HTTP：数据一路裸奔</text></g>
+<g class="sf-pop" style="--d:0.1s"><rect class="sf-box" x="24" y="96" width="144" height="46" rx="10"/><text class="sf-t sf-mid" x="96" y="119" text-anchor="middle">浏览器</text></g>
+<g class="sf-pop" style="--d:0.18s"><rect class="sf-box" x="192" y="96" width="144" height="46" rx="10"/><text class="sf-t sf-mid" x="264" y="119" text-anchor="middle">路由器</text></g>
+<g class="sf-pop" style="--d:0.26s"><rect class="sf-box" x="360" y="96" width="144" height="46" rx="10"/><text class="sf-t sf-mid" x="432" y="119" text-anchor="middle">骨干网</text></g>
+<g class="sf-pop" style="--d:0.34s"><rect class="sf-box" x="528" y="96" width="144" height="46" rx="10"/><text class="sf-t sf-mid" x="600" y="119" text-anchor="middle">服务器</text></g>
+<path class="sf-line sf-draw" d="M168 119 L192 119" pathLength="1" marker-end="url(#http-vs-https-ah-warn)" style="--d:0.35s"/>
+<path class="sf-line sf-draw" d="M336 119 L360 119" pathLength="1" marker-end="url(#http-vs-https-ah-warn)" style="--d:0.35s"/>
+<path class="sf-line sf-draw" d="M504 119 L528 119" pathLength="1" marker-end="url(#http-vs-https-ah-warn)" style="--d:0.35s"/>
+<g class="sf-pop" style="--d:0.5s"><text class="sf-t-warn sf-mono" x="264" y="174" text-anchor="middle">password=123456</text></g>
+<g class="sf-pop" style="--d:0.58s"><text class="sf-t-warn sf-mono" x="432" y="174" text-anchor="middle">password=123456</text></g>
+<g class="sf-pop" style="--d:0.45s"><text class="sf-t-sm" x="348" y="156" text-anchor="middle">每一跳都能直接读到明文</text></g>
+<g class="sf-pop" style="--d:0.7s"><text class="sf-t-ok" x="24" y="220" text-anchor="start">② HTTPS：全程密文 + 证书验明正身</text></g>
+<g class="sf-pop" style="--d:0.75s"><rect class="sf-box-a" x="24" y="232" width="144" height="46" rx="10"/><text class="sf-t sf-mid" x="96" y="255" text-anchor="middle">浏览器</text></g>
+<g class="sf-pop" style="--d:0.83s"><rect class="sf-box-a" x="192" y="232" width="144" height="46" rx="10"/><text class="sf-t sf-mid" x="264" y="255" text-anchor="middle">路由器</text></g>
+<g class="sf-pop" style="--d:0.91s"><rect class="sf-box-a" x="360" y="232" width="144" height="46" rx="10"/><text class="sf-t sf-mid" x="432" y="255" text-anchor="middle">骨干网</text></g>
+<g class="sf-pop" style="--d:0.99s"><rect class="sf-box-a" x="528" y="232" width="144" height="46" rx="10"/><text class="sf-t sf-mid" x="600" y="255" text-anchor="middle">服务器</text></g>
+<path class="sf-line sf-draw" d="M168 255 L192 255" pathLength="1" marker-end="url(#http-vs-https-ah-ok)" style="--d:1s"/>
+<path class="sf-line sf-draw" d="M336 255 L360 255" pathLength="1" marker-end="url(#http-vs-https-ah-ok)" style="--d:1s"/>
+<path class="sf-line sf-draw" d="M504 255 L528 255" pathLength="1" marker-end="url(#http-vs-https-ah-ok)" style="--d:1s"/>
+<g class="sf-pop" style="--d:1.15s"><text class="sf-t-ok sf-mono" x="264" y="310" text-anchor="middle">a8f3c1…9e7b</text></g>
+<g class="sf-pop" style="--d:1.22s"><text class="sf-t-sm" x="432" y="310" text-anchor="middle">冒充 / 篡改都会被证书发现</text></g>
+<g class="sf-pop" style="--d:1.35s"><text class="sf-t-dim" x="24" y="366" text-anchor="start">结论：中间人拿到的只是一串密文；证书保证你连的确实是那台真服务器。</text></g>
+</svg>

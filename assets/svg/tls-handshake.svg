@@ -1,0 +1,18 @@
+<svg viewBox="0 0 720 320" role="img" aria-labelledby="tls-handshake-t">
+<title id="tls-handshake-t">HTTPS 建立连接的四个步骤</title>
+<defs><marker id="tls-handshake-ah-acc" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="tls-handshake-ah-warn" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-warn)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="tls-handshake-ah-ok" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-ok)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="tls-handshake-ah-dim" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--border)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="sf-title" x="24" y="26">HTTPS 建立连接的四步</text>
+<text class="sf-sub" x="24" y="48">前两步用非对称加密交换密钥，之后全部改走对称加密</text>
+<g class="sf-pop" style="--d:0.08s"><rect class="sf-box" x="24" y="94" width="150" height="96" rx="10"/><text class="sf-t sf-mid" x="99" y="125" text-anchor="middle">① ClientHello</text><text class="sf-t-sm sf-mid" x="99" y="141" text-anchor="middle">客户端先打招呼</text><text class="sf-t-sm sf-mid" x="99" y="157" text-anchor="middle">带上支持的算法</text></g>
+<g class="sf-pop" style="--d:0.22s"><rect class="sf-box" x="198" y="94" width="150" height="96" rx="10"/><text class="sf-t sf-mid" x="273" y="125" text-anchor="middle">② ServerHello</text><text class="sf-t-sm sf-mid" x="273" y="141" text-anchor="middle">服务端选定算法</text><text class="sf-t-sm sf-mid" x="273" y="157" text-anchor="middle">并出示证书</text></g>
+<g class="sf-pop" style="--d:0.36s"><rect class="sf-box" x="372" y="94" width="150" height="96" rx="10"/><text class="sf-t sf-mid" x="447" y="125" text-anchor="middle">③ 生成会话密钥</text><text class="sf-t-sm sf-mid" x="447" y="141" text-anchor="middle">验证证书真伪</text><text class="sf-t-sm sf-mid" x="447" y="157" text-anchor="middle">双方算出同一把</text></g>
+<g class="sf-pop" style="--d:0.5s"><rect class="sf-box" x="546" y="94" width="150" height="96" rx="10"/><text class="sf-t sf-mid" x="621" y="125" text-anchor="middle">④ 加密通话</text><text class="sf-t-sm sf-mid" x="621" y="141" text-anchor="middle">改用对称加密</text><text class="sf-t-sm sf-mid" x="621" y="157" text-anchor="middle">之后快得多</text></g>
+<path class="sf-line sf-draw" d="M174 142 L198 142" pathLength="1" marker-end="url(#tls-handshake-ah-acc)" style="--d:0.7s"/>
+<path class="sf-line sf-draw" d="M348 142 L372 142" pathLength="1" marker-end="url(#tls-handshake-ah-acc)" style="--d:0.7s"/>
+<path class="sf-line sf-draw" d="M522 142 L546 142" pathLength="1" marker-end="url(#tls-handshake-ah-acc)" style="--d:0.7s"/>
+<path class="sf-line-dim" d="M24 226 L348 226" stroke-dasharray="4 4"/>
+<path class="sf-line-ok" d="M372 226 L696 226" stroke-dasharray="4 4"/>
+<g class="sf-pop" style="--d:0.85s"><text class="sf-t-dim" x="186" y="246" text-anchor="middle">非对称加密（慢）——只用来交换密钥</text></g>
+<g class="sf-pop" style="--d:0.95s"><text class="sf-t-ok" x="534" y="246" text-anchor="middle">对称加密（快）——之后所有数据都走它</text></g>
+<g class="sf-pop" style="--d:1.1s"><text class="sf-t-dim" x="24" y="292" text-anchor="start">对称加密的钥匙必须让对方知道，但明文传钥匙等于没加密 —— 非对称加密就是用来解决这个「先有鸡还是先有蛋」的问题。</text></g>
+</svg>

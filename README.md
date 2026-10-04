@@ -3,8 +3,9 @@
 个人技术博客的源码，基于 **Hugo + PaperMod**，通过 **GitHub Actions** 自动构建并部署到 **GitHub Pages**。
 
 - 线上地址：https://elthereal-star.github.io/blog/
-- 文章目录：`content/posts/`
+- 文章目录：`content/posts/`（37 篇，其中 22 篇带内联 SVG 示意图）
 - 项目介绍：`content/projects/`
+- 图库：`assets/svg/`（24 张自绘 SVG，主题自适配深浅色）
 
 ## 它是怎么工作的
 
@@ -74,11 +75,16 @@ blog/
 ├── archetypes/default.md         # 新建文章模板
 ├── assets/
 │   ├── css/extended/custom.css   # 自定义样式（不改主题源码）
-│   └── js/custom.js              # 自定义交互脚本
-├── layouts/_partials/
-│   ├── home_info.html            # 首页 Hero 区块
-│   ├── extend_head.html          # <head> 注入点
-│   └── extend_footer.html        # </body> 前注入点（进度条 + 脚本）
+│   ├── js/custom.js              # 自定义交互脚本
+│   └── svg/                      # SVG 示意图图库（shortcode 内联使用）
+├── layouts/
+│   ├── _partials/
+│   │   ├── home_info.html        # 首页 Hero 区块
+│   │   ├── extend_head.html      # <head> 注入点
+│   │   └── extend_footer.html    # </body> 前注入点（进度条 + 脚本）
+│   └── shortcodes/
+│       ├── svg.html              # 通用 SVG 图库：{{< svg "名字" >}}
+│       └── sb-compare.html       # Spring Boot 2 vs 3 对比动画
 ├── i18n/zh-cn.yaml               # 中文界面文案
 ├── content/
 │   ├── about.md                  # 关于我
@@ -86,9 +92,20 @@ blog/
 │   ├── archives.md               # 归档页
 │   ├── posts/                    # 文章
 │   └── projects/                 # 项目介绍
-├── static/                       # favicon 等静态文件
+├── scripts/                      # 内容生成脚本（Python，非构建依赖）
+│   ├── svgkit.py                 # SVG 生成 DSL 工具包
+│   ├── make-svgs.py              # 批量生成 assets/svg/*.svg
+│   ├── migrate-posts.py          # 把 Markdown 素材迁移成 Hugo 文章
+│   └── make-demo-video.py        # Pillow 逐帧渲染 + ffmpeg 编码演示视频
+├── static/
+│   ├── favicon*.png / .ico       # 站点图标
+│   ├── images/<slug>/            # 文章配图（本地化，不再依赖图床）
+│   ├── videos/                   # 演示视频（mp4 + poster）
+│   └── slides/                   # 零依赖 HTML 幻灯片
 └── themes/PaperMod/              # 主题（已内置进仓库）
 ```
+
+> `scripts/` 只在**内容制作时**手动跑，CI 构建不需要 Python —— 生成的成品（SVG / 图片 / 视频 / 幻灯片）都已提交进仓库。
 
 ## 视觉与交互定制
 
@@ -102,6 +119,8 @@ blog/
 | 首页徽章 / 打字机文案 / 技能标签 | `hugo.yaml` 的 `params.hero` |
 | 首页问候语和简介正文 | `hugo.yaml` 的 `params.homeInfoParams` |
 | 动效速度、开关 | `assets/js/custom.js` 顶部的 `TYPE_SPEED` / `HOLD_TIME` / `MAX_TILT` |
+| SVG 图库样式（描边、动画节奏） | `custom.css` 第 13 节「通用 SVG 示意图图库」 |
+| 图库内容本身 | `assets/svg/*.svg`（由 `scripts/make-svgs.py` 生成） |
 
 已经实现的动效清单：
 
@@ -115,6 +134,48 @@ blog/
 
 > 所有动效都遵循 `prefers-reduced-motion`：系统里关闭动画后会自动降级为静态显示。
 > 全部动效只用 CSS 与少量原生 JS 实现，整站**不请求任何第三方 CDN 或字体**。
+
+## 动态内容：三种形态
+
+除了普通图文，文章里还能放三种动态元素，完整示例见 `content/posts/spring-boot-2-vs-3-three-formats.md`。
+
+### 1. 内联 SVG 示意图（主力形态）
+
+24 张自绘图放在 `assets/svg/`，正文里一行短代码即可调用：
+
+```markdown
+{{< svg "cache-breakdown" >}}
+{{< svg "cache-breakdown" "缓存击穿：热点 key 过期的瞬间" >}}
+```
+
+- 第一个参数是文件名（不带 `.svg`），第二个是可选的图注。
+- **内联而非 `<img>`**：SVG 里的元素直接继承页面 CSS 变量，所以**一套图自动适配深浅色**，不用出两套。
+- 元素默认可见，只有 JS 可用时才隐藏并等滚进视口再播放 —— **禁用 JS 也能完整阅读**。
+- 找不到图时会渲染一个「缺图」占位块，并在构建日志里 `warnf` 报警，不会静默吞掉。
+
+生成方式：`python scripts/make-svgs.py`（内部用 `scripts/svgkit.py` 提供的 `box/line/text/ring/curve` 等 DSL）。改文案只改 `make-svgs.py`。
+
+### 2. 演示视频
+
+`static/videos/` 存放 mp4 + 封面图，文章里用原生 `<video>` 标签引用：
+
+```html
+<video controls preload="metadata" poster="/blog/videos/xxx-poster.jpg">
+  <source src="/blog/videos/xxx.mp4" type="video/mp4">
+</video>
+```
+
+生成脚本 `scripts/make-demo-video.py`：Pillow 逐帧渲染 PNG → ffmpeg 编码。编码参数 `-crf 23 -preset slow -pix_fmt yuv420p -movflags +faststart`，17 秒 720p 成品只有 **0.28 MB**。
+
+### 3. HTML 幻灯片
+
+`static/slides/` 下是**零依赖手写**的 HTML 幻灯片（约 8 KB，不引任何框架）。支持键盘方向键 / 空格 / 触摸滑动 / 滚轮翻页、`F` 全屏、URL hash 定位。文章里用 iframe 嵌入：
+
+```html
+<iframe src="/blog/slides/xxx.html" style="width:100%;aspect-ratio:16/9;border:0;border-radius:14px" allowfullscreen loading="lazy"></iframe>
+```
+
+> 这三种形态都要求 `hugo.yaml` 里开启 `markup.goldmark.renderer.unsafe: true`，否则正文里的 HTML/SVG 会被转义成纯文本。
 
 ## 几个容易踩的坑
 
@@ -143,6 +204,32 @@ rm -rf themes/PaperMod && mv hugo-PaperMod-master themes/PaperMod && rm -rf them
 **4. 中文字体与语言包。**
 语言代码是 `zh-cn`，所以项目自己的 `i18n/zh-cn.yaml` 必须存在（内容来自主题的 `zh.yaml`）。
 缺了它，页面上的「上一页 / 目录 / 复制」会显示成英文 key 名。
+
+**5. 别用带引号的模式去 grep 构建产物。**
+`hugo --minify` 会**去掉 HTML 属性的引号**，产物里是 `class=sb-compare` 而不是 `class="sb-compare"`。
+用带引号的模式去 `grep` 会误判成「shortcode 没渲染」，实际上渲染得好好的。验证时改成 `grep -o 'class=[a-z-]*'`。
+
+**6. 无头 Chrome 不能用来判断移动端是否溢出。**
+无头 Chrome 的窗口有**最小宽度**，`--window-size=390` 截出来的图是被裁切过的，看起来「溢出」其实是假象。
+要测窄屏布局，得在同源页面里放个 iframe 探针量 `scrollWidth`。
+
+## 从旧 Markdown 素材迁移文章
+
+早期素材（无 front matter 的纯 Markdown + 图床图片）可以用脚本批量转成 Hugo 文章：
+
+```bash
+python scripts/migrate-posts.py --dry-run   # 先看报告，不写文件
+python scripts/migrate-posts.py             # 正式迁移
+```
+
+脚本做四件事：
+
+1. 从 H1 提取标题，按文件时间生成 `date`，补上 `categories` / `tags` / `summary`；
+2. 把「占位符图片引用」替换成对应的 `{{< svg >}}` 短代码；
+3. 把图床真图下载到 `static/images/<slug>/` 并改成本地路径（摆脱外链）；
+4. 把指向同目录其它 `.md` 的相对链接改成 Hugo 文章地址。
+
+> 脚本会跟踪 Markdown **代码围栏**状态：代码块里出现的 `<img>` 是示例代码，**不会被改写**。
 
 ## 主题与主题修改
 

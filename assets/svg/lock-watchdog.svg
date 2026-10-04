@@ -1,0 +1,19 @@
+<svg viewBox="0 0 720 410" role="img" aria-labelledby="lock-watchdog-t">
+<title id="lock-watchdog-t">看门狗续期与主从切换丢锁的对比</title>
+<defs><marker id="lock-watchdog-ah-acc" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="lock-watchdog-ah-warn" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-warn)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="lock-watchdog-ah-ok" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-ok)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="lock-watchdog-ah-dim" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--border)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="sf-title" x="24" y="26">锁提前没了，可能是两种完全不同的原因</text>
+<text class="sf-sub" x="24" y="48">同样是「锁失效」，一种能救，一种只能靠更强的机制兜底</text>
+<g class="sf-pop" style="--d:0.05s"><rect class="sf-box-ghost" x="24" y="84" width="330" height="254" rx="14"/><text class="sf-t-sm" x="38" y="100" text-anchor="start">① 看门狗续期（业务没跑完）</text></g>
+<g class="sf-pop" style="--d:0.15s"><rect class="sf-box" x="44" y="130" width="290" height="42" rx="10"/><text class="sf-t sf-mid" x="189" y="151" text-anchor="middle">加锁：TTL = 30 秒</text></g>
+<path class="sf-line sf-draw" d="M189 172 L189 198" pathLength="1" marker-end="url(#lock-watchdog-ah-acc)" style="--d:0.3s"/>
+<g class="sf-pop" style="--d:0.35s"><rect class="sf-box-ok" x="44" y="198" width="290" height="42" rx="10"/><text class="sf-t-ok sf-mid" x="189" y="219" text-anchor="middle">看门狗每 10 秒续期一次</text></g>
+<path class="sf-line sf-draw" d="M189 240 L189 266" pathLength="1" marker-end="url(#lock-watchdog-ah-acc)" style="--d:0.45s"/>
+<g class="sf-pop" style="--d:0.5s"><rect class="sf-box" x="44" y="266" width="290" height="42" rx="10"/><text class="sf-t sf-mid" x="189" y="287" text-anchor="middle">业务跑完 → 主动释放</text></g>
+<g class="sf-pop" style="--d:0.1s"><rect class="sf-box-ghost" x="366" y="84" width="330" height="254" rx="14"/><text class="sf-t-sm" x="380" y="100" text-anchor="start">② 主从切换丢锁（锁同步丢了）</text></g>
+<g class="sf-pop" style="--d:0.2s"><rect class="sf-box" x="386" y="130" width="290" height="42" rx="10"/><text class="sf-t sf-mid" x="531" y="151" text-anchor="middle">客户端 A 在 Master 上加锁</text></g>
+<path class="sf-line sf-draw" d="M531 172 L531 198" pathLength="1" marker-end="url(#lock-watchdog-ah-warn)" style="--d:0.35s"/>
+<g class="sf-pop" style="--d:0.4s"><rect class="sf-box-warn" x="386" y="198" width="290" height="42" rx="10"/><text class="sf-t-warn sf-mid" x="531" y="219" text-anchor="middle">Master 宕机，锁还没同步到 Slave</text></g>
+<path class="sf-line sf-draw" d="M531 240 L531 266" pathLength="1" marker-end="url(#lock-watchdog-ah-warn)" style="--d:0.5s"/>
+<g class="sf-pop" style="--d:0.55s"><rect class="sf-box-warn" x="386" y="266" width="290" height="42" rx="10"/><text class="sf-t-warn sf-mid" x="531" y="287" text-anchor="middle">Slave 升为 Master → B 也拿到锁</text></g>
+<g class="sf-pop" style="--d:0.75s"><text class="sf-t-dim" x="24" y="374" text-anchor="start">看门狗治的是「业务没跑完锁就过期」；主从切换丢锁要靠 RedLock 或 fencing token 兜底。</text></g>
+</svg>

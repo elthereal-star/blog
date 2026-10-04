@@ -1,7 +1,6 @@
 ---
 title: "Health AI Assistant 健康管理平台"
 date: 2026-07-13
-weight: 30
 description: "AI 增强的个人健康管理平台，模块化单体架构：用文字记录饮食和运动，生成可持续的健康分析与个性化建议。"
 summary: "一个模块化单体应用：用户用自然语言记录饮食和运动，系统产出健康分析与个性化建议。核心理念是「AI 是分析师，不是计算器」。"
 tags: ["Java", "Spring Boot", "Vue", "AI", "全栈"]
