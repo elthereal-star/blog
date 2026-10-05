@@ -764,6 +764,40 @@ def f_deploy_pipeline():
     return f
 
 
+# ======================================================================
+# 25. Claude Code Mods：事件流上的可拦截关卡
+# ======================================================================
+def f_claude_mods():
+    f = Fig("claude-mods", "Claude Code 的 Mods 机制：事件穿过 Mod 链时被放行、改写或接管", 380)
+    f.head("Claude Code 的事件流，现在可以中途插手", "每个事件穿过 Mod 链时，都能被放行、改写或直接接管")
+
+    # ---- 第一行：主链路 ----
+    y, bh = 100, 56
+    f.box(24, y, 136, bh, "Claude Code", "抛出事件 e", d=0.05)
+    f.line([(160, y + bh / 2), (204, y + bh / 2)], d=0.15)
+    f.box(208, y, 118, bh, "Mod A", "放行", kind="sf-box-a", d=0.28)
+    f.line([(326, y + bh / 2), (370, y + bh / 2)], d=0.38)
+    f.box(374, y, 118, bh, "Mod B", "改写 + 放行", kind="sf-box-a", d=0.5)
+    f.line([(492, y + bh / 2), (536, y + bh / 2)], d=0.6)
+    f.box(540, y, 156, bh, "模型 / 界面", "看到改过的结果", d=0.72)
+
+    # ---- 第二行：一个 Mod 的三种选择 ----
+    f.text(24, 190, "一个 Mod 拿到事件之后，只有三种选择：",
+           cls="sf-t-sm", anchor="start", mid=False, d=0.85)
+    f.card(24, 200, 214, 92, "① 放行 next(e)",
+           [("原样交给下一个", "sf-t-sm"), ("最安全的默认动作", "sf-t-dim")], d=0.9)
+    f.card(253, 200, 214, 92, "② 改写后再放行",
+           [("换掉 e 里的字段", "sf-t-sm"), ("改参数、脱敏、补上下文", "sf-t-dim")], d=1.0)
+    f.card(482, 200, 214, 92, "③ 直接接管",
+           [("不再调用 next", "sf-t-sm"), ("自己算完直接返回", "sf-t-dim")], d=1.1)
+
+    # ---- 第三行：安全提醒 ----
+    f.line([(24, 322), (696, 322)], marker=None, dash="4 4", opacity=0.5, d=1.25)
+    f.text(24, 348, "注意：Mod 不做沙箱隔离，与你本机的 Claude Code 同权限，能读到环境变量里的密钥。",
+           cls="sf-t-warn", anchor="start", mid=False, d=1.35)
+    return f
+
+
 FIGURES = [
     f_http_vs_https,
     f_tls_handshake,
@@ -789,6 +823,7 @@ FIGURES = [
     f_lazy_progressive,
     f_optimistic_lock,
     f_deploy_pipeline,
+    f_claude_mods,
 ]
 
 
