@@ -105,7 +105,6 @@ blog/
 │   │   ├── moment_card.html      # 碎碎念卡片
 │   │   ├── toc.html              # 文章目录（覆盖主题：默认展开成侧栏卡片）
 │   │   ├── icon.html             # 内联 Lucide 图标字典
-│   │   ├── deploy_guide.html     # 部署指南弹窗内容
 │   │   ├── extend_head.html      # <head> 注入点：主题预置 + js-reveal
 │   │   └── extend_footer.html    # </body> 前注入点：指纹化脚本
 │   └── shortcodes/
@@ -237,7 +236,7 @@ python scripts/fetch-fonts.py --css-only  # 只重生成 @font-face
 - **选中文案工具栏**：选中正文后浮出「引用金句 / 复制」，不依赖第三方库
 - **图片灯箱**：正文图片点击放大，`ESC` / 点击遮罩关闭
 - 移动端底部标签栏（文章 / 碎念 / 专栏 / 搜索 / 主题）+ 抽屉式导航
-- 部署指南弹窗、下载源码提示、⌘K / Ctrl+K / `/` 唤起搜索
+- ⌘K / Ctrl+K / `/` 唤起搜索；导航栏「写文章」直达 GitHub 新建页
 
 > 所有动效都遵循 `prefers-reduced-motion`：系统里关闭动画后会自动降级为静态显示。
 > 全部动效只用 CSS 与原生 JS 实现，整站**不请求任何第三方 CDN 或字体**。

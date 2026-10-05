@@ -18,11 +18,14 @@
      8. 页脚与回到顶部
      9. 分页页码导航
     10. 移动端底部标签栏
-    11. 部署指南弹窗
+    11. 通用弹窗（书签 / 白噪音 / 分享卡片）
     12. 进场动画
     13. 文章内 SVG 动画（Spring Boot 对比图专用）
     14. 通用 SVG 示意图图库
     15. 无障碍与移动端
+    16. 页面模板：专栏 / 归档 / 关于 / 碎碎念
+    17. 文章页阅读增强
+    18. 全局组件：Toast / 白噪音 / 选中工具栏 / 灯箱 / 光标
    ============================================================ */
 
 /* ==================== 0. 设计令牌 ==================== */
@@ -2092,7 +2095,7 @@ details.toc a.is-active {
     }
 }
 
-/* ==================== 11. 部署指南弹窗 ==================== */
+/* ==================== 11. 通用弹窗（书签 / 白噪音 / 分享卡片） ==================== */
 
 .mz-modal {
     position: fixed;
@@ -2212,126 +2215,6 @@ body.mz-modal-open {
     font-family: var(--mz-mono);
     font-size: 11px;
     color: var(--mz-ink-4);
-}
-
-/* 弹窗里的步骤 */
-.mz-step-head {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--mz-serif);
-    font-weight: 600;
-    font-size: 15px;
-    color: var(--mz-ink);
-    margin-bottom: 10px;
-}
-
-.mz-step-num {
-    width: 22px;
-    height: 22px;
-    flex: none;
-    border-radius: 9999px;
-    background: var(--mz-surface-3);
-    color: var(--mz-ink-2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--mz-mono);
-    font-size: 11px;
-    font-weight: 500;
-}
-
-.mz-step-body {
-    padding-left: 30px;
-    font-size: 12.5px;
-    line-height: 1.75;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.mz-step-body ul,
-.mz-step-body ol {
-    padding-left: 18px;
-    margin: 0;
-}
-
-.mz-step-body li {
-    margin-bottom: 4px;
-}
-
-.mz-code {
-    position: relative;
-    border-radius: var(--mz-r-md);
-    border: 1px solid var(--mz-line);
-    background: var(--mz-code-block-bg);
-    color: #d8d8d8;
-    padding: 12px 14px;
-    font-family: var(--mz-mono);
-    font-size: 11.5px;
-    line-height: 1.65;
-    max-height: 210px;
-    overflow: auto;
-}
-
-.mz-code pre {
-    margin: 0;
-    background: none;
-    padding: 0;
-}
-
-.mz-code code {
-    background: none;
-    border: 0;
-    padding: 0;
-    color: inherit;
-    font-size: inherit;
-}
-
-.mz-callout {
-    padding: 13px 15px;
-    border-radius: var(--mz-r-md);
-    border: 1px solid var(--mz-line);
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.mz-callout-ok {
-    border-color: var(--mz-ok-line);
-    background: var(--mz-ok-soft);
-}
-
-.mz-callout-warn {
-    border-color: var(--mz-warn-line);
-    background: var(--mz-warn-soft);
-}
-
-.mz-callout-title {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-weight: 600;
-    font-size: 12.5px;
-}
-
-.mz-callout-ok .mz-callout-title {
-    color: var(--mz-ok);
-}
-
-.mz-callout-warn .mz-callout-title {
-    color: var(--mz-warn);
-}
-
-.mz-callout .mz-ico {
-    width: 14px;
-    height: 14px;
-}
-
-.mz-callout p {
-    margin: 0;
-    font-size: 12px;
-    line-height: 1.7;
 }
 
 /* ==================== 12. 进场动画 ==================== */

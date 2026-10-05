@@ -1,7 +1,8 @@
 {{- /* 吸顶导航栏（项目级覆盖主题 header.html）
 
        结构：品牌 → 主导航 → 图标动作区 → 移动端抽屉
-       文案与链接都走 hugo.yaml，改配置即可，不用动模板。 */ -}}
+       文案与链接都走 hugo.yaml，改配置即可，不用动模板。
+       动作区里唯一的外链是「写文章」，只依赖 params.repo。 */ -}}
 
 {{- $repo := site.Params.repo | default dict -}}
 {{- $repoURL := $repo.url | default "" -}}
@@ -77,19 +78,7 @@
                 {{ partial "icon.html" "pen" }}
                 <span>写文章</span>
             </a>
-
-            <a class="mz-btn mz-btn-ok mz-only-xl" href="{{ . }}/archive/refs/heads/{{ $branch }}.zip"
-                target="_blank" rel="noopener" title="下载整站源码 ZIP">
-                {{ partial "icon.html" "download" }}
-                <span>下载源码</span>
-            </a>
             {{- end }}
-
-            <button class="mz-btn mz-btn-ghost mz-only-lg" id="mzDeployBtn" type="button"
-                title="查看 GitHub Pages 部署指南">
-                {{ partial "icon.html" "github" }}
-                <span>部署指南</span>
-            </button>
 
             <button class="mz-iconbtn mz-burger" id="mzBurger" type="button"
                 aria-label="展开菜单" aria-expanded="false">
@@ -109,9 +98,7 @@
             {{- end }}
             {{- with $repoURL }}
             <li><a href="{{ . }}/new/{{ $branch }}/content/posts" target="_blank" rel="noopener">写文章</a></li>
-            <li><a href="{{ . }}/archive/refs/heads/{{ $branch }}.zip" target="_blank" rel="noopener">下载源码 ZIP</a></li>
             {{- end }}
-            <li><a href="#" id="mzDeployBtnMobile">部署指南</a></li>
         </ul>
     </div>
 </header>

@@ -13,7 +13,7 @@
      6. 金句卡随机轮换
      7. 触感微音效（Web Audio）
      8. 书签收藏（localStorage + 弹窗列表）
-     9. 弹窗通用逻辑（部署指南 / 我的书签）
+     9. 弹窗通用逻辑（我的书签 / 白噪音 / 分享卡片复用）
     10. 移动端抽屉菜单
     11. 回到顶部
     12. 全文搜索快捷键（⌘K / Ctrl+K / /）
@@ -607,7 +607,7 @@
     }
 
     /* =========================================================
-       9. 弹窗：部署指南 / 我的书签
+       9. 弹窗：我的书签
        ========================================================= */
     var lastFocus = null;
 
@@ -643,13 +643,9 @@
     window.mzCloseModal = closeModal;
 
     function initModals() {
-        var deploy = $("#mzDeployModal");
         var bookmarks = $("#mzBookmarkModal");
 
         var openers = [
-            ["#mzDeployBtn", deploy],
-            ["#mzDeployBtnMobile", deploy],
-            ["#mzFooterDeploy", deploy],
             ["#mzBookmarkBtn", bookmarks]
         ];
 
