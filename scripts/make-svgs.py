@@ -798,6 +798,40 @@ def f_claude_mods():
     return f
 
 
+# ======================================================================
+# 26. heap vs OrioleDB：旧行版本到底去哪了
+# ======================================================================
+def f_vacuum_vs_undo():
+    f = Fig("vacuum-vs-undo", "heap 与 OrioleDB 处理旧行版本的对比", 400)
+    f.head("同样一次 UPDATE，两种引擎留下的东西不一样",
+           "heap 把旧版本留在表里等 VACUUM 来收；OrioleDB 把它推进 undo log 自动覆盖")
+
+    # ---- ① heap ----
+    f.text(24, 92, "① heap：旧版本留在表里", cls="sf-t-warn", anchor="start", mid=False, d=0.05)
+    f.box(24, 104, 230, 78, "表文件", "活数据 + 死元组",
+          kind="sf-box-warn", tcls="sf-t-warn", d=0.12)
+    f.line([(254, 143), (290, 143)], d=0.22)
+    f.box(294, 104, 120, 78, "VACUUM", "定期全表扫", d=0.32)
+    f.line([(414, 143), (450, 143)], d=0.42)
+    f.box(454, 104, 242, 78, "空间回收", "标记为可复用", d=0.52)
+    f.text(24, 206, "死元组一直占着页，表持续膨胀；VACUUM 全表扫期间还要和业务抢 IO",
+           cls="sf-t-warn", anchor="start", mid=False, d=0.62)
+
+    # ---- 分隔线 ----
+    f.line([(24, 232), (696, 232)], marker=None, dash="4 4", opacity=0.5, d=0.7)
+
+    # ---- ② OrioleDB ----
+    f.text(24, 262, "② OrioleDB：旧版本推进 undo log", cls="sf-t-ok", anchor="start", mid=False, d=0.78)
+    f.box(24, 274, 230, 78, "表文件", "只有活数据",
+          kind="sf-box-ok", tcls="sf-t-ok", d=0.85)
+    f.line([(254, 313), (290, 313)], d=0.92)
+    f.box(294, 274, 402, 78, "undo log（环形 buffer）", "满了自动覆盖，永远不用 VACUUM",
+          kind="sf-box-a", d=1.0)
+    f.text(24, 376, "没有死元组堆积，也不用再给 VACUUM 排维护窗口",
+           cls="sf-t-ok", anchor="start", mid=False, d=1.1)
+    return f
+
+
 FIGURES = [
     f_http_vs_https,
     f_tls_handshake,
@@ -824,6 +858,7 @@ FIGURES = [
     f_optimistic_lock,
     f_deploy_pipeline,
     f_claude_mods,
+    f_vacuum_vs_undo,
 ]
 
 
