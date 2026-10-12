@@ -832,6 +832,45 @@ def f_vacuum_vs_undo():
     return f
 
 
+# ======================================================================
+# 27. Codex 的模型优先级：config.toml 只影响新建会话
+# ======================================================================
+def f_codex_model_priority():
+    f = Fig("codex-model-priority",
+            "Codex 的模型优先级：config.toml 只影响新建会话，已存在的会话沿用自己钉住的模型",
+            424)
+    f.head("同一份 config.toml，两条路走到完全不同的结果",
+           "你改的 model 只在「新建会话」那一刻被读一次，老会话里那把早就钉死了")
+
+    # ---- 你改的东西 ----
+    f.box(24, 84, 672, 56, "你改了 ~/.codex/config.toml 里的 model",
+          "claude-opus-5-5  →  gpt-6.1-sol", d=0.05)
+
+    # ---- 分叉 ----
+    f.line([(360, 140), (360, 158)], marker=None, d=0.2)
+    f.line([(182, 158), (538, 158)], marker=None, draw=False, d=0.25)
+    f.line([(182, 158), (182, 170)], d=0.3)
+    f.line([(538, 158), (538, 170)], d=0.35)
+
+    # ---- 两条路 ----
+    f.box(24, 170, 316, 64, "① 新建会话", "创建时读一次 config.toml", d=0.45)
+    f.box(380, 170, 316, 64, "② 已经存在的会话", "只认自己记下的 model", d=0.5)
+
+    f.line([(182, 234), (182, 266)], marker="ok", d=0.6)
+    f.line([(538, 234), (538, 266)], marker="warn", d=0.65)
+
+    f.box(24, 266, 316, 76, "gpt-6.1-sol", "生效，请求 200",
+          kind="sf-box-ok", tcls="sf-t-ok", subcls="sf-t-ok", d=0.75)
+    f.box(380, 266, 316, 76, "claude-opus-5-5", "无视 config，上游 503",
+          kind="sf-box-warn", tcls="sf-t-warn", subcls="sf-t-warn", d=0.8)
+
+    # ---- 结论 ----
+    f.line([(24, 372), (696, 372)], marker=None, dash="4 4", opacity=0.5, d=0.95)
+    f.text(24, 398, "模型只在会话「创建的那一刻」从 config.toml 读一次，之后就钉死在会话自己身上了。",
+           cls="sf-t-acc", anchor="start", mid=False, d=1.05)
+    return f
+
+
 FIGURES = [
     f_http_vs_https,
     f_tls_handshake,
@@ -859,6 +898,7 @@ FIGURES = [
     f_deploy_pipeline,
     f_claude_mods,
     f_vacuum_vs_undo,
+    f_codex_model_priority,
 ]
 
 

@@ -1,0 +1,19 @@
+<svg viewBox="0 0 720 424" role="img" aria-labelledby="codex-model-priority-t">
+<title id="codex-model-priority-t">Codex 的模型优先级：config.toml 只影响新建会话，已存在的会话沿用自己钉住的模型</title>
+<defs><marker id="codex-model-priority-ah-acc" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="codex-model-priority-ah-warn" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-warn)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="codex-model-priority-ah-ok" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-ok)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="codex-model-priority-ah-dim" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--border)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="sf-title" x="24" y="26">同一份 config.toml，两条路走到完全不同的结果</text>
+<text class="sf-sub" x="24" y="48">你改的 model 只在「新建会话」那一刻被读一次，老会话里那把早就钉死了</text>
+<g class="sf-pop" style="--d:0.05s"><rect class="sf-box" x="24" y="84" width="672" height="56" rx="10"/><text class="sf-t sf-mid" x="360" y="104" text-anchor="middle">你改了 ~/.codex/config.toml 里的 model</text><text class="sf-t-sm sf-mid" x="360" y="122" text-anchor="middle">claude-opus-5-5  →  gpt-6.1-sol</text></g>
+<path class="sf-line sf-draw" d="M360 140 L360 158" pathLength="1" style="--d:0.2s"/>
+<path class="sf-line" d="M182 158 L538 158" style="--d:0.25s"/>
+<path class="sf-line sf-draw" d="M182 158 L182 170" pathLength="1" marker-end="url(#codex-model-priority-ah-acc)" style="--d:0.3s"/>
+<path class="sf-line sf-draw" d="M538 158 L538 170" pathLength="1" marker-end="url(#codex-model-priority-ah-acc)" style="--d:0.35s"/>
+<g class="sf-pop" style="--d:0.45s"><rect class="sf-box" x="24" y="170" width="316" height="64" rx="10"/><text class="sf-t sf-mid" x="182" y="194" text-anchor="middle">① 新建会话</text><text class="sf-t-sm sf-mid" x="182" y="212" text-anchor="middle">创建时读一次 config.toml</text></g>
+<g class="sf-pop" style="--d:0.5s"><rect class="sf-box" x="380" y="170" width="316" height="64" rx="10"/><text class="sf-t sf-mid" x="538" y="194" text-anchor="middle">② 已经存在的会话</text><text class="sf-t-sm sf-mid" x="538" y="212" text-anchor="middle">只认自己记下的 model</text></g>
+<path class="sf-line sf-draw" d="M182 234 L182 266" pathLength="1" marker-end="url(#codex-model-priority-ah-ok)" style="--d:0.6s"/>
+<path class="sf-line sf-draw" d="M538 234 L538 266" pathLength="1" marker-end="url(#codex-model-priority-ah-warn)" style="--d:0.65s"/>
+<g class="sf-pop" style="--d:0.75s"><rect class="sf-box-ok" x="24" y="266" width="316" height="76" rx="10"/><text class="sf-t-ok sf-mid" x="182" y="296" text-anchor="middle">gpt-6.1-sol</text><text class="sf-t-ok sf-mid" x="182" y="314" text-anchor="middle">生效，请求 200</text></g>
+<g class="sf-pop" style="--d:0.8s"><rect class="sf-box-warn" x="380" y="266" width="316" height="76" rx="10"/><text class="sf-t-warn sf-mid" x="538" y="296" text-anchor="middle">claude-opus-5-5</text><text class="sf-t-warn sf-mid" x="538" y="314" text-anchor="middle">无视 config，上游 503</text></g>
+<path class="sf-line sf-draw" d="M24 372 L696 372" pathLength="1" stroke-dasharray="4 4" stroke-opacity="0.5" style="--d:0.95s"/>
+<g class="sf-pop" style="--d:1.05s"><text class="sf-t-acc" x="24" y="398" text-anchor="start">模型只在会话「创建的那一刻」从 config.toml 读一次，之后就钉死在会话自己身上了。</text></g>
+</svg>
