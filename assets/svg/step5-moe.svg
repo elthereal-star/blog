@@ -1,0 +1,26 @@
+<svg viewBox="0 0 720 400" role="img" aria-labelledby="step5-moe-t">
+<title id="step5-moe-t">稠密模型 vs 稀疏 MoE：一次前向传播，到底唤醒多少人</title>
+<defs><marker id="step5-moe-ah-acc" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="step5-moe-ah-warn" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-warn)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="step5-moe-ah-ok" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-ok)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="step5-moe-ah-dim" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--border)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="sf-title" x="24" y="26">600B 的模型，一次只叫醒 27B</text>
+<text class="sf-sub" x="24" y="48">稀疏 MoE 把参数切成一堆专家，router 按 token 挑人干活，其余的接着睡</text>
+<g class="sf-pop" style="--d:0.05s"><text class="sf-t-warn" x="24" y="84" text-anchor="start">① 稠密模型：一个 token 进来，全家起来加班</text></g>
+<g class="sf-pop" style="--d:0.12s"><rect class="sf-box" x="24" y="96" width="120" height="52" rx="10"/><text class="sf-t sf-mid" x="84" y="114" text-anchor="middle">token</text><text class="sf-t-sm sf-mid" x="84" y="132" text-anchor="middle">输入</text></g>
+<path class="sf-line sf-draw" d="M148 122 L184 122" pathLength="1" marker-end="url(#step5-moe-ah-acc)" style="--d:0.2s"/>
+<g class="sf-pop" style="--d:0.3s"><rect class="sf-box-warn" x="188" y="96" width="240" height="52" rx="10"/><text class="sf-t-warn sf-mid" x="308" y="114" text-anchor="middle">全部参数</text><text class="sf-t-sm sf-mid" x="308" y="132" text-anchor="middle">7B / 70B / 671B，一个都别想睡</text></g>
+<path class="sf-line sf-draw" d="M432 122 L468 122" pathLength="1" marker-end="url(#step5-moe-ah-acc)" style="--d:0.38s"/>
+<g class="sf-pop" style="--d:0.46s"><rect class="sf-box" x="472" y="96" width="224" height="52" rx="10"/><text class="sf-t sf-mid" x="584" y="114" text-anchor="middle">输出</text><text class="sf-t-sm sf-mid" x="584" y="132" text-anchor="middle">每个 token 都按全额付费</text></g>
+<path class="sf-line sf-draw" d="M24 190 L696 190" pathLength="1" stroke-dasharray="4 4" stroke-opacity="0.5" style="--d:0.58s"/>
+<g class="sf-pop" style="--d:0.64s"><text class="sf-t-ok" x="24" y="218" text-anchor="start">② 稀疏 MoE：router 派活，只醒相关的几个</text></g>
+<g class="sf-pop" style="--d:0.7s"><rect class="sf-box" x="24" y="232" width="112" height="52" rx="10"/><text class="sf-t sf-mid" x="80" y="250" text-anchor="middle">token</text><text class="sf-t-sm sf-mid" x="80" y="268" text-anchor="middle">输入</text></g>
+<path class="sf-line sf-draw" d="M140 258 L172 258" pathLength="1" marker-end="url(#step5-moe-ah-acc)" style="--d:0.76s"/>
+<g class="sf-pop" style="--d:0.82s"><rect class="sf-box-a" x="176" y="232" width="104" height="52" rx="10"/><text class="sf-t-acc sf-mid" x="228" y="250" text-anchor="middle">router</text><text class="sf-t-sm sf-mid" x="228" y="268" text-anchor="middle">看菜下碟</text></g>
+<path class="sf-line sf-draw" d="M284 258 L312 258" pathLength="1" marker-end="url(#step5-moe-ah-acc)" style="--d:0.88s"/>
+<g class="sf-pop" style="--d:0.92s"><text class="sf-t-sm sf-mid" x="503" y="228" text-anchor="middle">专家池：600B 总参数都住在这儿</text></g>
+<g class="sf-pop" style="--d:0.96s"><rect class="sf-box" x="316" y="236" width="66" height="44" rx="22"/><text class="sf-t-acc sf-mid" x="349" y="258" text-anchor="middle">专家 1</text></g>
+<g class="sf-pop" style="--d:1.02s"><rect class="sf-box-ok" x="393" y="236" width="66" height="44" rx="22"/><text class="sf-t-ok sf-mid" x="426" y="258" text-anchor="middle">专家 2</text></g>
+<g class="sf-pop" style="--d:1.08s"><rect class="sf-box" x="470" y="236" width="66" height="44" rx="22"/><text class="sf-t-acc sf-mid" x="503" y="258" text-anchor="middle">专家 3</text></g>
+<g class="sf-pop" style="--d:1.14s"><rect class="sf-box-ok" x="547" y="236" width="66" height="44" rx="22"/><text class="sf-t-ok sf-mid" x="580" y="258" text-anchor="middle">专家 4</text></g>
+<g class="sf-pop" style="--d:1.2s"><rect class="sf-box" x="624" y="236" width="66" height="44" rx="22"/><text class="sf-t-acc sf-mid" x="657" y="258" text-anchor="middle">专家 5</text></g>
+<g class="sf-pop" style="--d:1.28s"><text class="sf-t-ok sf-mid" x="503" y="302" text-anchor="middle">每次只有 2 个被叫醒 → 27B 激活 / 600B 总参数</text></g>
+<g class="sf-pop" style="--d:1.36s"><rect class="sf-box-ok" x="24" y="330" width="672" height="48" rx="10"/><text class="sf-t-ok sf-mid" x="360" y="346" text-anchor="middle">一次前向传播：唤醒 27B，睡着的 573B 不参与计算</text><text class="sf-t-ok sf-mid" x="360" y="364" text-anchor="middle">所以「600B 的模型」跑起来像个 27B 的——又快又便宜</text></g>
+</svg>

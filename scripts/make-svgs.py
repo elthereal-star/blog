@@ -871,6 +871,54 @@ def f_codex_model_priority():
     return f
 
 
+# ======================================================================
+# 28. 稀疏 MoE：600B 总参数，一次前向只唤醒 27B
+# ======================================================================
+def f_step5_moe():
+    f = Fig("step5-moe",
+            "稠密模型 vs 稀疏 MoE：一次前向传播，到底唤醒多少人",
+            400)
+    f.head("600B 的模型，一次只叫醒 27B",
+           "稀疏 MoE 把参数切成一堆专家，router 按 token 挑人干活，其余的接着睡")
+
+    # ---- ① 稠密模型 ----
+    f.text(24, 84, "① 稠密模型：一个 token 进来，全家起来加班",
+           cls="sf-t-warn", anchor="start", mid=False, d=0.05)
+    f.box(24, 96, 120, 52, "token", "输入", d=0.12)
+    f.line([(148, 122), (184, 122)], d=0.2)
+    f.box(188, 96, 240, 52, "全部参数", "7B / 70B / 671B，一个都别想睡",
+          kind="sf-box-warn", tcls="sf-t-warn", d=0.3)
+    f.line([(432, 122), (468, 122)], d=0.38)
+    f.box(472, 96, 224, 52, "输出", "每个 token 都按全额付费", d=0.46)
+
+    # ---- 分隔线 ----
+    f.line([(24, 190), (696, 190)], marker=None, dash="4 4", opacity=0.5, d=0.58)
+
+    # ---- ② 稀疏 MoE ----
+    f.text(24, 218, "② 稀疏 MoE：router 派活，只醒相关的几个",
+           cls="sf-t-ok", anchor="start", mid=False, d=0.64)
+    f.box(24, 232, 112, 52, "token", "输入", d=0.7)
+    f.line([(140, 258), (172, 258)], d=0.76)
+    f.box(176, 232, 104, 52, "router", "看菜下碟",
+          kind="sf-box-a", tcls="sf-t-acc", d=0.82)
+    f.line([(284, 258), (312, 258)], d=0.88)
+    f.text(503, 228, "专家池：600B 总参数都住在这儿",
+           cls="sf-t-sm", mid=True, d=0.92)
+    f.chip(316, 236, 66, 44, "专家 1", kind="sf-box", d=0.96)
+    f.chip(393, 236, 66, 44, "专家 2", kind="sf-box-ok", tcls="sf-t-ok", d=1.02)
+    f.chip(470, 236, 66, 44, "专家 3", kind="sf-box", d=1.08)
+    f.chip(547, 236, 66, 44, "专家 4", kind="sf-box-ok", tcls="sf-t-ok", d=1.14)
+    f.chip(624, 236, 66, 44, "专家 5", kind="sf-box", d=1.2)
+    f.text(503, 302, "每次只有 2 个被叫醒 → 27B 激活 / 600B 总参数",
+           cls="sf-t-ok", mid=True, d=1.28)
+
+    # ---- 结论 ----
+    f.box(24, 330, 672, 48, "一次前向传播：唤醒 27B，睡着的 573B 不参与计算",
+          "所以「600B 的模型」跑起来像个 27B 的——又快又便宜",
+          kind="sf-box-ok", tcls="sf-t-ok", subcls="sf-t-ok", d=1.36)
+    return f
+
+
 FIGURES = [
     f_http_vs_https,
     f_tls_handshake,
@@ -899,6 +947,7 @@ FIGURES = [
     f_claude_mods,
     f_vacuum_vs_undo,
     f_codex_model_priority,
+    f_step5_moe,
 ]
 
 
