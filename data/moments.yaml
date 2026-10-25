@@ -12,7 +12,18 @@
 #    likes    点赞数
 #    url      关联文章链接（可空，填了标题就变成可点链接）
 #    title    关联文章标题（可空）
+#    video    视频地址（可空，填了就在正文下方渲染播放器，放 static/videos/ 下）
+#    poster   视频封面图（可空，配合 video 用）
 # ============================================================
+
+- content: "把一段七年的关系做成了一部 3 分钟的黑金片子，五个问题，一个标准答案都没给。做的时候才发现，最难的不是写文案，是决定哪句话该停三秒、哪一帧该让画面彻底安静下来。"
+  date: "2026-10-25"
+  time: "17:15"
+  mood: "🌙 深夜思考"
+  location: "书房"
+  likes: 9
+  video: "/videos/love-choices-blackgold-v5.mp4"
+  poster: "/videos/love-choices-blackgold-v5-poster.jpg"
 
 - content: "把 filetidy 的 4 个真实缺陷收尾了：Windows 控制台 GBK 乱码、异常堆栈外泄、隐藏文件判定跨平台不一致、undo 残留空目录。测试从 4 个补到 31 个全绿——「能跑通」和「能交付」之间，差的往往就是这些不起眼的地方。"
   date: "2026-10-04"

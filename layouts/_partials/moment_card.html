@@ -28,6 +28,19 @@
 
     <p class="mz-moment-text">{{ $m.content }}</p>
 
+    {{- /* 可选：视频（填 video 字段即渲染，poster 可选）
+           注意：relURL 遇到以 / 开头的路径会丢掉 baseURL 里的 /blog/ 前缀，
+           所以这里先 TrimPrefix 再拼，YAML 里照常写 /videos/xxx.mp4 即可。 */}}
+    {{- with $m.video }}
+    {{- $src := . | strings.TrimPrefix "/" | relURL }}
+    {{- $poster := "" }}
+    {{- with $m.poster }}{{ $poster = . | strings.TrimPrefix "/" | relURL }}{{ end }}
+    <video class="mz-moment-video" controls preload="metadata" playsinline{{ with $poster }} poster="{{ . }}"{{ end }}>
+        <source src="{{ $src }}" type="video/mp4">
+        你的浏览器不支持 video 标签，<a href="{{ $src }}">点此下载视频</a>。
+    </video>
+    {{- end }}
+
     {{- with $m.url }}
     <a class="mz-moment-link" href="{{ . | relLangURL }}">
         {{ partial "icon.html" "book" }}

@@ -3592,6 +3592,16 @@ a.mz-profile-link:hover {
     color: var(--mz-ink-2);
 }
 
+/* 碎碎念里的视频：黑底 + 发丝边框，和卡片其他附件保持同一套圆角 */
+.mz-moment-video {
+    display: block;
+    width: 100%;
+    margin-top: 14px;
+    border: 1px solid var(--mz-line);
+    border-radius: var(--mz-r-md);
+    background: #000;
+}
+
 .mz-moment-link {
     display: flex;
     align-items: center;
