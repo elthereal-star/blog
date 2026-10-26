@@ -1,0 +1,36 @@
+<svg viewBox="0 0 720 352" role="img" aria-labelledby="bplus-split-rules-t">
+<title id="bplus-split-rules-t">叶子分裂把键复制给父节点，非叶分裂把中间的键上移给父节点</title>
+<defs><marker id="bplus-split-rules-ah-acc" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-accent)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="bplus-split-rules-ah-warn" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-warn)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="bplus-split-rules-ah-ok" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--sf-ok)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker><marker id="bplus-split-rules-ah-dim" viewBox="0 0 10 10" refX="8.6" refY="5" markerWidth="4.6" markerHeight="4.6" orient="auto"><path d="M1.9 1.7 L7.4 5 L1.9 8.3" fill="none" stroke="var(--border)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<text class="sf-title" x="24" y="26">同样是分裂，键的去向完全不同</text>
+<text class="sf-sub" x="24" y="48">叶子复制一份上去；非叶把中间那个键直接交出去</text>
+<g class="sf-pop" style="--d:0.05s"><text class="sf-t" x="24" y="86" text-anchor="start">叶子节点分裂</text></g>
+<g class="sf-pop" style="--d:0.08s"><text class="sf-t-sm" x="24" y="105" text-anchor="start">复制 —— 键留在原处</text></g>
+<rect class="sf-box" x="24" y="120" width="324" height="192" rx="12"/>
+<g class="sf-pop" style="--d:0.14s"><rect class="sf-box-a" x="54" y="142" width="66" height="32" rx="4"/><text class="sf-t sf-mono sf-mid" x="87" y="158" text-anchor="middle">10</text></g>
+<g class="sf-pop" style="--d:0.19s"><rect class="sf-box-a" x="120" y="142" width="66" height="32" rx="4"/><text class="sf-t sf-mono sf-mid" x="153" y="158" text-anchor="middle">20</text></g>
+<g class="sf-pop" style="--d:0.24s"><rect class="sf-box-a" x="186" y="142" width="66" height="32" rx="4"/><text class="sf-t sf-mono sf-mid" x="219" y="158" text-anchor="middle">30</text></g>
+<g class="sf-pop" style="--d:0.29s"><rect class="sf-box-a" x="252" y="142" width="66" height="32" rx="4"/><text class="sf-t sf-mono sf-mid" x="285" y="158" text-anchor="middle">40</text></g>
+<path class="sf-line sf-draw" d="M186 174 L108 206" pathLength="1" marker-end="url(#bplus-split-rules-ah-acc)" style="--d:0.42s"/>
+<path class="sf-line sf-draw" d="M186 174 L264 206" pathLength="1" marker-end="url(#bplus-split-rules-ah-acc)" style="--d:0.46s"/>
+<g class="sf-pop" style="--d:0.52s"><rect class="sf-box" x="42" y="206" width="66" height="32" rx="4"/><text class="sf-t sf-mono sf-mid" x="75" y="222" text-anchor="middle">10</text></g>
+<g class="sf-pop" style="--d:0.56s"><rect class="sf-box" x="108" y="206" width="66" height="32" rx="4"/><text class="sf-t sf-mono sf-mid" x="141" y="222" text-anchor="middle">20</text></g>
+<g class="sf-pop" style="--d:0.6s"><rect class="sf-box" x="198" y="206" width="66" height="32" rx="4"/><text class="sf-t-acc sf-mono sf-mid" x="231" y="222" text-anchor="middle">30</text></g>
+<g class="sf-pop" style="--d:0.64s"><rect class="sf-box" x="264" y="206" width="66" height="32" rx="4"/><text class="sf-t sf-mono sf-mid" x="297" y="222" text-anchor="middle">40</text></g>
+<g class="sf-pop" style="--d:0.74s"><text class="sf-t-acc sf-mid" x="186" y="268" text-anchor="middle">30 复制一份给父节点</text></g>
+<g class="sf-pop" style="--d:0.78s"><text class="sf-t-sm sf-mid" x="186" y="290" text-anchor="middle">叶子里仍然有它</text></g>
+<g class="sf-pop" style="--d:0.84s"><text class="sf-t" x="372" y="86" text-anchor="start">非叶节点分裂</text></g>
+<g class="sf-pop" style="--d:0.87s"><text class="sf-t-sm" x="372" y="105" text-anchor="start">上移 —— 键被抽走</text></g>
+<rect class="sf-box" x="372" y="120" width="324" height="192" rx="12"/>
+<g class="sf-pop" style="--d:0.92s"><rect class="sf-box-a" x="402" y="142" width="66" height="32" rx="4"/><text class="sf-t sf-mono sf-mid" x="435" y="158" text-anchor="middle">30</text></g>
+<g class="sf-pop" style="--d:0.97s"><rect class="sf-box-a" x="468" y="142" width="66" height="32" rx="4"/><text class="sf-t sf-mono sf-mid" x="501" y="158" text-anchor="middle">50</text></g>
+<g class="sf-pop" style="--d:1.02s"><rect class="sf-box-a" x="534" y="142" width="66" height="32" rx="4"/><text class="sf-t sf-mono sf-mid" x="567" y="158" text-anchor="middle">70</text></g>
+<g class="sf-pop" style="--d:1.07s"><rect class="sf-box-a" x="600" y="142" width="66" height="32" rx="4"/><text class="sf-t sf-mono sf-mid" x="633" y="158" text-anchor="middle">90</text></g>
+<path class="sf-line sf-draw" d="M534 174 L456 206" pathLength="1" marker-end="url(#bplus-split-rules-ah-acc)" style="--d:1.12s"/>
+<path class="sf-line sf-draw" d="M534 174 L579 206" pathLength="1" marker-end="url(#bplus-split-rules-ah-acc)" style="--d:1.16s"/>
+<g class="sf-pop" style="--d:1.2s"><rect class="sf-box" x="390" y="206" width="66" height="32" rx="4"/><text class="sf-t sf-mono sf-mid" x="423" y="222" text-anchor="middle">30</text></g>
+<g class="sf-pop" style="--d:1.24s"><rect class="sf-box" x="456" y="206" width="66" height="32" rx="4"/><text class="sf-t sf-mono sf-mid" x="489" y="222" text-anchor="middle">50</text></g>
+<g class="sf-pop" style="--d:1.3s"><rect class="sf-box" x="546" y="206" width="66" height="32" rx="4"/><text class="sf-t sf-mono sf-mid" x="579" y="222" text-anchor="middle">90</text></g>
+<g class="sf-pop" style="--d:1.38s"><text class="sf-t-acc sf-mid" x="534" y="268" text-anchor="middle">70 交给父节点</text></g>
+<g class="sf-pop" style="--d:1.42s"><text class="sf-t-sm sf-mid" x="534" y="290" text-anchor="middle">子节点里不再有它</text></g>
+<g class="sf-pop" style="--d:1.5s"><text class="sf-t-dim sf-mid" x="360" y="334" text-anchor="middle">复制 = 数据键还在；上移 = 索引键搬家</text></g>
+</svg>

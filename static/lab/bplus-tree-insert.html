@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>B+ 树插入 · 可视化实验室</title>
+<style>
+:root{
+  --paper:#faf9f6;
+  --ink:#111113;
+  --ink2:#3a3a3c;
+  --muted:#74736e;
+  --faint:#9c9a92;
+  --rule:#e4e1d9;
+  --rule2:#cfcbc0;
+  --parch:#f7f3e8;
+  --accent:#a63d2a;
+  --accent-soft:#f3e5df;
+  --node-fill:#ffffff;
+  --node-stroke:#cfcbc0;
+  --serif:"Noto Serif SC","Source Han Serif SC","Songti SC",SimSun,Georgia,serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --mono:"JetBrains Mono","Cascadia Code",Consolas,"Courier New",monospace;
+}
+
+/* 深色态：跟随博客站点的三态主题（读 localStorage 的 pref-theme） */
+html[data-lab="dark"]{
+  --paper:#111113;
+  --ink:#e9e7e1;
+  --ink2:#c6c4be;
+  --muted:#8d8b85;
+  --faint:#66655f;
+  --rule:#28282a;
+  --rule2:#3b3b3e;
+  --parch:#191918;
+  --accent:#cf6a51;
+  --accent-soft:#3b2620;
+  --node-fill:#1a1a1c;
+  --node-stroke:#3b3b3e;
+}
+
+/* 嵌入模式：iframe 里只留实验室，去掉页头页脚与其它区块 */
+html[data-embed="1"] header,
+html[data-embed="1"] footer,
+html[data-embed="1"] section:not(#lab){display:none;}
+html[data-embed="1"] #lab{padding:16px 0 18px;border-bottom:0;}
+html[data-embed="1"] #lab .sec-head{display:none;}
+html[data-embed="1"] .wrap{padding:0 18px;max-width:none;}
+html[data-embed="1"] .lab{gap:16px;}
+html[data-embed="1"] .canvas{min-height:296px;}
+html[data-embed="1"] .log{max-height:352px;}
+@media (max-width:900px){
+  /* 嵌入时页面更窄，日志挪到画布下方，压低高度避免 iframe 内部再滚动 */
+  html[data-embed="1"] .log{max-height:196px;}
+  html[data-embed="1"] .stats{margin-top:14px;gap:26px;}
+}
+*{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--sans);font-size:15px;line-height:1.78;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+.wrap{max-width:1020px;margin:0 auto;padding:0 30px;}
+p{margin:0 0 16px;}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent-soft);}
+
+header{padding:78px 0 46px;border-bottom:1px solid var(--rule);}
+.eyebrow{
+  font-family:var(--mono);font-size:11px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:22px;
+}
+h1{
+  font-family:var(--serif);font-weight:500;
+  font-size:clamp(32px,5.2vw,48px);line-height:1.22;
+  letter-spacing:-.01em;margin:0 0 18px;
+}
+h1 em{font-style:normal;color:var(--accent);}
+.lede{font-size:16.5px;color:var(--ink2);max-width:620px;line-height:1.85;}
+
+.laws{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:44px;border-top:1px solid var(--rule);}
+.law{padding:22px 26px 0 0;border-right:1px solid var(--rule);}
+.law:last-child{border-right:0;padding-right:0;}
+.law:nth-child(2),.law:nth-child(3){padding-left:26px;}
+.law-no{font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:.12em;}
+.law h3{font-family:var(--serif);font-size:16px;font-weight:500;margin:8px 0 8px;}
+.law p{font-size:13.5px;color:var(--muted);line-height:1.7;margin:0;}
+
+section{padding:62px 0;border-bottom:1px solid var(--rule);}
+section:last-of-type{border-bottom:0;}
+.sec-head{margin-bottom:32px;}
+.sec-label{
+  font-family:var(--mono);font-size:11px;letter-spacing:.18em;
+  color:var(--muted);text-transform:uppercase;margin-bottom:12px;
+}
+h2{font-family:var(--serif);font-size:26px;font-weight:500;margin:0 0 10px;letter-spacing:-.005em;}
+.sec-sub{font-size:14px;color:var(--muted);margin:0;}
+
+.lab{display:grid;grid-template-columns:minmax(0,1fr) 296px;gap:22px;align-items:start;}
+.panel{min-width:0;}
+.bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px;}
+input[type=number]{
+  width:96px;padding:9px 11px;border:1px solid var(--rule2);border-radius:4px;
+  background:var(--node-fill);font-family:var(--mono);font-size:13px;color:var(--ink);
+  outline:none;transition:border-color .16s;
+  -moz-appearance:textfield;
+}
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0;}
+input[type=number]:focus{border-color:var(--ink);}
+input[type=number]::placeholder{color:var(--faint);}
+button{
+  padding:9px 15px;border:1px solid var(--rule2);border-radius:4px;
+  background:var(--parch);color:var(--ink);font-family:var(--sans);
+  font-size:13px;cursor:pointer;
+  transition:background .16s,color .16s,border-color .16s;
+}
+button:hover:not(:disabled){background:var(--ink);color:var(--paper);border-color:var(--ink);}
+button:active:not(:disabled){transform:translateY(1px);}
+button:disabled{opacity:.38;cursor:not-allowed;}
+button.primary{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+button.primary:hover:not(:disabled){background:var(--accent);border-color:var(--accent);}
+.hint{font-family:var(--mono);font-size:11px;color:var(--faint);margin-left:2px;}
+
+.canvas{
+  position:relative;background:var(--node-fill);border:1px solid var(--rule);
+  border-radius:6px;overflow:auto;padding:6px 10px;min-height:330px;
+}
+#tree{display:block;}
+.empty-state{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:var(--faint);pointer-events:none;
+}
+
+.stats{display:flex;gap:34px;margin-top:18px;flex-wrap:wrap;}
+.stat b{display:block;font-family:var(--mono);font-size:20px;font-weight:500;line-height:1.2;}
+.stat span{font-size:11px;color:var(--muted);letter-spacing:.05em;}
+
+.log{
+  background:var(--parch);border:1px solid var(--rule);border-radius:6px;
+  padding:14px 16px;font-family:var(--mono);font-size:11.5px;line-height:1.85;
+  max-height:430px;overflow-y:auto;color:var(--ink2);
+}
+.log-empty{color:var(--faint);}
+.log-group{margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--rule2);}
+.log-group:last-child{margin-bottom:0;padding-bottom:0;border-bottom:0;}
+.log-head{color:var(--accent);font-weight:500;margin-bottom:4px;}
+.log-item{padding-left:11px;position:relative;color:var(--muted);}
+.log-item::before{content:"";position:absolute;left:0;top:9px;width:4px;height:1px;background:var(--rule2);}
+
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
+.card{
+  background:var(--node-fill);border:1px solid var(--rule);border-radius:6px;
+  padding:22px 22px 18px;
+}
+.card-no{font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.12em;}
+.card h3{font-family:var(--serif);font-size:17px;font-weight:500;margin:6px 0 14px;}
+.card p{font-size:13.5px;color:var(--muted);margin:12px 0 0;line-height:1.72;}
+.diagram{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:16px 12px;background:var(--paper);border-radius:4px;
+  border:1px dashed var(--rule2);min-height:70px;
+}
+.diagram.stack{flex-direction:column;align-items:flex-start;gap:9px;}
+.row{display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+.dn{
+  display:inline-flex;border:1px solid var(--rule2);border-radius:4px;
+  font-family:var(--mono);font-size:12.5px;background:var(--node-fill);overflow:hidden;
+}
+.dn i{font-style:normal;padding:5px 9px;border-right:1px solid var(--rule);line-height:1.4;}
+.dn i:last-child{border-right:0;}
+.dn.int{background:var(--parch);}
+.dn i.hi{color:var(--accent);}
+.dn i.up{color:var(--accent);background:var(--accent-soft);}
+.dn.small{font-size:11.5px;}
+.dn.small i{padding:4px 7px;}
+.sym{font-family:var(--mono);font-size:12px;color:var(--faint);}
+.note{font-family:var(--mono);font-size:11px;color:var(--accent);}
+.note-line{
+  font-family:var(--mono);font-size:11px;color:var(--accent);
+  line-height:1.6;margin-top:2px;
+}
+.ln{
+  font-family:var(--mono);font-size:10.5px;color:var(--faint);
+  flex:0 0 40px;letter-spacing:.06em;
+}
+
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:6px;}
+th{
+  text-align:left;padding:10px 14px;border-bottom:1px solid var(--ink);
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);font-weight:500;
+}
+td{padding:13px 14px;border-bottom:1px solid var(--rule);vertical-align:top;color:var(--ink2);}
+td:first-child{color:var(--ink);}
+tr:hover td{background:var(--parch);}
+td code{font-family:var(--mono);font-size:12.5px;background:var(--parch);padding:1px 5px;border-radius:3px;}
+
+.pit{display:grid;gap:0;border-top:1px solid var(--rule);}
+.pit-item{display:grid;grid-template-columns:52px 1fr;gap:20px;padding:22px 0;border-bottom:1px solid var(--rule);}
+.pit-no{font-family:var(--mono);font-size:12px;color:var(--accent);padding-top:2px;}
+.pit-item h4{font-family:var(--serif);font-size:16px;font-weight:500;margin:0 0 7px;}
+.pit-item p{font-size:13.5px;color:var(--muted);margin:0;line-height:1.74;}
+
+footer{padding:42px 0 66px;border-top:1px solid var(--rule);margin-top:0;}
+footer p{font-family:var(--mono);font-size:11.5px;color:var(--faint);margin:0;}
+
+#tree .box{fill:var(--node-fill);stroke:var(--node-stroke);stroke-width:1;}
+#tree .nd.int .box{fill:var(--parch);}
+#tree .sep{stroke:var(--rule2);stroke-width:1;}
+#tree .k{
+  font-family:var(--mono);font-size:14px;fill:var(--ink);
+  text-anchor:middle;dominant-baseline:central;
+}
+#tree .k.hot{fill:var(--accent);}
+#tree .lk{
+  font-family:var(--mono);font-size:9.5px;fill:var(--faint);
+  text-anchor:middle;dominant-baseline:central;letter-spacing:.08em;
+}
+#tree .edge{stroke:var(--rule2);stroke-width:1;fill:none;}
+#tree .chain{stroke:#b3b0a6;stroke-width:1.4;fill:none;}
+#tree .nd.new{animation:ndfade .42s ease both;}
+@keyframes ndfade{from{opacity:0;}to{opacity:1;}}
+@media (prefers-reduced-motion:reduce){
+  #tree .nd.new{animation:none;}
+  button:active:not(:disabled){transform:none;}
+}
+
+@media (max-width:900px){
+  #tree{max-width:100%;height:auto;}
+}
+
+@media (max-width:900px){
+  .lab{grid-template-columns:1fr;}
+  .laws{grid-template-columns:1fr;}
+  .law{border-right:0;border-bottom:1px solid var(--rule);padding:20px 0;}
+  .law:nth-child(2),.law:nth-child(3){padding-left:0;}
+  .law:last-child{border-bottom:0;}
+  .cards{grid-template-columns:1fr;}
+}
+@media (max-width:640px){
+  .wrap{padding:0 20px;}
+  header{padding:52px 0 36px;}
+  section{padding:46px 0;}
+  .stats{gap:22px;}
+  .pit-item{grid-template-columns:1fr;gap:6px;}
+}
+</style>
+<script>
+/* 与博客主站同源，直接读它的主题偏好，让这个独立页面跟上三态主题 */
+(function () {
+  var dark = false;
+  try {
+    var pref = localStorage.getItem('pref-theme');
+    if (pref === 'dark') {
+      dark = true;
+    } else if (pref === 'light' || pref === 'parchment' || pref === 'paper') {
+      dark = false;
+    } else {
+      dark = !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    }
+  } catch (e) {}
+  if (dark) document.documentElement.setAttribute('data-lab', 'dark');
+  if (/[?&]embed=1/.test(location.search)) {
+    document.documentElement.setAttribute('data-embed', '1');
+  }
+})();
+</script>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow">Data Structure · Visual Notes</div>
+    <h1>B+ 树的插入，<br>是<em>从叶子往上长</em>的。</h1>
+    <p class="lede">
+      新键永远先落进叶子。只有当这个叶子被塞满，它才会裂开，把一个键交还给父节点；
+      父节点也装不下了，就继续往上交。这场「归还」会一层层传递，直到某个节点还有空位，
+      或者——连根都被撑破，于是长出一个新的根，整棵树因此高了一层。
+    </p>
+
+    <div class="laws">
+      <div class="law">
+        <div class="law-no">01</div>
+        <h3>数据只住在叶子</h3>
+        <p>所有键值和真正的数据行，都只存在于最底层。上面的节点是纯粹的索引，不存数据。</p>
+      </div>
+      <div class="law">
+        <div class="law-no">02</div>
+        <h3>索引键来自叶子</h3>
+        <p>父节点里的每个键，等于它右边那棵子树的最小键。它只是一块路牌，不是新的数据。</p>
+      </div>
+      <div class="law">
+        <div class="law-no">03</div>
+        <h3>溢出才长节点</h3>
+        <p>装得下就什么都不变。装不下才分裂，新长出来的节点交给父节点接管。</p>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="lab">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-label">01 / Playground</div>
+      <h2>交互实验室</h2>
+      <p class="sec-sub">
+        一棵 4 阶 B+ 树：每个节点最多 4 个孩子、3 个键。输入数字回车插入，或点「完整演示」跑一遍 10 → 100。
+      </p>
+    </div>
+
+    <div class="lab">
+      <div class="panel">
+        <div class="bar">
+          <input type="number" id="key" placeholder="输入数字" min="-999" max="999">
+          <button class="primary" id="btn-ins">插入</button>
+          <button id="btn-demo">完整演示</button>
+          <button id="btn-reset">重置</button>
+          <span class="hint">回车快速插入</span>
+        </div>
+
+        <div class="canvas">
+          <svg id="tree" xmlns="http://www.w3.org/2000/svg"></svg>
+          <div class="empty-state" id="empty-state">输入一个数字，开始构建这棵树</div>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><b id="st-h">0</b><span>层数</span></div>
+          <div class="stat"><b id="st-n">0</b><span>节点总数</span></div>
+          <div class="stat"><b id="st-l">0</b><span>叶子节点</span></div>
+          <div class="stat"><b id="st-k">0</b><span>键总数</span></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="log" id="log"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="cases">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-label">02 / Four Cases</div>
+      <h2>插入之后，到底变了什么</h2>
+      <p class="sec-sub">所有插入都逃不出这四种情况，复杂的树只是它们的反复组合。</p>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-no">CASE 01</div>
+        <h3>叶子还有空位</h3>
+        <div class="diagram">
+          <div class="dn"><i>10</i><i>20</i></div>
+          <span class="sym">+35 →</span>
+          <div class="dn"><i>10</i><i>20</i><i class="hi">35</i></div>
+        </div>
+        <p>键按顺序插进叶子就结束了。父节点、兄弟节点、叶子链表全都不动，树的结构零变化。大多数插入都属于这一类。</p>
+      </div>
+
+      <div class="card">
+        <div class="card-no">CASE 02</div>
+        <h3>叶子满了，父节点还有空位</h3>
+        <div class="diagram stack">
+          <div class="row">
+            <div class="dn"><i>10</i><i>20</i><i>30</i></div>
+            <span class="sym">+40 →</span>
+            <div class="dn"><i>10</i><i>20</i></div>
+            <div class="dn"><i class="hi">30</i><i>40</i></div>
+          </div>
+          <div class="note-line">↑ 右半边的 30 复制给父节点，叶子里仍然保留它</div>
+        </div>
+        <p>叶子一分为二：左半留在原节点，右半成为新兄弟。右半的最小键被<b>复制</b>一份给父节点当分隔键——叶子里那个 30 依然存在。</p>
+      </div>
+
+      <div class="card">
+        <div class="card-no">CASE 03</div>
+        <h3>父节点也满了</h3>
+        <div class="diagram stack">
+          <div class="row">
+            <div class="dn int small"><i>30</i><i>50</i><i>70</i></div>
+            <span class="sym">+90 溢出 →</span>
+            <div class="dn int small"><i>30</i><i>50</i></div>
+            <div class="dn int small"><i>90</i></div>
+          </div>
+          <div class="note-line">↑ 中间的 70 被抽走上交，子节点里不再有它</div>
+        </div>
+        <p>非叶节点溢出时，正中间的键被<b>抽走</b>交给上一层，自己分成左右两半。注意它被抽走后，左右两半都不会是满的。</p>
+      </div>
+
+      <div class="card">
+        <div class="card-no">CASE 04</div>
+        <h3>分裂传到根了</h3>
+        <div class="diagram stack">
+          <div class="row">
+            <span class="ln">新根</span>
+            <div class="dn int small"><i class="hi">70</i></div>
+          </div>
+          <div class="row">
+            <span class="ln">原根</span>
+            <div class="dn int small"><i>30</i><i>50</i></div>
+            <div class="dn int small"><i>90</i></div>
+          </div>
+          <div class="row">
+            <span class="ln">叶子</span>
+            <span class="sym">5 个叶子原封不动</span>
+          </div>
+          <div class="note-line">↑ 整棵树只多了最上面这一层</div>
+        </div>
+        <p>根没有父节点可以接管这个键，于是系统新建一个根把它装进去，原根变成左孩子，分裂出的节点成为右孩子。这是 B+ 树唯一长高的方式。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="diff">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-label">03 / Copy vs Move</div>
+      <h2>复制，还是上移？</h2>
+      <p class="sec-sub">这是 B+ 树插入里最容易被记反的一点，也是它和 B 树最大的形态差异。</p>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width:22%">对比项</th>
+          <th style="width:39%">叶子节点分裂</th>
+          <th style="width:39%">非叶节点分裂</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>送给父节点的是</td>
+          <td>右半边的最小键</td>
+          <td>正中间那个键</td>
+        </tr>
+        <tr>
+          <td>这个键的去向</td>
+          <td><code>复制</code> —— 原地保留</td>
+          <td><code>上移</code> —— 从子节点中删除</td>
+        </tr>
+        <tr>
+          <td>分裂后子节点状态</td>
+          <td>左右各 2 个键（对 4 阶树）</td>
+          <td>左 2 键 3 指针，右 1 键 2 指针</td>
+        </tr>
+        <tr>
+          <td>为什么这样设计</td>
+          <td>叶子存真实数据，不能把记录搬走</td>
+          <td>非叶只是路由信息，没必要存两份</td>
+        </tr>
+        <tr>
+          <td>对树的影响</td>
+          <td>叶子层多一个节点，链表多一个环节</td>
+          <td>上层多一个节点，索引层重新分布</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="pit">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-label">04 / Pitfalls</div>
+      <h2>四个容易记反的地方</h2>
+    </div>
+
+    <div class="pit">
+      <div class="pit-item">
+        <div class="pit-no">01</div>
+        <div>
+          <h4>父节点只多一个键、一个指针</h4>
+          <p>分裂只产生一个新兄弟，所以父节点自然只多一个孩子。很多人会误以为分裂会多出两个指针。</p>
+        </div>
+      </div>
+      <div class="pit-item">
+        <div class="pit-no">02</div>
+        <div>
+          <h4>分裂只影响最左或最右的一条路径</h4>
+          <p>插入永远从根走到某一个叶子。分裂只会沿着这条路径向上冒，其余兄弟子树完全不受影响。所以插入代价是 O(log n)，且只有这条链上的节点被改写。</p>
+        </div>
+      </div>
+      <div class="pit-item">
+        <div class="pit-no">03</div>
+        <div>
+          <h4>树是从根往下长的，新节点只在叶子层出现</h4>
+          <p>树高只在根分裂时 +1。所以任何时刻，所有叶子都严格处在同一层——这正是 B+ 树查询代价稳定的根本原因。</p>
+        </div>
+      </div>
+      <div class="pit-item">
+        <div class="pit-no">04</div>
+        <div>
+          <h4>工程实现里，分裂点不一定在键数正中间</h4>
+          <p>MySQL InnoDB 的 B+ 树是按页内<b>字节数</b> 50% 来拆分的，而不是按键的个数对半分。因为 varchar、text 这类变长字段会让每个键占的字节差异极大，按个数分容易拆出严重失衡的两半。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>原生 HTML / CSS / JavaScript + SVG · 无任何外部依赖 · 4 阶 B+ 树实现</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  var MAXK = 3;
+  var CELL = 48, GAP = 24, LEAF_H = 52, INT_H = 36;
+  var LEVEL_H = 112, TOP = 34, BOTTOM = 38, SIDE = 26;
+  var DEMO = [10,20,30,40,50,60,70,80,90,100];
+
+  var root = null;
+  var uid = 1;
+  var prevIds = {};
+  var flashKey = null;
+  var logs = [];
+  var evts = [];
+  var busy = false;
+  var runToken = 0;
+
+  function $(id){ return document.getElementById(id); }
+
+  function mkNode(leaf){
+    return {
+      id: uid++, leaf: leaf, keys: [], children: [],
+      next: null, prev: null,
+      w: 0, subW: 0, x: 0, y: 0
+    };
+  }
+
+  function exists(key){
+    var found = false;
+    (function walk(n){
+      if (found) return;
+      if (n.leaf){
+        if (n.keys.indexOf(key) !== -1) found = true;
+      } else {
+        for (var i = 0; i < n.children.length; i++) walk(n.children[i]);
+      }
+    })(root);
+    return found;
+  }
+
+  function splitLeaf(n){
+    var right = mkNode(true);
+    right.keys = n.keys.slice(2);
+    n.keys = n.keys.slice(0, 2);
+
+    right.next = n.next;
+    right.prev = n;
+    if (n.next) n.next.prev = right;
+    n.next = right;
+
+    evts.push("叶子溢出 → 拆成 [" + n.keys.join(" ") + "] 和 [" + right.keys.join(" ") + "]");
+    evts.push("把右半边最小键 " + right.keys[0] + " 复制一份交给父节点");
+    return { upKey: right.keys[0], newNode: right };
+  }
+
+  function splitInt(n){
+    var up = n.keys[2];
+    var right = mkNode(false);
+    right.keys = n.keys.slice(3);
+    right.children = n.children.slice(3);
+    n.keys = n.keys.slice(0, 2);
+    n.children = n.children.slice(0, 3);
+
+    evts.push("非叶节点溢出 → 中间的 " + up + " 被抽出来上交");
+    evts.push("剩下两半：[" + n.keys.join(" ") + "] 和 [" + (right.keys.length ? right.keys.join(" ") : "空") + "]");
+    return { upKey: up, newNode: right };
+  }
+
+  function ins(n, key){
+    if (n.leaf){
+      var i = 0;
+      while (i < n.keys.length && n.keys[i] < key) i++;
+      n.keys.splice(i, 0, key);
+      evts.push("落到叶子 [" + n.keys.join(" ") + "]，现在 " + n.keys.length + " 个键（上限 " + MAXK + "）");
+      if (n.keys.length > MAXK) return splitLeaf(n);
+      evts.push("没超过上限，插入结束，上层完全不动");
+      return null;
+    }
+
+    var j = 0;
+    while (j < n.keys.length && key >= n.keys[j]) j++;
+    var r = ins(n.children[j], key);
+    if (!r) return null;
+
+    n.keys.splice(j, 0, r.upKey);
+    n.children.splice(j + 1, 0, r.newNode);
+    evts.push("父节点收下 " + r.upKey + "，现在 " + n.keys.length + " 个键（上限 " + MAXK + "）");
+
+    if (n.keys.length > MAXK) return splitInt(n);
+    evts.push("父节点还有空位，分裂到此为止");
+    return null;
+  }
+
+  function doInsert(key){
+    evts = ["插入 " + key];
+
+    if (root === null){
+      root = mkNode(true);
+      root.keys.push(key);
+      evts.push("树还是空的，新建一个叶子节点作为根");
+      evts.push("这个根同时也是叶子，数据直接放进去");
+    } else if (exists(key)){
+      evts.push("键 " + key + " 已经存在，B+ 树的索引键唯一，本次跳过");
+    } else {
+      evts.push("从根开始，按分隔键逐层比较，决定走哪个孩子");
+      var r = ins(root, key);
+      if (r){
+        var nr = mkNode(false);
+        nr.keys = [r.upKey];
+        nr.children = [root, r.newNode];
+        root = nr;
+        evts.push("根也装不下了 → 新建一个根，把 " + r.upKey + " 放进去");
+        evts.push("原根变成左孩子，分裂出的节点成为右孩子，树高 +1");
+      }
+    }
+
+    flashKey = key;
+    logs.push({ head: evts[0], items: evts.slice(1) });
+    if (logs.length > 24) logs.shift();
+    render();
+    renderLog();
+  }
+
+  function measure(n){
+    n.w = Math.max(n.keys.length, 1) * CELL;
+    if (n.leaf){ n.subW = n.w; return n.subW; }
+    var sum = 0;
+    for (var i = 0; i < n.children.length; i++){
+      sum += measure(n.children[i]);
+      if (i) sum += GAP;
+    }
+    n.subW = Math.max(n.w, sum);
+    return n.subW;
+  }
+
+  function place(n, left){
+    n.x = left + n.subW / 2;
+    if (n.leaf) return;
+    var cw = 0, i;
+    for (i = 0; i < n.children.length; i++){
+      cw += n.children[i].subW;
+      if (i) cw += GAP;
+    }
+    var s = left + (n.subW - cw) / 2;
+    for (i = 0; i < n.children.length; i++){
+      place(n.children[i], s);
+      s += n.children[i].subW + GAP;
+    }
+  }
+
+  function setY(n, d){
+    n.y = TOP + d * LEVEL_H;
+    if (!n.leaf) for (var i = 0; i < n.children.length; i++) setY(n.children[i], d + 1);
+  }
+
+  function depthOf(n){
+    return n.leaf ? 1 : 1 + depthOf(n.children[0]);
+  }
+
+  function nodeSVG(n, isNew){
+    var w = n.w, h = n.leaf ? LEAF_H : INT_H;
+    var x = n.x - w / 2, y = n.y;
+    var cls = "nd " + (n.leaf ? "leaf" : "int") + (isNew ? " new" : "");
+    var s = '<g class="' + cls + '">';
+    s += '<rect class="box" x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="4"/>';
+
+    var keyY = n.leaf ? y + (h - 22) / 2 : y + h / 2;
+    var sepEnd = n.leaf ? y + h - 22 : y + h;
+
+    for (var i = 0; i < n.keys.length; i++){
+      var cx = x + i * CELL + CELL / 2;
+      if (i > 0){
+        s += '<line class="sep" x1="' + (x + i * CELL) + '" y1="' + y + '" x2="' + (x + i * CELL) + '" y2="' + sepEnd + '"/>';
+      }
+      var hot = (n.keys[i] === flashKey) ? " hot" : "";
+      s += '<text class="k' + hot + '" x="' + cx + '" y="' + keyY + '">' + n.keys[i] + '</text>';
+    }
+
+    if (n.leaf){
+      s += '<line class="sep" x1="' + x + '" y1="' + (y + h - 22) + '" x2="' + (x + w) + '" y2="' + (y + h - 22) + '"/>';
+      s += '<text class="lk" x="' + n.x + '" y="' + (y + h - 8) + '">data</text>';
+    }
+
+    s += '</g>';
+    return s;
+  }
+
+  function render(){
+    var svg = $("tree");
+    var emptyEl = $("empty-state");
+
+    if (root === null){
+      svg.innerHTML = "";
+      svg.setAttribute("viewBox", "0 0 10 10");
+      svg.setAttribute("width", "10");
+      svg.setAttribute("height", "10");
+      emptyEl.style.display = "flex";
+      updateStats();
+      return;
+    }
+    emptyEl.style.display = "none";
+
+    measure(root);
+    var depth = depthOf(root);
+    var W = Math.max(root.subW + SIDE * 2, 320);
+    var H = (depth - 1) * LEVEL_H + LEAF_H + TOP + BOTTOM;
+
+    place(root, SIDE);
+    setY(root, 0);
+
+    svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+    svg.setAttribute("width", W);
+    svg.setAttribute("height", H);
+
+    var edges = "", nodes = "";
+    var cur = {};
+
+    (function walk(n){
+      cur[n.id] = true;
+      var isNew = !prevIds[n.id];
+      nodes += nodeSVG(n, isNew);
+      if (!n.leaf){
+        for (var i = 0; i < n.children.length; i++){
+          var c = n.children[i];
+          edges += '<path class="edge" d="M' + n.x + ' ' + (n.y + INT_H) + ' L' + c.x + ' ' + c.y + '"/>';
+          walk(c);
+        }
+      }
+    })(root);
+
+    var leaves = [];
+    (function collect(n){
+      if (n.leaf) leaves.push(n);
+      else for (var i = 0; i < n.children.length; i++) collect(n.children[i]);
+    })(root);
+    leaves.sort(function(a, b){ return a.x - b.x; });
+
+    var chain = "";
+    for (var k = 0; k < leaves.length - 1; k++){
+      var a = leaves[k], b = leaves[k + 1];
+      var x1 = a.x + a.w / 2, x2 = b.x - b.w / 2;
+      if (x2 - x1 > 12){
+        var ly = a.y + LEAF_H - 11;
+        chain += '<path class="chain" d="M' + (x1 + 2) + ' ' + ly + ' L' + (x2 - 2) + ' ' + ly + '" marker-start="url(#bpa)" marker-end="url(#bpa)"/>';
+      }
+    }
+
+    svg.innerHTML =
+      '<defs>' +
+        '<marker id="bpa" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="5" markerHeight="5" orient="auto-start-reverse">' +
+          '<path d="M1.5 1.5 L6 4 L1.5 6.5" fill="none" stroke="#b3b0a6" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '</marker>' +
+      '</defs>' + edges + chain + nodes;
+
+    prevIds = cur;
+    updateStats();
+  }
+
+  function updateStats(){
+    var total = 0, leafCount = 0, keyCount = 0;
+    if (root){
+      (function walk(n){
+        total++;
+        if (n.leaf){ leafCount++; keyCount += n.keys.length; }
+        else for (var i = 0; i < n.children.length; i++) walk(n.children[i]);
+      })(root);
+    }
+    $("st-h").textContent = root ? depthOf(root) : 0;
+    $("st-n").textContent = total;
+    $("st-l").textContent = leafCount;
+    $("st-k").textContent = keyCount;
+  }
+
+  function renderLog(){
+    var el = $("log");
+    if (!logs.length){
+      el.innerHTML = '<div class="log-empty">还没有操作记录。插入一个数字试试。</div>';
+      return;
+    }
+    var html = "";
+    for (var i = 0; i < logs.length; i++){
+      html += '<div class="log-group"><div class="log-head">' + logs[i].head + '</div>';
+      for (var j = 0; j < logs[i].items.length; j++){
+        html += '<div class="log-item">' + logs[i].items[j] + '</div>';
+      }
+      html += '</div>';
+    }
+    el.innerHTML = html;
+    el.scrollTop = el.scrollHeight;
+  }
+
+  function setDisabled(state){
+    $("btn-ins").disabled = state;
+    $("btn-demo").disabled = state;
+    $("key").disabled = state;
+  }
+
+  function reset(keepToken){
+    if (!keepToken) runToken++;
+    root = null;
+    uid = 1;
+    prevIds = {};
+    flashKey = null;
+    logs = [];
+    evts = [];
+    busy = false;
+    setDisabled(false);
+    render();
+    renderLog();
+  }
+
+  function sleep(ms){
+    return new Promise(function(res){ setTimeout(res, ms); });
+  }
+
+  async function playDemo(){
+    if (busy) return;
+    busy = true;
+    runToken++;
+    var my = runToken;
+    reset(true);
+    setDisabled(true);
+    try {
+      await sleep(240);
+      for (var i = 0; i < DEMO.length; i++){
+        if (my !== runToken) break;
+        doInsert(DEMO[i]);
+        await sleep(760);
+      }
+    } finally {
+      if (my === runToken){
+        busy = false;
+        setDisabled(false);
+      }
+    }
+  }
+
+  function insertFromInput(){
+    if (busy) return;
+    var el = $("key");
+    var v = el.value.trim();
+    if (v === "") { el.focus(); return; }
+    var n = parseInt(v, 10);
+    if (isNaN(n)) { el.focus(); return; }
+    if (n < -999 || n > 9999) { el.value = ""; el.focus(); return; }
+    doInsert(n);
+    el.value = "";
+    el.focus();
+  }
+
+  $("btn-ins").addEventListener("click", insertFromInput);
+  $("btn-demo").addEventListener("click", playDemo);
+  $("btn-reset").addEventListener("click", function(){ reset(false); });
+  $("key").addEventListener("keydown", function(e){
+    if (e.key === "Enter") { e.preventDefault(); insertFromInput(); }
+  });
+
+  reset(false);
+})();
+</script>
+</body>
+</html>

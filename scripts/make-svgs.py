@@ -919,6 +919,66 @@ def f_step5_moe():
     return f
 
 
+# ======================================================================
+# 29. B+ 树插入：复制 vs 上移
+# ======================================================================
+def f_bplus_split_rules():
+    f = Fig(
+        "bplus-split-rules",
+        "叶子分裂把键复制给父节点，非叶分裂把中间的键上移给父节点",
+        352,
+    )
+    f.head(
+        "同样是分裂，键的去向完全不同",
+        "叶子复制一份上去；非叶把中间那个键直接交出去",
+    )
+
+    # ---- 左：叶子分裂 ----
+    f.text(24, 86, "叶子节点分裂", cls="sf-t", anchor="start", mid=False, d=0.05)
+    f.text(24, 105, "复制 —— 键留在原处", cls="sf-t-sm",
+           anchor="start", mid=False, d=0.08)
+    f.raw('<rect class="sf-box" x="24" y="120" width="324" height="192" rx="12"/>')
+
+    for i, k in enumerate(["10", "20", "30", "40"]):
+        f.box(54 + i * 66, 142, 66, 32, k, kind="sf-box-a",
+              tcls="sf-t sf-mono", rx=4, d=0.14 + i * 0.05)
+
+    f.line([(186, 174), (108, 206)], marker="acc", d=0.42)
+    f.line([(186, 174), (264, 206)], marker="acc", d=0.46)
+
+    f.box(42, 206, 66, 32, "10", kind="sf-box", tcls="sf-t sf-mono", rx=4, d=0.52)
+    f.box(108, 206, 66, 32, "20", kind="sf-box", tcls="sf-t sf-mono", rx=4, d=0.56)
+    f.box(198, 206, 66, 32, "30", kind="sf-box", tcls="sf-t-acc sf-mono", rx=4, d=0.60)
+    f.box(264, 206, 66, 32, "40", kind="sf-box", tcls="sf-t sf-mono", rx=4, d=0.64)
+
+    f.text(186, 268, "30 复制一份给父节点", cls="sf-t-acc", d=0.74)
+    f.text(186, 290, "叶子里仍然有它", cls="sf-t-sm", d=0.78)
+
+    # ---- 右：非叶分裂 ----
+    f.text(372, 86, "非叶节点分裂", cls="sf-t", anchor="start", mid=False, d=0.84)
+    f.text(372, 105, "上移 —— 键被抽走", cls="sf-t-sm",
+           anchor="start", mid=False, d=0.87)
+    f.raw('<rect class="sf-box" x="372" y="120" width="324" height="192" rx="12"/>')
+
+    for i, k in enumerate(["30", "50", "70", "90"]):
+        f.box(402 + i * 66, 142, 66, 32, k, kind="sf-box-a",
+              tcls="sf-t sf-mono", rx=4, d=0.92 + i * 0.05)
+
+    f.line([(534, 174), (456, 206)], marker="acc", d=1.12)
+    f.line([(534, 174), (579, 206)], marker="acc", d=1.16)
+
+    f.box(390, 206, 66, 32, "30", kind="sf-box", tcls="sf-t sf-mono", rx=4, d=1.20)
+    f.box(456, 206, 66, 32, "50", kind="sf-box", tcls="sf-t sf-mono", rx=4, d=1.24)
+    f.box(546, 206, 66, 32, "90", kind="sf-box", tcls="sf-t sf-mono", rx=4, d=1.30)
+
+    f.text(534, 268, "70 交给父节点", cls="sf-t-acc", d=1.38)
+    f.text(534, 290, "子节点里不再有它", cls="sf-t-sm", d=1.42)
+
+    f.text(360, 334, "复制 = 数据键还在；上移 = 索引键搬家",
+           cls="sf-t-dim", d=1.5)
+    return f
+
+
 FIGURES = [
     f_http_vs_https,
     f_tls_handshake,
@@ -948,6 +1008,7 @@ FIGURES = [
     f_vacuum_vs_undo,
     f_codex_model_priority,
     f_step5_moe,
+    f_bplus_split_rules,
 ]
 
 
